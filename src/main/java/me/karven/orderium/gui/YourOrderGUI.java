@@ -1,5 +1,6 @@
 package me.karven.orderium.gui;
 
+import io.papermc.paper.dialog.Dialog;
 import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
@@ -32,12 +33,16 @@ public class YourOrderGUI {
         for (Order order : orders) {
             gui.addItem(ConvertUtils.parseOrder(order, rawLore, event -> {
                 PlayerUtils.closeInv(p);
-                ManageOrderDialog.show(order, p);
+                Dialog dialog = ManageOrderDialog.getDialog(order, p);
+                PlayerUtils.openDialog(p, dialog);
             }), slot++);
         }
 
         if (orders.size() < 27) {
-            gui.addItem(ConvertUtils.parseNewButton(cache.getNewOrderButton(), event -> NewOrderDialog.start(p)), slot);
+            gui.addItem(ConvertUtils.parseNewButton(cache.getNewOrderButton(), event -> {
+                InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
+                PlayerUtils.openGUI(p, chooseItemGUI, false);
+            }), slot);
         }
 
         PlayerUtils.openGUI(p, gui, isAsync);

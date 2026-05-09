@@ -8,10 +8,10 @@ import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.karven.orderium.data.ConfigCache;
+import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
 import me.karven.orderium.obj.orderitem.OrderItem;
 import me.karven.orderium.obj.orderitem.SearchableItem;
-import me.karven.orderium.utils.Log;
 import me.karven.orderium.utils.PlayerUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
@@ -33,27 +33,18 @@ public class NewOrderDialog {
         cache = plugin.getConfigs();
     }
 
-    public static void start(Player p) {
-        PlayerUtils.openGUI(p, ChooseItemGUI.choose(0, 0), false);
-    }
-
-    public static void newSession(Player p, OrderItem orderItem) {
-        try {
-            PlayerUtils.openDialog(p, createDialog(
-                    mm.deserialize(cache.getNewOrderDialogTitle()),
-                    mm.deserialize(cache.getItemDescription()),
-                    orderItem,
-                    mm.deserialize(cache.getAmountLabel()),
-                    mm.deserialize(cache.getMoneyPerLabel()),
-                    mm.deserialize(cache.getChangeItemButton()),
-                    mm.deserialize(cache.getChangeItemTooltip()),
-                    mm.deserialize(cache.getConfirmButton()),
-                    mm.deserialize(cache.getConfirmTooltip())
-            ));
-        } catch (Exception e) {
-            Log.warn("Failed to send dialog to player " + p.getName());
-
-        }
+    public static Dialog getDialog(OrderItem orderItem) {
+        return createDialog(
+                mm.deserialize(cache.getNewOrderDialogTitle()),
+                mm.deserialize(cache.getItemDescription()),
+                orderItem,
+                mm.deserialize(cache.getAmountLabel()),
+                mm.deserialize(cache.getMoneyPerLabel()),
+                mm.deserialize(cache.getChangeItemButton()),
+                mm.deserialize(cache.getChangeItemTooltip()),
+                mm.deserialize(cache.getConfirmButton()),
+                mm.deserialize(cache.getConfirmTooltip())
+        );
     }
 
     private static Dialog createDialog(Component title,  Component bodyText, OrderItem orderItem, Component amountLabel, Component moneyPerLabel, Component changeItemLabel, Component changeItemHover, Component confirmLabel, Component confirmHover) {
@@ -113,7 +104,9 @@ public class NewOrderDialog {
                                     .tooltip(changeItemHover)
                                     .width(cache.getButtonWidth())
                                     .action(DialogAction.customClick((view, player) -> {
-                                        if (player instanceof Player p) NewOrderDialog.start(p);
+                                        if (!(player instanceof Player p)) return;
+                                        InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
+                                        PlayerUtils.openGUI(p, chooseItemGUI, false);
                                     }, ClickCallback.Options.builder().uses(1).build()))
                                     .build()
                     ))

@@ -43,7 +43,6 @@ public class ContainerContentListener implements PacketListener {
         NBTCompound nbt = nbtOptional.get();
         NBTCompound persistentData = nbt.getCompoundTagOrNull("PublicBukkitValues");
         if (persistentData == null) return;
-        persistentData.removeTag("orderium:if-uuid");
         for (NamespacedKey key : PDCUtils.KEYS) {
             persistentData.removeTag(key.toString());
         }

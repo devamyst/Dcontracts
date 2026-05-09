@@ -314,12 +314,12 @@ public class AdminToolGUI {
         );
     }
 
-    public static void openBlacklist(Player p) {
-        PlayerUtils.openGUI(p, blacklist.getFirst(), true);
+    public static InventoryGUI getBlacklistGUI() {
+        return blacklist.getFirst();
     }
 
-    public static void openCustomItems(Player p) {
-        PlayerUtils.openGUI(p, customItems.getFirst(), true);
+    public static InventoryGUI getCustomItemsGUI() {
+        return customItems.getFirst();
     }
 
     private static void addBlacklistButtons(int i, int pageAmount, final InventoryGUI gui) {

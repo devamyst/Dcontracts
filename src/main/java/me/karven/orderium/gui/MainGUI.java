@@ -54,7 +54,6 @@ public class MainGUI {
 
         this.amount = ceil_div(orders.size(), 45);
         setupPages();
-        open(p);
     }
 
     public MainGUI(Player p, int sortIdx, String search) {
@@ -68,7 +67,6 @@ public class MainGUI {
 
         this.amount = ceil_div(orders.size(), 45);
         setupPages();
-        open(p);
     }
 
     private void setupPages() {
@@ -132,7 +130,9 @@ public class MainGUI {
                 return;
             }
 
-            DeliveryConfirmDialog.show(p, order, amount, items);
+            Dialog dialog = DeliveryConfirmDialog.getDialog(p, order, amount, items);
+
+            PlayerUtils.openDialog(p, dialog);
         });
         return deliverGUI;
     }
@@ -184,17 +184,18 @@ public class MainGUI {
         ), cache.getOrdersNextButton().getSlot() + 45);
 
         gui.addItem(ConvertUtils.parseNewButton(cache.getRefreshButton(), event -> {
-            if (search.isEmpty()) new MainGUI(player, sortIdx);
-            else new MainGUI(player, sortIdx, search);
-
+            MainGUI mainGUI = search.isEmpty() ? new MainGUI(player, sortIdx) : new MainGUI(player, sortIdx, search);
+            PlayerUtils.openGUI(player, mainGUI.getGUI(), false);
             PlayerUtils.playSound(player, cache.getRefreshSound());
 
         }), cache.getRefreshButton().getSlot() + 45);
 
         gui.addItem(ConvertUtils.parseSortButton(cache.getOrdersSortButton(), cache.getOrdersSortsOrder().get(sortIdx), event -> {
+            MainGUI mainGUI = search.isEmpty() ?
+                    new MainGUI(player, sortIdx + 1 == cache.getOrdersSortsOrder().size() ? 0 : sortIdx + 1) :
+                    new MainGUI(player, sortIdx + 1 == cache.getOrdersSortsOrder().size() ? 0 : sortIdx + 1, search);
 
-            if (search.isEmpty()) new MainGUI(player, sortIdx + 1 == cache.getOrdersSortsOrder().size() ? 0 : sortIdx + 1);
-            else new MainGUI(player, sortIdx + 1 == cache.getOrdersSortsOrder().size() ? 0 : sortIdx + 1, search);
+            PlayerUtils.openGUI(player, mainGUI.getGUI(), false);
 
             PlayerUtils.playSound(player, cache.getSortSound());
 
@@ -204,7 +205,10 @@ public class MainGUI {
                 cache.getOrdersSearchButton(),
                 event -> SignGUI.newSession(
                     player,
-                    (s) -> DispatchUtil.entity(player, () -> new MainGUI(player, sortIdx, s)),
+                    (s) -> DispatchUtil.entity(player, () -> {
+                        MainGUI mainGUI = new MainGUI(player, sortIdx, s);
+                        PlayerUtils.openGUI(player, mainGUI.getGUI(), false);
+                    }),
                     cache.getLines(), cache.getSignBlock(), cache.getSearchLine()
                 )
         ), cache.getOrdersSearchButton().getSlot() + 45);
@@ -215,8 +219,7 @@ public class MainGUI {
         ), cache.getYoButton().getSlot() + 45);
     }
 
-
-    private void open(Player p) {
-        PlayerUtils.openGUI(p, pages.getFirst(), true);
+    public InventoryGUI getGUI() {
+        return pages.getFirst();
     }
 }

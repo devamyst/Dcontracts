@@ -10,7 +10,6 @@ import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.listener.DialogListener;
 import me.karven.orderium.obj.Order;
 import me.karven.orderium.utils.ConvertUtils;
-import me.karven.orderium.utils.PlayerUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
@@ -34,7 +33,7 @@ public class DeliveryConfirmDialog {
         cache = plugin.getConfigs();
     }
 
-    public static void show(Player p, Order order, int amount, Collection<ItemStack> items) {
+    public static Dialog getDialog(Player p, Order order, int amount, Collection<ItemStack> items) {
         final Dialog dialog = Dialog.create(builder -> {
             final String amountText = ConvertUtils.formatNumber(amount);
             final int amountWidth = amountText.length() * 10;
@@ -65,6 +64,6 @@ public class DeliveryConfirmDialog {
         });
         DialogListener.addItems(p, items);
 
-        PlayerUtils.openDialog(p, dialog);
+        return dialog;
     }
 }

@@ -11,6 +11,7 @@ import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.karven.orderium.gui.AdminToolGUI;
 import me.karven.orderium.gui.MainGUI;
+import me.karven.orderium.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NonNull;
@@ -24,14 +25,17 @@ public class Bootstrapper implements PluginBootstrap {
         return Commands.literal(alias)
                 .requires(predicate -> predicate.getExecutor() instanceof Player)
                 .executes(ctx -> {
-                    new MainGUI((Player) ctx.getSource().getExecutor(), 0);
-
+                    if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
+                    MainGUI mainGUI = new MainGUI(player, 0);
+                    PlayerUtils.openGUI(player, mainGUI.getGUI(), true);
                     return 1;
                 })
                 .then(Commands.argument("search", StringArgumentType.greedyString())
                         .executes(ctx -> {
+                            if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
                             final String search = StringArgumentType.getString(ctx, "search");
-                            new MainGUI((Player) ctx.getSource().getExecutor(), 0, search);
+                            MainGUI mainGUI = new MainGUI(player, 0, search);
+                            PlayerUtils.openGUI(player, mainGUI.getGUI(), true);
                             return 1;
                         })
                 )
@@ -57,7 +61,7 @@ public class Bootstrapper implements PluginBootstrap {
                         .executes(ctx -> {
                             if (!(ctx.getSource().getExecutor() instanceof Player p)) return 0;
 
-                            AdminToolGUI.openBlacklist(p);
+                            PlayerUtils.openGUI(p, AdminToolGUI.getBlacklistGUI(), true);
 
                             return 1;
                         })
@@ -70,7 +74,7 @@ public class Bootstrapper implements PluginBootstrap {
                         .executes(ctx -> {
                             if (!(ctx.getSource().getExecutor() instanceof Player p)) return 0;
 
-                            AdminToolGUI.openCustomItems(p);
+                            PlayerUtils.openGUI(p, AdminToolGUI.getCustomItemsGUI(), true);
 
                             return 1;
                         })

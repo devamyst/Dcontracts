@@ -30,7 +30,7 @@ public class ManageOrderDialog {
         mm = plugin.mm;
     }
 
-    public static void show(Order order, Player player_) {
+    public static Dialog getDialog(Order order, Player player_) {
         final String name = player_.getName();
         final ItemStack item = ConvertUtils.parseOrder(order, cache.getYoLore());
         final Dialog collectItemsDialog = Dialog.create(builder -> builder.empty()
@@ -93,7 +93,7 @@ public class ManageOrderDialog {
                 ))
         );
 
-        final Dialog dialog = Dialog.create(builder -> builder.empty()
+        return Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(mm.deserialize(cache.getManageOrderTitle()))
                         .body(
                                 List.of(
@@ -124,6 +124,5 @@ public class ManageOrderDialog {
                                 .build()
                 )
         );
-        PlayerUtils.openDialog(player_, dialog);
     }
 }

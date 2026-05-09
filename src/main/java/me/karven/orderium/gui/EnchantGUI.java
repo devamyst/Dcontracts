@@ -10,16 +10,15 @@ import me.karven.orderium.obj.orderitem.VanillaItem;
 import me.karven.orderium.utils.ConvertUtils;
 import me.karven.orderium.utils.Log;
 import me.karven.orderium.utils.PDCUtils;
-import me.karven.orderium.utils.PlayerUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,15 +31,15 @@ import static me.karven.orderium.load.Orderium.plugin;
  */
 public class EnchantGUI {
     // Store all the applicable enchantments and their current levels.
-    ConcurrentHashMap<Enchantment, Integer> enchantsWithLevel = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Enchantment, Integer> enchantsWithLevel = new ConcurrentHashMap<>();
+    private InventoryGUI gui;
 
     /**
      * Create an EnchantGUI and shows it to the player
-     * @param player the player
      * @param item the original item
      * @param action the action to perform after enchantments are applied, will be null if the player exits the GUI
      */
-    public EnchantGUI(Player player, EnchantableItem item, Consumer<OrderItem> action) {
+    public EnchantGUI(EnchantableItem item, Consumer<OrderItem> action) {
         if (!(item instanceof VanillaItem vanillaItem)) {
             Log.error("Failed to process enchant GUI", new IllegalArgumentException("Unsupported item"));
             return;
@@ -55,7 +54,7 @@ public class EnchantGUI {
         int length = enchantable.size();
         // Create the GUI. Use more rows if more than 9 enchantments
         int enchantmentsRows = Math.min(4, length / 9 + 1); // amount of rows for enchantment books
-        InventoryGUI gui = new InventoryGUI(2 + enchantmentsRows, mm.deserialize(cache.getEnchantItemTitle()));
+        this.gui = new InventoryGUI(2 + enchantmentsRows, mm.deserialize(cache.getEnchantItemTitle()));
         gui.setOnClick(event -> event.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(event -> event.setCancelled(true), InteractLocation.GLOBAL);
 
@@ -114,8 +113,10 @@ public class EnchantGUI {
             guiItem.setOnClick(clickAction);
             gui.addItem(guiItem, slot++);
         }
+    }
 
-        PlayerUtils.openGUI(player, gui, false);
+    public @Nullable InventoryGUI getGUI() {
+        return gui;
     }
 
     /**

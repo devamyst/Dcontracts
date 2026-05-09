@@ -1,5 +1,6 @@
 package me.karven.orderium.gui;
 
+import io.papermc.paper.dialog.Dialog;
 import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
@@ -48,11 +49,11 @@ public class ChooseItemGUI {
         return AZ;
     }
 
-    public static InventoryGUI choose(int sortIdx, int pageIdx) {
+    public static InventoryGUI getGUI(int sortIdx, int pageIdx) {
         return getPages(cache.getChooseSortsOrder().get(sortIdx)).get(pageIdx);
     }
 
-    public static InventoryGUI choose(int sortIdx, String search) {
+    public static InventoryGUI getGUI(int sortIdx, String search) {
         final List<InventoryGUI> pages = new ArrayList<>();
         createPages(pages, cache.getChooseSortsOrder().get(sortIdx), search);
         return pages.getFirst();
@@ -75,7 +76,7 @@ public class ChooseItemGUI {
         gui.addItem(ConvertUtils.parseSortButton(cache.getChooseSortButton(), sortType, e -> {
             if (!(e.getWhoClicked() instanceof Player p)) return;
             final int nextIdx = sortIdx == sortOrder.size() - 1 ? 0 : sortIdx + 1;
-            PlayerUtils.openGUI(p, choose(nextIdx, idx), false);
+            PlayerUtils.openGUI(p, getGUI(nextIdx, idx), false);
             PlayerUtils.playSound(p, cache.getSortSound());
         }), cache.getChooseSortButton().getSlot() + 45);
 
@@ -83,7 +84,7 @@ public class ChooseItemGUI {
             if (!(e.getWhoClicked() instanceof Player p)) return;
             SignGUI.newSession(
                     p,
-                    (s) -> PlayerUtils.openGUI(p, ChooseItemGUI.choose(sortIdx, s), true),
+                    (s) -> PlayerUtils.openGUI(p, ChooseItemGUI.getGUI(sortIdx, s), true),
                     cache.getLines(),
                     cache.getSignBlock(),
                     cache.getSearchLine()
@@ -127,10 +128,16 @@ public class ChooseItemGUI {
                             !cache.isEnchantItem() ||
                             !(orderItem instanceof EnchantableItem enchantableItem)
                     ) {
-                        NewOrderDialog.newSession(p, orderItem);
+                        Dialog dialog = NewOrderDialog.getDialog(orderItem);
+                        PlayerUtils.openDialog(p, dialog);
                         return;
                     }
-                    new EnchantGUI(p, enchantableItem, (enchantedItem) -> NewOrderDialog.newSession(p, enchantedItem));
+                    EnchantGUI enchantGUI = new EnchantGUI(enchantableItem, (enchantedItem) -> {
+                        Dialog dialog = NewOrderDialog.getDialog(enchantedItem);
+                        PlayerUtils.openDialog(p, dialog);
+                    });
+                    InventoryGUI inventoryEnchantGUI = enchantGUI.getGUI();
+                    if (inventoryEnchantGUI != null) PlayerUtils.openGUI(p, inventoryEnchantGUI, false);
                     return;
                 }
                 final ItemStack guiItemStack = guiItem.getItem();
