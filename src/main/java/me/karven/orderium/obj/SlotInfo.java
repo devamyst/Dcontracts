@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SlotInfo implements Cloneable {
+public class SlotInfo {
     private int slot = -1;
     private List<String> lore;
     private String displayName;
@@ -57,13 +57,5 @@ public class SlotInfo implements Cloneable {
         itemModel = section.getString("item-model");
 
         type = ConvertUtils.getItemType(section.getString("type", "minecraft:stone"));
-    }
-
-    public SlotInfo clone() {
-        try {
-            return (SlotInfo) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }
