@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 public class SQLStorage extends Storage {
@@ -205,7 +206,7 @@ public class SQLStorage extends Storage {
 
                 for (ItemStack item : items) {
                     if (!AlgoUtils.isSimilar(item, order.getItem())) {
-                        if (isShulkerBox(item) && plugin.getConfigs().shulkerDelivering) {
+                        if (isShulkerBox(item) && cache.shulkerDelivering) {
                             deliverable = scanShulkerBox(item, order.getItem(), deliverable);
                         }
                         PlayerUtils.give(deliverer, item, true);

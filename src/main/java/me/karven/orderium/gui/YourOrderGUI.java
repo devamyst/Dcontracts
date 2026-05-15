@@ -1,7 +1,6 @@
 package me.karven.orderium.gui;
 
 import io.papermc.paper.dialog.Dialog;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
@@ -13,6 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 public class YourOrderGUI {
@@ -23,7 +23,6 @@ public class YourOrderGUI {
     public static void open(Player p, boolean isAsync) {
         final UUID pUUID = p.getUniqueId();
         final List<Order> orders = plugin.getDataCache().getOrders(pUUID, isAsync);
-        final ConfigCache cache = plugin.getConfigs();
         final MiniMessage mm = plugin.mm;
         final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(cache.yoGuiTitle));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);

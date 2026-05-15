@@ -6,7 +6,6 @@ import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.listener.DialogListener;
 import me.karven.orderium.obj.Order;
 import me.karven.orderium.utils.ConvertUtils;
@@ -21,17 +20,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.List;
 
-import static me.karven.orderium.load.Orderium.plugin;
+import static me.karven.orderium.data.ConfigCache.cache;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DeliveryConfirmDialog {
-    private static MiniMessage mm;
-    private static ConfigCache cache;
-
-    public static void init() {
-        mm = plugin.mm;
-        cache = plugin.getConfigs();
-    }
+    private static final MiniMessage mm = MiniMessage.miniMessage();
 
     public static Dialog getDialog(Player p, Order order, int amount, Collection<ItemStack> items) {
         final Dialog dialog = Dialog.create(builder -> {

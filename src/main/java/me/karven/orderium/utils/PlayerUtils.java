@@ -1,7 +1,6 @@
 package me.karven.orderium.utils;
 
 import io.papermc.paper.dialog.Dialog;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InventoryGUI;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
@@ -18,14 +17,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 public class PlayerUtils {
-    private static ConfigCache cache;
-
-    public static void init() {
-        PlayerUtils.cache = plugin.getConfigs();
-    }
 
     /**
      *

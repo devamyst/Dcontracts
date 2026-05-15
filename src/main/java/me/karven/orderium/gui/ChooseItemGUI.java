@@ -1,7 +1,6 @@
 package me.karven.orderium.gui;
 
 import io.papermc.paper.dialog.Dialog;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.guiframework.InventoryItem;
@@ -22,18 +21,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 public class ChooseItemGUI {
     private static final List<InventoryGUI> AZ = new ArrayList<>();
     private static final List<InventoryGUI> ZA = new ArrayList<>();
-    private static MiniMessage mm;
-    private static ConfigCache cache;
+    private static final MiniMessage mm = MiniMessage.miniMessage();
 
     public static void init() {
-        mm = plugin.mm;
-        cache = plugin.getConfigs();
-
         AZ.clear();
         ZA.clear();
 

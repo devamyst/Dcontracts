@@ -1,6 +1,5 @@
 package me.karven.orderium.gui;
 
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.guiframework.InventoryItem;
@@ -24,6 +23,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 /**
@@ -50,7 +50,6 @@ public class EnchantGUI {
             return;
         }
         MiniMessage mm = plugin.mm;
-        ConfigCache cache = plugin.getConfigs();
         int length = enchantable.size();
         // Create the GUI. Use more rows if more than 9 enchantments
         int enchantmentsRows = Math.min(4, length / 9 + 1); // amount of rows for enchantment books

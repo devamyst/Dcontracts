@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 public abstract class Storage {
@@ -39,7 +40,7 @@ public abstract class Storage {
     private final HikariDataSource modifiedItemDataSource;
 
     public static void init() {
-        Storage.configs = plugin.getConfigs();
+        Storage.configs = cache;
         Storage.dataDir = plugin.getDataFolder();
     }
 

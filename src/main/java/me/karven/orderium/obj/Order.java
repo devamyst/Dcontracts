@@ -4,7 +4,6 @@ import me.karven.orderium.api.events.PlayerCancelOrderEvent;
 import me.karven.orderium.api.events.PlayerCollectItemsEvent;
 import me.karven.orderium.api.events.PlayerCreateOrderEvent;
 import me.karven.orderium.api.events.PlayerDeliverOrderEvent;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.gui.YourOrderGUI;
 import me.karven.orderium.utils.ConvertUtils;
 import me.karven.orderium.utils.EconUtils;
@@ -19,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 // TODO: Replace `item` with OrderItem instead of ItemStack.
@@ -32,12 +32,6 @@ public class Order implements me.karven.orderium.api.Order {
     public int delivered;
     public int inStorage;
     public long expiresAt;
-
-    private static ConfigCache cache;
-
-    public static void init() {
-        cache = plugin.getConfigs();
-    }
 
     public Order(int id, UUID owner, ItemStack item, double moneyPer, int amount, int delivered, int inStorage, long expiresAt) {
         this.id = id;

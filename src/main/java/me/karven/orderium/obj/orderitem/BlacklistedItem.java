@@ -2,7 +2,6 @@ package me.karven.orderium.obj.orderitem;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 public class BlacklistedItem implements SerializedItem, OrderItem {
     private final byte[] itemAsBytes;
@@ -32,7 +31,7 @@ public class BlacklistedItem implements SerializedItem, OrderItem {
     }
 
     @Override
-    public void setItemStack(@NonNull ItemStack itemStack) {
+    public void setItemStack(@NotNull ItemStack itemStack) {
         this.item = itemStack;
     }
 }

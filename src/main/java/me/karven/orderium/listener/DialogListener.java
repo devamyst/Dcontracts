@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DialogListener implements Listener {
-
     private static final HashMap<Player, Collection<ItemStack>> pendingItems = new HashMap<>();
 
     @EventHandler

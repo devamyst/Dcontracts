@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.karven.orderium.utils.PDCUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public void addSearch(@NonNull String key) {
+    public void addSearch(@NotNull String key) {
         searches.add(key);
     }
 
@@ -48,7 +47,7 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public void removeSearch(@NonNull String key) {
+    public void removeSearch(@NotNull String key) {
         searches.remove(key);
     }
 
@@ -58,7 +57,7 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public void setSearches(@NonNull List<@NotNull String> searches) {
+    public void setSearches(@NotNull List<@NotNull String> searches) {
         this.searches.clear();
         this.searches.addAll(searches);
     }
@@ -69,21 +68,19 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public @NonNull ImmutableList<@NotNull String> getSearches() {
+    public @NotNull ImmutableList<@NotNull String> getSearches() {
         return ImmutableList.copyOf(searches);
     }
 
     @Override
     public @NotNull ItemStack getParsedItemStack() {
         ItemStack item = getItemStack();
-        item.editMeta(meta -> {
-            PDCUtils.setSearch(meta, String.join(",", searches));
-        });
+        item.editMeta(meta -> PDCUtils.setSearch(meta, String.join(",", searches)));
         return item;
     }
 
     @Override
-    public boolean canBeSearched(@NonNull String key) {
+    public boolean canBeSearched(@NotNull String key) {
         for (String search : searches) {
             if (search.contains(key)) return true;
         }
@@ -96,7 +93,7 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public @NonNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack() {
         return item.clone();
     }
 
@@ -105,7 +102,7 @@ public class CustomItem implements SearchableItem, SerializedItem {
     }
 
     @Override
-    public void setItemStack(@NonNull ItemStack itemStack) {
+    public void setItemStack(@NotNull ItemStack itemStack) {
         this.item = itemStack;
     }
 }

@@ -18,7 +18,7 @@ import org.bukkit.block.TileState;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +70,7 @@ public class SignGUI implements PacketListener {
     }
 
     @Override
-    public void onPacketReceive(@NonNull PacketReceiveEvent e) {
+    public void onPacketReceive(@NotNull PacketReceiveEvent e) {
         if (e.getPacketType() != PacketType.Play.Client.UPDATE_SIGN) return;
         final Player player = e.getPlayer();
         final SignInfo info = sessionsList.get(player);

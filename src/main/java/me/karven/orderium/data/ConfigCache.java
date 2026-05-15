@@ -29,7 +29,8 @@ import static me.karven.orderium.load.Orderium.plugin;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ConfigCache {
-    public static final ConfigCache INSTANCE = new ConfigCache();
+    public static final ConfigCache cache = new ConfigCache();
+
     private final File configFile;
     private ConfigFile config;
 
@@ -294,7 +295,7 @@ public class ConfigCache {
 
         searchLine = config.getInteger("gui.search-sign.search-line");
         lines = config.getStringList("gui.search-sign.lines");
-        signBlock = DataCache.INSTANCE.getBlockType(config.getString("gui.search-sign.type"));
+        signBlock = DataCache.getInstance().getBlockType(config.getString("gui.search-sign.type"));
 
         deliverTitle = config.getString("gui.delivery.title");
         deliverRows = config.getInteger("gui.delivery.rows");

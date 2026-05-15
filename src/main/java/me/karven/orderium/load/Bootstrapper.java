@@ -9,14 +9,14 @@ import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.gui.AdminToolGUI;
 import me.karven.orderium.gui.MainGUI;
 import me.karven.orderium.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 
 @SuppressWarnings({"UnstableApiUsage", "unused"})
@@ -50,7 +50,7 @@ public class Bootstrapper implements PluginBootstrap {
                 .then(Commands.literal("reload")
                         .requires(predicate -> predicate.getSender().hasPermission("orderium.admin.reload"))
                         .executes(ctx -> {
-                            plugin.getConfigs().reload(() -> ctx.getSource().getSender().sendRichMessage("<green>Orderium reloaded"));
+                            cache.reload(() -> ctx.getSource().getSender().sendRichMessage("<green>Orderium reloaded"));
                             return 1;
                         })
                 )
@@ -112,9 +112,9 @@ public class Bootstrapper implements PluginBootstrap {
     }
 
     @Override
-    public void bootstrap(@NonNull BootstrapContext ctx) {
+    public void bootstrap(@NotNull BootstrapContext ctx) {
         ctx.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, e -> {
-            for (final String orderAlias : ConfigCache.INSTANCE.orderCommandAliases) {
+            for (final String orderAlias : cache.orderCommandAliases) {
                 e.registrar().register(getOrderCmd(orderAlias));
             }
             e.registrar().register(getOrderiumCmd("orderium"));
@@ -122,7 +122,7 @@ public class Bootstrapper implements PluginBootstrap {
     }
 
     @Override
-    public @NonNull JavaPlugin createPlugin(@NonNull PluginProviderContext ctx) {
-        return new Orderium();
+    public @NotNull JavaPlugin createPlugin(@NotNull PluginProviderContext ctx) {
+        return plugin;
     }
 }

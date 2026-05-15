@@ -13,13 +13,19 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.Registry;
 import org.bukkit.block.BlockType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public final class DataCache {
-    public static final DataCache INSTANCE = new DataCache();
+    private static final DataCache INSTANCE = new DataCache();
+
+    public static @NotNull DataCache getInstance() {
+        return INSTANCE;
+    }
+
     private static final Registry<BlockType> BLOCK_REGISTRY = Registry.BLOCK;
     private final NavigableSet<OrderItem> itemsAZ = new ConcurrentSkipListSet<>(AlgoUtils.getComparator(SortTypes.A_Z));
     private final NavigableSet<OrderItem> itemsZA = new ConcurrentSkipListSet<>(AlgoUtils.getComparator(SortTypes.Z_A));

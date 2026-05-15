@@ -7,7 +7,6 @@ import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,28 +33,28 @@ public class VanillaItem implements EnchantableItem {
     }
 
     @Override
-    public void addEnchantable(@NonNull Enchantment enchantment) {
+    public void addEnchantable(@NotNull Enchantment enchantment) {
         enchantable.add(enchantment);
     }
 
     @Override
-    public void removeEnchantable(@NonNull Enchantment enchantment) {
+    public void removeEnchantable(@NotNull Enchantment enchantment) {
         enchantable.remove(enchantment);
     }
 
     @Override
-    public void setEnchantable(@NonNull List<@NotNull Enchantment> enchantments) {
+    public void setEnchantable(@NotNull List<@NotNull Enchantment> enchantments) {
         enchantable.clear();
         enchantable.addAll(enchantments);
     }
 
     @Override
-    public @NonNull ImmutableList<@NotNull Enchantment> getEnchantable() {
+    public @NotNull ImmutableList<@NotNull Enchantment> getEnchantable() {
         return ImmutableList.copyOf(enchantable);
     }
 
     @Override
-    public @NonNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack() {
         return item.clone();
     }
 
@@ -66,7 +65,7 @@ public class VanillaItem implements EnchantableItem {
     }
 
     @Override
-    public void setItemStack(@NonNull ItemStack itemStack) {
+    public void setItemStack(@NotNull ItemStack itemStack) {
         this.item = itemStack;
     }
 }

@@ -3,7 +3,6 @@ package me.karven.orderium.gui;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemContainerContents;
 import io.papermc.paper.dialog.Dialog;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static me.karven.orderium.data.ConfigCache.cache;
 import static me.karven.orderium.load.Orderium.plugin;
 import static me.karven.orderium.utils.ConvertUtils.ceil_div;
 
@@ -35,13 +35,7 @@ public class MainGUI {
     private final int sortIdx;
     private final String search;
 
-    private static ConfigCache cache;
-    private static MiniMessage mm;
-
-    public static void init() {
-        cache = plugin.getConfigs();
-        mm = plugin.mm;
-    }
+    private static final MiniMessage mm = MiniMessage.miniMessage();
 
     public MainGUI(Player p, int sortIdx) {
         this.search = "";

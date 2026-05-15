@@ -2,14 +2,14 @@ package me.karven.orderium.load;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import me.karven.orderium.data.ConfigCache;
 import me.karven.orderium.data.DataCache;
-import me.karven.orderium.gui.*;
+import me.karven.orderium.gui.AdminToolGUI;
+import me.karven.orderium.gui.ChooseItemGUI;
+import me.karven.orderium.gui.SignGUI;
 import me.karven.orderium.guiframework.GUIListener;
 import me.karven.orderium.listener.ContainerContentListener;
 import me.karven.orderium.listener.DialogListener;
 import me.karven.orderium.listener.DisconnectListener;
-import me.karven.orderium.obj.Order;
 import me.karven.orderium.storage.Storage;
 import me.karven.orderium.storage.implementation.SQLStorage;
 import me.karven.orderium.utils.*;
@@ -21,26 +21,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.TimeUnit;
 
-public final class Orderium extends JavaPlugin {
-    public static Orderium plugin;
-    public static boolean isFolia;
-    public final DialogListener DIALOG_LISTENER = new DialogListener();
-    public final DisconnectListener DISCONNECT_LISTENER = new DisconnectListener();
-    public final GUIListener GUI_LISTENER = new GUIListener();
+import static me.karven.orderium.data.ConfigCache.cache;
 
-    private final @NotNull ConfigCache configs = ConfigCache.INSTANCE;
+public final class Orderium extends JavaPlugin {
+    public static final Orderium plugin = new Orderium();
+    public static boolean isFolia;
+
     private Storage storage;
-    private final DataCache dataCache = DataCache.INSTANCE;
     private Economy econ;
     public final MiniMessage mm = MiniMessage.miniMessage();
 
-    public @NonNull ConfigCache getConfigs() { return configs; }
     public Storage getStorage() { return storage; }
-    public DataCache getDataCache() { return dataCache; }
+    public @NotNull DataCache getDataCache() { return DataCache.getInstance(); }
     public Economy getEcon() { return econ; }
 
     public void setStorage(Storage storage) { this.storage = storage; }
@@ -53,8 +48,7 @@ public final class Orderium extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        plugin = this;
-        Log.init();
+//        plugin = this;
         isFolia = isFolia();
         if (!setupEconomy()) {
             Log.warn("Orderium disabled due to no Vault dependency found!");
@@ -62,31 +56,21 @@ public final class Orderium extends JavaPlugin {
             return;
         }
         UpdateUtils.init();
-        Bukkit.getPluginManager().registerEvents(GUI_LISTENER, this);
-
-//        configs = new ConfigCache();
-        Storage.init();
+        Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
+        Log.info("Orderium enabled");
+        Storage.init(); // need testing
         storage = createStorage();
-        AlgoUtils.init();
-        MainGUI.init();
         EconUtils.init();
-        Order.init();
-        ConvertUtils.init();
-        PlayerUtils.init();
-        AdminToolGUI.init();
+        AdminToolGUI.init(); // need testing
 
-        ChooseItemGUI.init();
+        ChooseItemGUI.init(); // need testing
 
-        NewOrderDialog.init();
-        DeliveryConfirmDialog.init();
-        ManageOrderDialog.init();
-
-        if (configs.bStats) {
+        if (cache.bStats) {
             final int pluginId = 27569;
             new Metrics(this, pluginId);
         }
 
-        if (configs.checkForUpdates) {
+        if (cache.checkForUpdates) {
             Bukkit.getAsyncScheduler().runNow(this, task -> {
                final String newVer = UpdateUtils.checkForUpdates();
                if (newVer == null) return;
@@ -95,8 +79,8 @@ public final class Orderium extends JavaPlugin {
             });
         }
 
-        Bukkit.getPluginManager().registerEvents(DISCONNECT_LISTENER, this);
-        Bukkit.getPluginManager().registerEvents(DIALOG_LISTENER, this);
+        Bukkit.getPluginManager().registerEvents(new DisconnectListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DialogListener(), this);
 
         Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> {
 
@@ -108,7 +92,7 @@ public final class Orderium extends JavaPlugin {
     }
 
     public Storage createStorage() {
-        switch (configs.storageMethod) {
+        switch (cache.storageMethod) {
             case SQLITE -> {
                 return SQLStorage.sqlite();
             }
