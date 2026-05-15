@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import static me.karven.orderium.load.Orderium.plugin;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "unused"})
 public class Bootstrapper implements PluginBootstrap {
 
     private static LiteralCommandNode<CommandSourceStack> getOrderCmd(String alias) {

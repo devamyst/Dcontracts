@@ -31,8 +31,8 @@ import static me.karven.orderium.load.Orderium.plugin;
 public abstract class Storage {
     protected static ConfigCache configs;
     protected static File dataDir;
-    protected final String ORDER_TABLE = configs.getTablePref() + "orders";
-    protected final String TRANSACTION_TABLE = configs.getTablePref() + "transactions";
+    protected final String ORDER_TABLE = configs.tablePref + "orders";
+    protected final String TRANSACTION_TABLE = configs.tablePref + "transactions";
     private final String CUSTOM_ITEMS_TABLE = "orderium_custom_items_v2";
     private final String BLACKLIST_TABLE = "orderium_blacklist";
 

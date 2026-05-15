@@ -110,12 +110,12 @@ public class PlayerUtils {
     public static void clickNext(InventoryClickEvent e, InventoryGUI nextPage) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
         PlayerUtils.openGUI(p, nextPage, false);
-        PlayerUtils.playSound(p, cache.getNextPageSound());
+        PlayerUtils.playSound(p, cache.nextPageSound);
     }
 
     public static void clickBack(InventoryClickEvent e, InventoryGUI previousPage) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
         PlayerUtils.openGUI(p, previousPage, false);
-        PlayerUtils.playSound(p, cache.getPreviousPageSound());
+        PlayerUtils.playSound(p, cache.previousPageSound);
     }
 }

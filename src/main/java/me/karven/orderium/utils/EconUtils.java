@@ -34,14 +34,14 @@ public class EconUtils {
     }
 
     private static void logTransactionBefore(OfflinePlayer p, double amount) {
-        if (!cache.isLogTransactions()) return;
+        if (!cache.logTransactions) return;
         currentTransaction.player = p.getUniqueId();
         currentTransaction.before = eco.getBalance(p);
         currentTransaction.amount = amount;
     }
 
     private static void logTransactionAfter(OfflinePlayer p) {
-        if (!cache.isLogTransactions()) return;
+        if (!cache.logTransactions) return;
         currentTransaction.after = eco.getBalance(p);
         plugin.getStorage().logTransaction(currentTransaction.player, currentTransaction.before, currentTransaction.amount, currentTransaction.after);
     }

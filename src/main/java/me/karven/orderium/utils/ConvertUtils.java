@@ -207,10 +207,10 @@ public class ConvertUtils {
 
     public static InventoryItem parseSortButton(SlotInfo info, SortTypes type, Consumer<InventoryClickEvent> action) {
         final ItemStack item = info.getType().createItemStack();
-        List<TagResolver> placeholders = new ArrayList<>(List.of(cache.getSortPlaceholders()));
+        List<TagResolver> placeholders = new ArrayList<>(List.of(cache.sortPlaceholders));
         @Subst("ignored")
         final String identifier = type.getIdentifier();
-        placeholders.add(Placeholder.parsed(identifier, cache.getSortPrefix() + type.getDisplay()));
+        placeholders.add(Placeholder.parsed(identifier, cache.sortPrefix + type.getDisplay()));
         item.editMeta(meta -> {
             meta.displayName(mm.deserialize(info.getDisplayName(), TagResolver.resolver(placeholders)).decoration(TextDecoration.ITALIC, false));
             final List<Component> lore = info.getLore().stream().map(str -> mm.deserialize(str, TagResolver.resolver(placeholders)).decoration(TextDecoration.ITALIC, false)).toList();
@@ -265,7 +265,7 @@ public class ConvertUtils {
         if (s == null || s.isEmpty()) return -1;
         try {
             final double num = Double.parseDouble(s);
-            if (num < cache.getMinPrice()) return -1;
+            if (num < cache.minPrice) return -1;
             return num;
         } catch (Exception e) {
             if (s.length() == 1) return -1;
@@ -277,7 +277,7 @@ public class ConvertUtils {
         final String suffix = s.substring(s.length() - 1).toUpperCase();
         if (!unit.containsKey(suffix)) return -1;
         num *= unit.get(suffix);
-        if (num < cache.getMinPrice()) return -1;
+        if (num < cache.minPrice) return -1;
         return num;
     }
 }

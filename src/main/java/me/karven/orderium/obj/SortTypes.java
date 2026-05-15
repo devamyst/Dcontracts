@@ -1,12 +1,10 @@
 package me.karven.orderium.obj;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Getter
 public enum SortTypes {
     MOST_MONEY_PER_ITEM("most-money-per-item"),
     RECENTLY_LISTED("recently-listed"),
@@ -16,8 +14,19 @@ public enum SortTypes {
     Z_A("z-a");
 
     private final String identifier;
-    @Setter
     private String display;
+
+    public @NotNull String getIdentifier() {
+        return identifier;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(final @NotNull String display) {
+        this.display = display;
+    }
 
     SortTypes(String identifier) {
         this.identifier = identifier;

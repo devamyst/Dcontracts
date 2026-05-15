@@ -38,16 +38,16 @@ public class DeliveryConfirmDialog {
             final String amountText = ConvertUtils.formatNumber(amount);
             final int amountWidth = amountText.length() * 10;
             builder.empty()
-                    .base(DialogBase.builder(mm.deserialize(cache.getConfirmDeliveryTitle()))
+                    .base(DialogBase.builder(mm.deserialize(cache.confirmDeliveryTitle))
                             .body(List.of(
-                                    DialogBody.plainMessage(mm.deserialize(cache.getConfirmDeliveryBody())),
-                                    DialogBody.item(ConvertUtils.parseOrder(order, cache.getOrderLore())).description(DialogBody.plainMessage(Component.text(amountText), amountWidth)).build(),
-                                    DialogBody.plainMessage(mm.deserialize(cache.getConfirmDeliveryTransactionMessage(), Placeholder.unparsed("money", ConvertUtils.formatNumber(amount * order.getMoneyPer()))))
+                                    DialogBody.plainMessage(mm.deserialize(cache.confirmDeliveryBody)),
+                                    DialogBody.item(ConvertUtils.parseOrder(order, cache.orderLore)).description(DialogBody.plainMessage(Component.text(amountText), amountWidth)).build(),
+                                    DialogBody.plainMessage(mm.deserialize(cache.confirmDeliveryTransactionMessage, Placeholder.unparsed("money", ConvertUtils.formatNumber(amount * order.getMoneyPer()))))
                             ))
                             .build())
                     .type(DialogType.confirmation(
-                            ActionButton.builder(mm.deserialize(cache.getConfirmDeliveryConfirmLabel()))
-                                    .tooltip(mm.deserialize(cache.getConfirmDeliveryConfirmHover()))
+                            ActionButton.builder(mm.deserialize(cache.confirmDeliveryConfirmLabel))
+                                    .tooltip(mm.deserialize(cache.confirmDeliveryConfirmHover))
                                     .action(DialogAction.customClick(
                                             (view, audience) -> {
                                                 DialogListener.removeItems(p);
@@ -56,8 +56,8 @@ public class DeliveryConfirmDialog {
                                             ClickCallback.Options.builder().build()
                                     ))
                                     .build(),
-                            ActionButton.builder(mm.deserialize(cache.getConfirmDeliveryCancelLabel()))
-                                    .tooltip(mm.deserialize(cache.getConfirmDeliveryCancelHover()))
+                            ActionButton.builder(mm.deserialize(cache.confirmDeliveryCancelLabel))
+                                    .tooltip(mm.deserialize(cache.confirmDeliveryCancelHover))
                                     .action(DialogAction.customClick(Key.key("orderium:confirm_delivery/cancel"), null))
                                     .build()
                     ));

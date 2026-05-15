@@ -25,10 +25,10 @@ public class YourOrderGUI {
         final List<Order> orders = plugin.getDataCache().getOrders(pUUID, isAsync);
         final ConfigCache cache = plugin.getConfigs();
         final MiniMessage mm = plugin.mm;
-        final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(cache.getYoGuiTitle()));
+        final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(cache.yoGuiTitle));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
-        final List<String> rawLore = cache.getYoLore();
+        final List<String> rawLore = cache.yoLore;
         int slot = 0;
         for (Order order : orders) {
             gui.addItem(ConvertUtils.parseOrder(order, rawLore, event -> {
@@ -39,7 +39,7 @@ public class YourOrderGUI {
         }
 
         if (orders.size() < 27) {
-            gui.addItem(ConvertUtils.parseNewButton(cache.getNewOrderButton(), event -> {
+            gui.addItem(ConvertUtils.parseNewButton(cache.newOrderButton, event -> {
                 InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
                 PlayerUtils.openGUI(p, chooseItemGUI, false);
             }), slot);

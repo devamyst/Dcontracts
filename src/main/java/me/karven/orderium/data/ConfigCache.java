@@ -2,7 +2,6 @@ package me.karven.orderium.data;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.papermc.paper.datacomponent.DataComponentType;
-import lombok.Getter;
 import me.karven.orderium.gui.AdminToolGUI;
 import me.karven.orderium.gui.ChooseItemGUI;
 import me.karven.orderium.obj.OrderStatus;
@@ -28,19 +27,18 @@ import java.util.logging.Level;
 
 import static me.karven.orderium.load.Orderium.plugin;
 
-@Getter
 @SuppressWarnings("UnstableApiUsage")
 public class ConfigCache {
     private final File configFile;
     private ConfigFile config;
 
-    private boolean bStats;
-    private boolean checkForUpdates;
+    public boolean bStats;
+    public boolean checkForUpdates;
 
-    private String mainGuiTitle;
-    private List<String> orderLore;
-    private List<SortTypes> ordersSortsOrder;
-    private final SlotInfo
+    public String mainGuiTitle;
+    public List<String> orderLore;
+    public List<SortTypes> ordersSortsOrder;
+    public final SlotInfo
             refreshButton = new SlotInfo(),
             yoButton = new SlotInfo(),
             ordersSortButton = new SlotInfo(),
@@ -48,108 +46,108 @@ public class ConfigCache {
             ordersNextButton = new SlotInfo(),
             ordersSearchButton = new SlotInfo();
 
-    private String yoGuiTitle;
-    private List<String> yoLore;
-    private final SlotInfo
+    public String yoGuiTitle;
+    public List<String> yoLore;
+    public final SlotInfo
             newOrderButton = new SlotInfo();
 
-    private String chooseItemTitle;
-    private List<SortTypes> chooseSortsOrder;
-    private final SlotInfo
+    public String chooseItemTitle;
+    public List<SortTypes> chooseSortsOrder;
+    public final SlotInfo
             chooseBackButton = new SlotInfo(),
             chooseNextButton = new SlotInfo(),
             chooseSearchButton = new SlotInfo(),
             chooseSortButton = new SlotInfo();
 
-    private int searchLine;
-    private BlockType signBlock;
-    private List<String> lines;
+    public int searchLine;
+    public BlockType signBlock;
+    public List<String> lines;
 
-    private String deliverTitle;
-    private int deliverRows;
+    public String deliverTitle;
+    public int deliverRows;
 
-    private String enchantItemTitle;
-    private String enchantActivePrefix;
-    private String enchantInactivePrefix;
-    private List<String> enchantLore;
-    private final SlotInfo confirmEnchantButton = new SlotInfo();
+    public String enchantItemTitle;
+    public String enchantActivePrefix;
+    public String enchantInactivePrefix;
+    public List<String> enchantLore;
+    public final SlotInfo confirmEnchantButton = new SlotInfo();
 
-    private String newOrderDialogTitle;
-    private String itemDescription;
-    private String amountLabel;
-    private String moneyPerLabel;
-    private String changeItemButton;
-    private String changeItemTooltip;
-    private String confirmButton;
-    private String confirmTooltip;
-    private int descriptionWidth;
-    private int inputWidth;
-    private int buttonWidth;
+    public String newOrderDialogTitle;
+    public String itemDescription;
+    public String amountLabel;
+    public String moneyPerLabel;
+    public String changeItemButton;
+    public String changeItemTooltip;
+    public String confirmButton;
+    public String confirmTooltip;
+    public int descriptionWidth;
+    public int inputWidth;
+    public int buttonWidth;
 
-    private String confirmDeliveryTitle;
-    private String confirmDeliveryBody;
-    private String confirmDeliveryTransactionMessage;
-    private String confirmDeliveryConfirmLabel;
-    private String confirmDeliveryConfirmHover;
-    private String confirmDeliveryCancelLabel;
-    private String confirmDeliveryCancelHover;
+    public String confirmDeliveryTitle;
+    public String confirmDeliveryBody;
+    public String confirmDeliveryTransactionMessage;
+    public String confirmDeliveryConfirmLabel;
+    public String confirmDeliveryConfirmHover;
+    public String confirmDeliveryCancelLabel;
+    public String confirmDeliveryCancelHover;
 
-    private String manageOrderTitle;
-    private String manageOrderBody;
-    private String collectItemsLabel;
-    private String collectItemsHover;
-    private String cancelOrderLabel;
-    private String cancelOrderHover;
+    public String manageOrderTitle;
+    public String manageOrderBody;
+    public String collectItemsLabel;
+    public String collectItemsHover;
+    public String cancelOrderLabel;
+    public String cancelOrderHover;
 
-    private String collectItemsTitle;
-    private String collectItemsBody;
-    private String collectItemsAmountLabel;
-    private String collectItemsCancelLabel;
-    private String collectItemsCancelHover;
-    private String collectItemsConfirmLabel;
-    private String collectItemsConfirmHover;
+    public String collectItemsTitle;
+    public String collectItemsBody;
+    public String collectItemsAmountLabel;
+    public String collectItemsCancelLabel;
+    public String collectItemsCancelHover;
+    public String collectItemsConfirmLabel;
+    public String collectItemsConfirmHover;
 
-    private String cancelOrderTitle;
-    private String cancelOrderBody;
-    private String cancelOrderCancelLabel;
-    private String cancelOrderCancelHover;
-    private String cancelOrderConfirmLabel;
-    private String cancelOrderConfirmHover;
+    public String cancelOrderTitle;
+    public String cancelOrderBody;
+    public String cancelOrderCancelLabel;
+    public String cancelOrderCancelHover;
+    public String cancelOrderConfirmLabel;
+    public String cancelOrderConfirmHover;
 
-    private String invalidInput;
-    private String orderCreationSuccessful;
-    private String delivered;
-    private String receiveDelivery;
-    private String notEnoughMoney;
-    private String deliverSelf;
-    private String collectingTooFast;
-    private String exceedMaxCollect;
+    public String invalidInput;
+    public String orderCreationSuccessful;
+    public String delivered;
+    public String receiveDelivery;
+    public String notEnoughMoney;
+    public String deliverSelf;
+    public String collectingTooFast;
+    public String exceedMaxCollect;
 
-    private Sound nextPageSound;
-    private Sound previousPageSound;
-    private Sound refreshSound;
-    private Sound sortSound;
-    private Sound newOrderSound;
-    private Sound deliverSound;
+    public Sound nextPageSound;
+    public Sound previousPageSound;
+    public Sound refreshSound;
+    public Sound sortSound;
+    public Sound newOrderSound;
+    public Sound deliverSound;
 
-    private StorageMethod storageMethod;
-    private String remoteAddress;
-    private String databaseName;
-    private String dbUsername;
-    private String dbPassword;
-    private String tablePref;
+    public StorageMethod storageMethod;
+    public String remoteAddress;
+    public String databaseName;
+    public String dbUsername;
+    public String dbPassword;
+    public String tablePref;
 
-    private boolean logTransactions;
-    private long expiresAfter;
-    private double minPrice;
-    private String sortPrefix;
-    private int maxCollectPerMinute;
-    private int maxCollect;
-    private TagResolver[] sortPlaceholders;
-    private boolean enchantItem;
-    private boolean shulkerDelivering;
+    public boolean logTransactions;
+    public long expiresAfter;
+    public double minPrice;
+    public String sortPrefix;
+    public int maxCollectPerMinute;
+    public int maxCollect;
+    public TagResolver[] sortPlaceholders;
+    public boolean enchantItem;
+    public boolean shulkerDelivering;
 
-    private final List<DataComponentType.Valued<?>> similarityCheck = new ArrayList<>();
+    public final List<DataComponentType.Valued<?>> similarityCheck = new ArrayList<>();
 
     public ConfigCache() {
         this.configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -194,6 +192,161 @@ public class ConfigCache {
             return;
         }
         // CONFIG
+        setDefaults();
+
+        // TODO: Have a better structure for migrating config
+        final int previousConfigVersion = config.getInteger("config-version", -1);
+        final int currentConfigVersion = 2;
+        config.addDefault("config-version", currentConfigVersion);
+        if (previousConfigVersion != -1) {
+            if (previousConfigVersion > currentConfigVersion) {
+                Log.warn("You are downgrading the plugin. This is not supported");
+            }
+            config.set("config-version", 2);
+
+            if (previousConfigVersion < 2) {
+                config.save();
+            }
+        } else config.save();
+
+
+//        storageMethod = StorageMethod.fromString(config.getString("storage.method"));
+//        remoteAddress = config.getString("storage.config.address");
+//        databaseName = config.getString("storage.config.database");
+//        dbUsername = config.getString("storage.config.username");
+//        dbPassword = config.getString("storage.config.password");
+//        tablePref = config.getString("storage.config.table-prefix");
+        storageMethod = StorageMethod.SQLITE;
+        tablePref = "orderium_";
+
+        bStats = config.getBoolean("bstats");
+        checkForUpdates = config.getBoolean("check-for-updates");
+        logTransactions = config.getBoolean("log-transactions");
+        expiresAfter = config.getLong("expires-after");
+        minPrice = config.getDouble("minimum-price");
+        sortPrefix = config.getString("sort-prefix");
+        maxCollect = config.getInteger("max-collect");
+        maxCollectPerMinute = config.getInteger(("max-collect-per-minute"));
+        enchantItem = config.getBoolean("enchantments");
+        shulkerDelivering = config.getBoolean("shulker-delivering");
+        sortPlaceholders = new TagResolver[SortTypes.values().length];
+        int i = 0;
+        for (SortTypes sortType : SortTypes.values()) {
+            @Subst("ignored")
+            final String identifier = sortType.getIdentifier();
+            sortType.setDisplay(config.getString("sort-types." + identifier));
+            sortPlaceholders[i++] = Placeholder.parsed(identifier, sortType.getDisplay());
+        }
+
+        for (OrderStatus status : OrderStatus.values()) {
+            status.setText(config.getString("order-status." + status.getIdentifier()));
+        }
+
+        final List<String> rawDataComponents = config.getStringList("similarity-check");
+        similarityCheck.clear();
+        for (final String s : rawDataComponents) {
+            final DataComponentType.Valued<?> dataComponentType = ConvertUtils.getDataComponentType(s);
+            if (dataComponentType == null) {
+                plugin.getLogger().severe("Failed to get data component type with identifier " + s);
+                continue;
+            }
+            similarityCheck.add(dataComponentType);
+        }
+
+        orderCreationSuccessful = config.getString("messages.create-order-success");
+        invalidInput = config.getString("messages.invalid-input");
+        delivered = config.getString("messages.delivery");
+        receiveDelivery = config.getString("messages.receive-delivery");
+        notEnoughMoney = config.getString("messages.not-enough-money");
+        deliverSelf = config.getString("messages.deliver-self");
+        exceedMaxCollect = config.getString("messages.exceeded-max-collect");
+        collectingTooFast = config.getString("messages.collecting-too-fast");
+
+        nextPageSound = getSound("next-page");
+        previousPageSound = getSound("previous-page");
+        refreshSound = getSound("refresh");
+        sortSound = getSound("sort");
+        newOrderSound = getSound("new-order");
+        deliverSound = getSound("deliver");
+
+        mainGuiTitle = config.getString("gui.main.title");
+        orderLore = config.getStringList("gui.main.order-lore");
+        ordersSortsOrder = config.getStringList("gui.main.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
+        refreshButton.deserialize(config.getConfigSection("gui.main.buttons.refresh"));
+        yoButton.deserialize(config.getConfigSection("gui.main.buttons.your-orders"));
+        ordersSortButton.deserialize(config.getConfigSection("gui.main.buttons.sort"));
+        ordersBackButton.deserialize(config.getConfigSection("gui.main.buttons.back"));
+        ordersNextButton.deserialize(config.getConfigSection("gui.main.buttons.next"));
+        ordersSearchButton.deserialize(config.getConfigSection("gui.main.buttons.search"));
+
+        yoGuiTitle = config.getString("gui.your-orders.title");
+        yoLore = config.getStringList("gui.your-orders.order-lore");
+        newOrderButton.deserialize(config.getConfigSection("gui.your-orders.buttons.new-order"));
+
+        chooseItemTitle = config.getString("gui.choose-item.title");
+        chooseSortsOrder = config.getStringList("gui.choose-item.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
+        chooseBackButton.deserialize(config.getConfigSection("gui.choose-item.buttons.back"));
+        chooseNextButton.deserialize(config.getConfigSection("gui.choose-item.buttons.next"));
+        chooseSearchButton.deserialize(config.getConfigSection("gui.choose-item.buttons.search"));
+        chooseSortButton.deserialize(config.getConfigSection("gui.choose-item.buttons.sort"));
+
+        searchLine = config.getInteger("gui.search-sign.search-line");
+        lines = config.getStringList("gui.search-sign.lines");
+        signBlock = plugin.getDataCache().getBlockType(config.getString("gui.search-sign.type"));
+
+        deliverTitle = config.getString("gui.delivery.title");
+        deliverRows = config.getInteger("gui.delivery.rows");
+
+        enchantItemTitle = config.getString("gui.enchant-item.title");
+        enchantActivePrefix = config.getString("gui.enchant-item.name-prefix.active");
+        enchantInactivePrefix = config.getString("gui.enchant-item.name-prefix.inactive");
+        enchantLore = config.getStringList("gui.enchant-item.lore");
+        confirmEnchantButton.deserialize(config.getConfigSection("gui.enchant-item.confirm-button"));
+
+        newOrderDialogTitle = config.getString("gui.new-order.title");
+        itemDescription = config.getString("gui.new-order.item-description");
+        amountLabel = config.getString("gui.new-order.amount-label");
+        moneyPerLabel = config.getString("gui.new-order.money-per-label");
+        changeItemButton = config.getString("gui.new-order.change-item-button");
+        changeItemTooltip = config.getString("gui.new-order.change-item-tooltip");
+        confirmButton = config.getString("gui.new-order.confirm-button");
+        confirmTooltip = config.getString("gui.new-order.confirm-tooltip");
+        descriptionWidth = config.getInteger("gui.new-order.description-width");
+        inputWidth = config.getInteger("gui.new-order.input-width");
+        buttonWidth = config.getInteger("gui.new-order.button-width");
+
+        confirmDeliveryTitle = config.getString("gui.confirm-delivery.title");
+        confirmDeliveryBody = config.getString("gui.confirm-delivery.body");
+        confirmDeliveryTransactionMessage = config.getString("gui.confirm-delivery.transaction-message");
+        confirmDeliveryConfirmLabel = config.getString("gui.confirm-delivery.confirm-button");
+        confirmDeliveryConfirmHover = config.getString("gui.confirm-delivery.confirm-tooltip");
+        confirmDeliveryCancelLabel = config.getString("gui.confirm-delivery.cancel-button");
+        confirmDeliveryCancelHover = config.getString("gui.confirm-delivery.cancel-tooltip");
+
+        manageOrderTitle = config.getString("gui.manage-order.title");
+        manageOrderBody = config.getString("gui.manage-order.body");
+        collectItemsLabel = config.getString("gui.manage-order.collect-items-button");
+        collectItemsHover = config.getString("gui.manage-order.collect-items-tooltip");
+        cancelOrderLabel = config.getString("gui.manage-order.cancel-order-button");
+        cancelOrderHover = config.getString("gui.manage-order.cancel-order-tooltip");
+
+        collectItemsTitle = config.getString("gui.collect-items.title");
+        collectItemsBody = config.getString("gui.collect-items.body");
+        collectItemsAmountLabel = config.getString("gui.collect-items.amount-label");
+        collectItemsCancelLabel = config.getString("gui.collect-items.cancel-button");
+        collectItemsCancelHover = config.getString("gui.collect-items.cancel-tooltip");
+        collectItemsConfirmLabel = config.getString("gui.collect-items.confirm-button");
+        collectItemsConfirmHover = config.getString("gui.collect-items.confirm-tooltip");
+
+        cancelOrderTitle = config.getString("gui.cancel-order.title");
+        cancelOrderBody = config.getString("gui.cancel-order.body");
+        cancelOrderCancelLabel = config.getString("gui.cancel-order.cancel-button");
+        cancelOrderCancelHover = config.getString("gui.cancel-order.cancel-tooltip");
+        cancelOrderConfirmLabel = config.getString("gui.cancel-order.confirm-button");
+        cancelOrderConfirmHover = config.getString("gui.cancel-order.confirm-tooltip");
+    }
+
+    private void setDefaults() {
 
         // NOT YET
 //        config.addComment("storage", "Choose how the data should be saved");
@@ -223,24 +376,24 @@ public class ConfigCache {
                         """
         );
         config.addDefault("similarity-check", List.of(
-                "minecraft:enchantments",
-                "minecraft:bundle_contents",
-                "minecraft:container",
-                "minecraft:fireworks",
-                "minecraft:instrument",
-                "minecraft:potion_contents",
-                "minecraft:stored_enchantments",
-                "minecraft:max_stack_size",
+                        "minecraft:enchantments",
+                        "minecraft:bundle_contents",
+                        "minecraft:container",
+                        "minecraft:fireworks",
+                        "minecraft:instrument",
+                        "minecraft:potion_contents",
+                        "minecraft:stored_enchantments",
+                        "minecraft:max_stack_size",
 //                "minecraft:custom_data", // Custom data doesn't exist in the registry for some reason?
-                "minecraft:custom_model_data",
-                "minecraft:ominous_bottle_amplifier",
-                "minecraft:damage",
-                "minecraft:custom_name",
-                "minecraft:item_model",
-                "minecraft:bundle_contents",
-                "minecraft:damage_type",
-                "minecraft:consumable"
-        ),
+                        "minecraft:custom_model_data",
+                        "minecraft:ominous_bottle_amplifier",
+                        "minecraft:damage",
+                        "minecraft:custom_name",
+                        "minecraft:item_model",
+                        "minecraft:bundle_contents",
+                        "minecraft:damage_type",
+                        "minecraft:consumable"
+                ),
                 """
                 This defines how should two items to be similar.
                 If all the following data component types are equal on both items beside their item types, they are similar.
@@ -250,10 +403,10 @@ public class ConfigCache {
         );
 
         config.addDefault("enchantments", false,
-                        """
-                        Whether to enable enchanting items or not.
-                        Currently you cannot edit what enchantments can be applied, the default will be used.
-                        """
+                """
+                Whether to enable enchanting items or not.
+                Currently you cannot edit what enchantments can be applied, the default will be used.
+                """
         );
 
         config.addDefault("shulker-delivering", true, "Whether to allow players to deliver orders with items in shulker boxes");
@@ -434,157 +587,6 @@ public class ConfigCache {
         config.addDefault("gui.cancel-order.cancel-tooltip", "Click to cancel the cancellation of this order");
         config.addDefault("gui.cancel-order.confirm-button", "<green>Confirm");
         config.addDefault("gui.cancel-order.confirm-tooltip", "Click to confirm the cancellation of this order");
-        config.addDefault("config-version", 2);
-
-        // TODO: Have a better structure for migrating config
-        final int previousConfigVersion = config.getInteger("config-version", -1);
-        final int currentConfigVersion = 2;
-        if (previousConfigVersion != -1) {
-            if (previousConfigVersion > currentConfigVersion) {
-                Log.warn("You are downgrading the plugin. This is not supported");
-            }
-            config.set("config-version", 2);
-
-            if (previousConfigVersion < 2) {
-                config.save();
-            }
-        } else config.save();
-
-//        storageMethod = StorageMethod.fromString(config.getString("storage.method"));
-//        remoteAddress = config.getString("storage.config.address");
-//        databaseName = config.getString("storage.config.database");
-//        dbUsername = config.getString("storage.config.username");
-//        dbPassword = config.getString("storage.config.password");
-//        tablePref = config.getString("storage.config.table-prefix");
-        storageMethod = StorageMethod.SQLITE;
-        tablePref = "orderium_";
-
-        bStats = config.getBoolean("bstats");
-        checkForUpdates = config.getBoolean("check-for-updates");
-        logTransactions = config.getBoolean("log-transactions");
-        expiresAfter = config.getLong("expires-after");
-        minPrice = config.getDouble("minimum-price");
-        sortPrefix = config.getString("sort-prefix");
-        maxCollect = config.getInteger("max-collect");
-        maxCollectPerMinute = config.getInteger(("max-collect-per-minute"));
-        enchantItem = config.getBoolean("enchantments");
-        shulkerDelivering = config.getBoolean("shulker-delivering");
-        sortPlaceholders = new TagResolver[SortTypes.values().length];
-        int i = 0;
-        for (SortTypes sortType : SortTypes.values()) {
-            @Subst("ignored")
-            final String identifier = sortType.getIdentifier();
-            sortType.setDisplay(config.getString("sort-types." + identifier));
-            assert sortType.getDisplay() != null;
-            sortPlaceholders[i++] = Placeholder.parsed(identifier, sortType.getDisplay());
-        }
-
-        for (OrderStatus status : OrderStatus.values()) {
-            status.setText(config.getString("order-status." + status.getIdentifier()));
-        }
-
-        final List<String> rawDataComponents = config.getStringList("similarity-check");
-        similarityCheck.clear();
-        for (final String s : rawDataComponents) {
-            final DataComponentType.Valued<?> dataComponentType = ConvertUtils.getDataComponentType(s);
-            if (dataComponentType == null) {
-                plugin.getLogger().severe("Failed to get data component type with identifier " + s);
-                continue;
-            }
-            similarityCheck.add(dataComponentType);
-        }
-
-        orderCreationSuccessful = config.getString("messages.create-order-success");
-        invalidInput = config.getString("messages.invalid-input");
-        delivered = config.getString("messages.delivery");
-        receiveDelivery = config.getString("messages.receive-delivery");
-        notEnoughMoney = config.getString("messages.not-enough-money");
-        deliverSelf = config.getString("messages.deliver-self");
-        exceedMaxCollect = config.getString("messages.exceeded-max-collect");
-        collectingTooFast = config.getString("messages.collecting-too-fast");
-
-        nextPageSound = getSound("next-page");
-        previousPageSound = getSound("previous-page");
-        refreshSound = getSound("refresh");
-        sortSound = getSound("sort");
-        newOrderSound = getSound("new-order");
-        deliverSound = getSound("deliver");
-
-        mainGuiTitle = config.getString("gui.main.title");
-        orderLore = config.getStringList("gui.main.order-lore");
-        ordersSortsOrder = config.getStringList("gui.main.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
-        refreshButton.deserialize(config.getConfigSection("gui.main.buttons.refresh"));
-        yoButton.deserialize(config.getConfigSection("gui.main.buttons.your-orders"));
-        ordersSortButton.deserialize(config.getConfigSection("gui.main.buttons.sort"));
-        ordersBackButton.deserialize(config.getConfigSection("gui.main.buttons.back"));
-        ordersNextButton.deserialize(config.getConfigSection("gui.main.buttons.next"));
-        ordersSearchButton.deserialize(config.getConfigSection("gui.main.buttons.search"));
-
-        yoGuiTitle = config.getString("gui.your-orders.title");
-        yoLore = config.getStringList("gui.your-orders.order-lore");
-        newOrderButton.deserialize(config.getConfigSection("gui.your-orders.buttons.new-order"));
-
-        chooseItemTitle = config.getString("gui.choose-item.title");
-        chooseSortsOrder = config.getStringList("gui.choose-item.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
-        chooseBackButton.deserialize(config.getConfigSection("gui.choose-item.buttons.back"));
-        chooseNextButton.deserialize(config.getConfigSection("gui.choose-item.buttons.next"));
-        chooseSearchButton.deserialize(config.getConfigSection("gui.choose-item.buttons.search"));
-        chooseSortButton.deserialize(config.getConfigSection("gui.choose-item.buttons.sort"));
-
-        searchLine = config.getInteger("gui.search-sign.search-line");
-        lines = config.getStringList("gui.search-sign.lines");
-        signBlock = plugin.getDataCache().getBlockType(config.getString("gui.search-sign.type"));
-
-        deliverTitle = config.getString("gui.delivery.title");
-        deliverRows = config.getInteger("gui.delivery.rows");
-
-        enchantItemTitle = config.getString("gui.enchant-item.title");
-        enchantActivePrefix = config.getString("gui.enchant-item.name-prefix.active");
-        enchantInactivePrefix = config.getString("gui.enchant-item.name-prefix.inactive");
-        enchantLore = config.getStringList("gui.enchant-item.lore");
-        confirmEnchantButton.deserialize(config.getConfigSection("gui.enchant-item.confirm-button"));
-
-        newOrderDialogTitle = config.getString("gui.new-order.title");
-        itemDescription = config.getString("gui.new-order.item-description");
-        amountLabel = config.getString("gui.new-order.amount-label");
-        moneyPerLabel = config.getString("gui.new-order.money-per-label");
-        changeItemButton = config.getString("gui.new-order.change-item-button");
-        changeItemTooltip = config.getString("gui.new-order.change-item-tooltip");
-        confirmButton = config.getString("gui.new-order.confirm-button");
-        confirmTooltip = config.getString("gui.new-order.confirm-tooltip");
-        descriptionWidth = config.getInteger("gui.new-order.description-width");
-        inputWidth = config.getInteger("gui.new-order.input-width");
-        buttonWidth = config.getInteger("gui.new-order.button-width");
-
-        confirmDeliveryTitle = config.getString("gui.confirm-delivery.title");
-        confirmDeliveryBody = config.getString("gui.confirm-delivery.body");
-        confirmDeliveryTransactionMessage = config.getString("gui.confirm-delivery.transaction-message");
-        confirmDeliveryConfirmLabel = config.getString("gui.confirm-delivery.confirm-button");
-        confirmDeliveryConfirmHover = config.getString("gui.confirm-delivery.confirm-tooltip");
-        confirmDeliveryCancelLabel = config.getString("gui.confirm-delivery.cancel-button");
-        confirmDeliveryCancelHover = config.getString("gui.confirm-delivery.cancel-tooltip");
-
-        manageOrderTitle = config.getString("gui.manage-order.title");
-        manageOrderBody = config.getString("gui.manage-order.body");
-        collectItemsLabel = config.getString("gui.manage-order.collect-items-button");
-        collectItemsHover = config.getString("gui.manage-order.collect-items-tooltip");
-        cancelOrderLabel = config.getString("gui.manage-order.cancel-order-button");
-        cancelOrderHover = config.getString("gui.manage-order.cancel-order-tooltip");
-
-        collectItemsTitle = config.getString("gui.collect-items.title");
-        collectItemsBody = config.getString("gui.collect-items.body");
-        collectItemsAmountLabel = config.getString("gui.collect-items.amount-label");
-        collectItemsCancelLabel = config.getString("gui.collect-items.cancel-button");
-        collectItemsCancelHover = config.getString("gui.collect-items.cancel-tooltip");
-        collectItemsConfirmLabel = config.getString("gui.collect-items.confirm-button");
-        collectItemsConfirmHover = config.getString("gui.collect-items.confirm-tooltip");
-
-        cancelOrderTitle = config.getString("gui.cancel-order.title");
-        cancelOrderBody = config.getString("gui.cancel-order.body");
-        cancelOrderCancelLabel = config.getString("gui.cancel-order.cancel-button");
-        cancelOrderCancelHover = config.getString("gui.cancel-order.cancel-tooltip");
-        cancelOrderConfirmLabel = config.getString("gui.cancel-order.confirm-button");
-        cancelOrderConfirmHover = config.getString("gui.cancel-order.confirm-tooltip");
     }
 
     private Sound getSound(String name) {

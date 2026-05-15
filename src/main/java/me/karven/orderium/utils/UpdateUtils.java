@@ -3,7 +3,6 @@ package me.karven.orderium.utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
@@ -15,11 +14,7 @@ import java.net.URI;
 
 import static me.karven.orderium.load.Orderium.plugin;
 
-@Slf4j
 public class UpdateUtils {
-    private static final String itemsURL = "https://github.com/ImKarven/Orderium/raw/refs/heads/master/items.db";
-    private static File itemsFile;
-
     private static final String API_URL = "https://api.modrinth.com/v2/project/";
     private static final String PROJECT_ID = "EH2l9h8i";
     private static final String mcVer = Bukkit.getMinecraftVersion();
@@ -27,7 +22,7 @@ public class UpdateUtils {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void init() {
-        itemsFile = new File(plugin.getDataFolder(), "items.db");
+        final File itemsFile = new File(plugin.getDataFolder(), "items.db");
         plVer = plugin.getPluginMeta().getVersion();
 
         try {

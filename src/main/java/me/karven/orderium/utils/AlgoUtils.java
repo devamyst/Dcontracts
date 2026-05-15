@@ -117,7 +117,7 @@ public class AlgoUtils {
 
     public static boolean isSimilar(final ItemStack a, final ItemStack b) {
         if (!a.getType().equals(b.getType())) return false;
-        for (final DataComponentType.Valued<?> component : cache.getSimilarityCheck()) {
+        for (final DataComponentType.Valued<?> component : cache.similarityCheck) {
             final Object dataA = a.getData(component);
             final Object dataB = b.getData(component);
             if (dataA == null && dataB == null) continue;

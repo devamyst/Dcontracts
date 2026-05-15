@@ -1,17 +1,18 @@
 package me.karven.orderium.obj;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
-@Getter
 public enum OrderStatus {
     EXPIRED("expired"),
     COMPLETED("completed"),
     AVAILABLE("available");
 
     private final String identifier;
-    @Setter
     private String text;
+
+    public @NotNull String getIdentifier() { return identifier; }
+    public String getText() { return text; }
+    public void setText(final @NotNull String text) { this.text = text; }
 
      OrderStatus(String identifier) {
         this.identifier = identifier;

@@ -35,15 +35,15 @@ public class NewOrderDialog {
 
     public static Dialog getDialog(OrderItem orderItem) {
         return createDialog(
-                mm.deserialize(cache.getNewOrderDialogTitle()),
-                mm.deserialize(cache.getItemDescription()),
+                mm.deserialize(cache.newOrderDialogTitle),
+                mm.deserialize(cache.itemDescription),
                 orderItem,
-                mm.deserialize(cache.getAmountLabel()),
-                mm.deserialize(cache.getMoneyPerLabel()),
-                mm.deserialize(cache.getChangeItemButton()),
-                mm.deserialize(cache.getChangeItemTooltip()),
-                mm.deserialize(cache.getConfirmButton()),
-                mm.deserialize(cache.getConfirmTooltip())
+                mm.deserialize(cache.amountLabel),
+                mm.deserialize(cache.moneyPerLabel),
+                mm.deserialize(cache.changeItemButton),
+                mm.deserialize(cache.changeItemTooltip),
+                mm.deserialize(cache.confirmButton),
+                mm.deserialize(cache.confirmTooltip)
         );
     }
 
@@ -55,18 +55,18 @@ public class NewOrderDialog {
                                     .canCloseWithEscape(true)
                                     .body(List.of(
                                             DialogBody.item(orderItem.getItemStack())
-                                                    .description(DialogBody.plainMessage(bodyText, cache.getDescriptionWidth()))
+                                                    .description(DialogBody.plainMessage(bodyText, cache.descriptionWidth))
                                                     .showDecorations(false)
                                                     .build()
                                             )
                                     )
                                     .inputs(List.of(
                                             DialogInput.text("amount", amountLabel)
-                                                    .width(cache.getInputWidth())
+                                                    .width(cache.inputWidth)
                                                     .initial("1")
                                                     .build(),
                                             DialogInput.text("money_per", moneyPerLabel)
-                                                    .width(cache.getInputWidth())
+                                                    .width(cache.inputWidth)
                                                     .initial("1")
                                                     .build()
                                             )
@@ -77,7 +77,7 @@ public class NewOrderDialog {
                     .type(DialogType.confirmation(
                             ActionButton.builder(confirmLabel)
                                     .tooltip(confirmHover)
-                                    .width(cache.getButtonWidth())
+                                    .width(cache.buttonWidth)
                                     .action(DialogAction.customClick((view, player) -> {
                                         if (!(player instanceof Player p)) {
                                             return;
@@ -90,11 +90,11 @@ public class NewOrderDialog {
                                         final Order.Response response = Order.create(p, item, view.getText("money_per"), view.getText("amount"));
 
                                         switch (response) {
-                                            case INVALID -> p.sendRichMessage(cache.getInvalidInput());
-                                            case FAIL -> p.sendRichMessage(cache.getNotEnoughMoney());
+                                            case INVALID -> p.sendRichMessage(cache.invalidInput);
+                                            case FAIL -> p.sendRichMessage(cache.notEnoughMoney);
                                             case SUCCESS -> {
-                                                p.sendRichMessage(cache.getOrderCreationSuccessful());
-                                                PlayerUtils.playSound(p, cache.getNewOrderSound());
+                                                p.sendRichMessage(cache.orderCreationSuccessful);
+                                                PlayerUtils.playSound(p, cache.newOrderSound);
                                             }
                                         }
 
@@ -102,7 +102,7 @@ public class NewOrderDialog {
                                     .build(),
                             ActionButton.builder(changeItemLabel)
                                     .tooltip(changeItemHover)
-                                    .width(cache.getButtonWidth())
+                                    .width(cache.buttonWidth)
                                     .action(DialogAction.customClick((view, player) -> {
                                         if (!(player instanceof Player p)) return;
                                         InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);

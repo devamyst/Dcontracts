@@ -1,6 +1,5 @@
 package me.karven.orderium.api.events;
 
-import lombok.Getter;
 import me.karven.orderium.api.Order;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -9,7 +8,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class PlayerCreateOrderEvent {
     private PlayerCreateOrderEvent() {}
 

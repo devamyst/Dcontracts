@@ -80,12 +80,12 @@ public final class Orderium extends JavaPlugin {
         DeliveryConfirmDialog.init();
         ManageOrderDialog.init();
 
-        if (configs.isBStats()) {
+        if (configs.bStats) {
             final int pluginId = 27569;
             new Metrics(this, pluginId);
         }
 
-        if (configs.isCheckForUpdates()) {
+        if (configs.checkForUpdates) {
             Bukkit.getAsyncScheduler().runNow(this, task -> {
                final String newVer = UpdateUtils.checkForUpdates();
                if (newVer == null) return;
@@ -107,7 +107,7 @@ public final class Orderium extends JavaPlugin {
     }
 
     public Storage createStorage() {
-        switch (configs.getStorageMethod()) {
+        switch (configs.storageMethod) {
             case SQLITE -> {
                 return SQLStorage.sqlite();
             }

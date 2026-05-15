@@ -35,14 +35,10 @@ dependencies {
 //    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
     paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    compileOnly("org.projectlombok:lombok:1.18.42")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude group: "org.bukkit", module: "bukkit"
     }
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
-    annotationProcessor("org.projectlombok:lombok:1.18.42")
-    testCompileOnly("org.projectlombok:lombok:1.18.42")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
     implementation("com.zaxxer:HikariCP:7.0.2")
 }

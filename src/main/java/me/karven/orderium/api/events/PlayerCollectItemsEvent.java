@@ -1,13 +1,11 @@
 package me.karven.orderium.api.events;
 
-import lombok.Getter;
 import me.karven.orderium.api.Order;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class PlayerCollectItemsEvent {
     private PlayerCollectItemsEvent() {}
 

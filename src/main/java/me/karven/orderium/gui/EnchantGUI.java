@@ -54,7 +54,7 @@ public class EnchantGUI {
         int length = enchantable.size();
         // Create the GUI. Use more rows if more than 9 enchantments
         int enchantmentsRows = Math.min(4, length / 9 + 1); // amount of rows for enchantment books
-        this.gui = new InventoryGUI(2 + enchantmentsRows, mm.deserialize(cache.getEnchantItemTitle()));
+        this.gui = new InventoryGUI(2 + enchantmentsRows, mm.deserialize(cache.enchantItemTitle));
         gui.setOnClick(event -> event.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(event -> event.setCancelled(true), InteractLocation.GLOBAL);
 
@@ -67,13 +67,13 @@ public class EnchantGUI {
             action.accept(copy);
         };
         InventoryItem displayItem = new InventoryItem(enchantedItem);
-        InventoryItem confirmItem = ConvertUtils.parseNewButton(cache.getConfirmEnchantButton(), confirmAction);
+        InventoryItem confirmItem = ConvertUtils.parseNewButton(cache.confirmEnchantButton, confirmAction);
 
         gui.addItem(displayItem, 0);
-        gui.addItem(confirmItem, cache.getConfirmEnchantButton().getSlot());
+        gui.addItem(confirmItem, cache.confirmEnchantButton.getSlot());
 
-        Component activePrefix = mm.deserialize(cache.getEnchantActivePrefix());
-        Component inactivePrefix = mm.deserialize(cache.getEnchantInactivePrefix());
+        Component activePrefix = mm.deserialize(cache.enchantActivePrefix);
+        Component inactivePrefix = mm.deserialize(cache.enchantInactivePrefix);
         int slot = 18;
         for (Enchantment enchantment : enchantable) {
             Component enchantmentName = enchantment.description().decoration(TextDecoration.ITALIC, false);
@@ -81,7 +81,7 @@ public class EnchantGUI {
             bookItem.editMeta(meta -> {
                meta.setEnchantmentGlintOverride(true);
                meta.displayName(inactivePrefix.append(enchantmentName));
-               meta.lore(cache.getEnchantLore().stream().map(raw -> mm.deserialize(raw).decoration(TextDecoration.ITALIC, false)).toList());
+               meta.lore(cache.enchantLore.stream().map(raw -> mm.deserialize(raw).decoration(TextDecoration.ITALIC, false)).toList());
             });
             InventoryItem guiItem = new InventoryItem(bookItem);
 

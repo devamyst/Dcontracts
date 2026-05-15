@@ -50,47 +50,47 @@ public class ChooseItemGUI {
     }
 
     public static InventoryGUI getGUI(int sortIdx, int pageIdx) {
-        return getPages(cache.getChooseSortsOrder().get(sortIdx)).get(pageIdx);
+        return getPages(cache.chooseSortsOrder.get(sortIdx)).get(pageIdx);
     }
 
     public static InventoryGUI getGUI(int sortIdx, String search) {
         final List<InventoryGUI> pages = new ArrayList<>();
-        createPages(pages, cache.getChooseSortsOrder().get(sortIdx), search);
+        createPages(pages, cache.chooseSortsOrder.get(sortIdx), search);
         return pages.getFirst();
     }
 
     private static void addButtons(InventoryGUI gui, List<InventoryGUI> pages, SortTypes sortType, final int idx, final int pagesAmount) {
-        final List<SortTypes> sortOrder = cache.getChooseSortsOrder();
+        final List<SortTypes> sortOrder = cache.chooseSortsOrder;
         final int sortIdx = sortOrder.indexOf(sortType);
 
         if (idx > 0) gui.addItem(ConvertUtils.parseNewButton(
-                cache.getChooseBackButton(),
+                cache.chooseBackButton,
                 e -> PlayerUtils.clickBack(e, pages.get(idx - 1))
-        ), cache.getChooseBackButton().getSlot() + 45);
+        ), cache.chooseBackButton.getSlot() + 45);
 
         if (idx + 1 < pagesAmount) gui.addItem(ConvertUtils.parseNewButton(
-                cache.getChooseNextButton(),
+                cache.chooseNextButton,
                 e -> PlayerUtils.clickNext(e, pages.get(idx + 1))
-        ), cache.getChooseNextButton().getSlot() + 45);
+        ), cache.chooseNextButton.getSlot() + 45);
 
-        gui.addItem(ConvertUtils.parseSortButton(cache.getChooseSortButton(), sortType, e -> {
+        gui.addItem(ConvertUtils.parseSortButton(cache.chooseSortButton, sortType, e -> {
             if (!(e.getWhoClicked() instanceof Player p)) return;
             final int nextIdx = sortIdx == sortOrder.size() - 1 ? 0 : sortIdx + 1;
             PlayerUtils.openGUI(p, getGUI(nextIdx, idx), false);
-            PlayerUtils.playSound(p, cache.getSortSound());
-        }), cache.getChooseSortButton().getSlot() + 45);
+            PlayerUtils.playSound(p, cache.sortSound);
+        }), cache.chooseSortButton.getSlot() + 45);
 
-        gui.addItem(ConvertUtils.parseNewButton(cache.getChooseSearchButton(), e -> {
+        gui.addItem(ConvertUtils.parseNewButton(cache.chooseSearchButton, e -> {
             if (!(e.getWhoClicked() instanceof Player p)) return;
             SignGUI.newSession(
                     p,
                     (s) -> PlayerUtils.openGUI(p, ChooseItemGUI.getGUI(sortIdx, s), true),
-                    cache.getLines(),
-                    cache.getSignBlock(),
-                    cache.getSearchLine()
+                    cache.lines,
+                    cache.signBlock,
+                    cache.searchLine
             );
 
-        }), cache.getChooseSearchButton().getSlot() + 45);
+        }), cache.chooseSearchButton.getSlot() + 45);
     }
 
     private static void createPages(List<InventoryGUI> pages, SortTypes sortType) {
@@ -125,7 +125,7 @@ public class ChooseItemGUI {
                 if (e.getClick() != ClickType.RIGHT || !p.hasPermission("orderium.admin.blacklist")) {
 
                     if (
-                            !cache.isEnchantItem() ||
+                            !cache.enchantItem ||
                             !(orderItem instanceof EnchantableItem enchantableItem)
                     ) {
                         Dialog dialog = NewOrderDialog.getDialog(orderItem);
@@ -155,7 +155,7 @@ public class ChooseItemGUI {
     }
 
     private static InventoryGUI initPage(List<InventoryGUI> pages, SortTypes sortType, int idx, int pagesAmount) {
-        InventoryGUI gui = new InventoryGUI(6, mm.deserialize(cache.getChooseItemTitle()));
+        InventoryGUI gui = new InventoryGUI(6, mm.deserialize(cache.chooseItemTitle));
         addButtons(gui, pages, sortType, idx, pagesAmount);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);

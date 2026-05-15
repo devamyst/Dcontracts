@@ -62,8 +62,8 @@ public class Order implements me.karven.orderium.api.Order {
             double moneyReceived = receive; // I don't like working with wrapped class at all so will use primitive
             if (moneyReceived == 0.0) return;
             EconUtils.addMoney(p, moneyReceived);
-            p.sendRichMessage(cache.getDelivered(), Placeholder.unparsed("money", ConvertUtils.formatNumber(moneyReceived)));
-            PlayerUtils.playSound(p, cache.getDeliverSound());
+            p.sendRichMessage(cache.delivered, Placeholder.unparsed("money", ConvertUtils.formatNumber(moneyReceived)));
+            PlayerUtils.playSound(p, cache.deliverSound);
 
             PlayerDeliverOrderEvent.Post postEvent = new PlayerDeliverOrderEvent.Post(p, this, isAsync);
             postEvent.callEvent();
@@ -74,7 +74,7 @@ public class Order implements me.karven.orderium.api.Order {
             final Component displayName = meta == null ? null : meta.displayName();
             assert item.getType().getItemTranslationKey() != null;
             ownerPlayer.sendRichMessage(
-                    cache.getReceiveDelivery(),
+                    cache.receiveDelivery,
                     Placeholder.unparsed("deliverer", p.getName()),
                     Placeholder.unparsed("amount",  ConvertUtils.formatNumber((int) (moneyReceived / moneyPer))),
                     Placeholder.component("item", (displayName == null ? Component.translatable(item.getType().getItemTranslationKey()) : displayName))
@@ -89,7 +89,7 @@ public class Order implements me.karven.orderium.api.Order {
         final double dAmount = ConvertUtils.formatNumber(rawAmount);
         final int amount = (int) dAmount;
         if (dAmount == -1 || dAmount != amount) {
-            p.sendRichMessage(cache.getInvalidInput());
+            p.sendRichMessage(cache.invalidInput);
             return Response.INVALID;
         }
         return collect(amount);
@@ -99,14 +99,14 @@ public class Order implements me.karven.orderium.api.Order {
     public Response collect(int amount) {
         final Player p = Bukkit.getPlayer(this.getOwnerUniqueId());
         if (p == null || !p.isOnline()) return Response.INVALID;
-        if (amount > cache.getMaxCollect() && !p.hasPermission("orderium.bypass.max-collect")) {
-            p.sendRichMessage(cache.getExceedMaxCollect());
+        if (amount > cache.maxCollect && !p.hasPermission("orderium.bypass.max-collect")) {
+            p.sendRichMessage(cache.exceedMaxCollect);
             return Response.FAIL;
         }
 
         final int collectedInMinute = PDCUtils.getCollected(p);
-        if (collectedInMinute > cache.getMaxCollectPerMinute() && !p.hasPermission("orderium.bypass.max-collect-per-minute")) {
-            p.sendRichMessage(cache.getCollectingTooFast());
+        if (collectedInMinute > cache.maxCollectPerMinute && !p.hasPermission("orderium.bypass.max-collect-per-minute")) {
+            p.sendRichMessage(cache.collectingTooFast);
             return Response.FAIL;
         }
 
@@ -116,7 +116,7 @@ public class Order implements me.karven.orderium.api.Order {
         plugin.getStorage().collectItems(this, amount).thenAccept(success -> {
             boolean succeeded = success;
             if (!succeeded) {
-                p.sendRichMessage(cache.getInvalidInput());
+                p.sendRichMessage(cache.invalidInput);
                 return;
             }
 

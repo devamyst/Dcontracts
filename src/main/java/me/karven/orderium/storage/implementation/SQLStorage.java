@@ -39,7 +39,7 @@ public class SQLStorage extends Storage {
     private final HikariDataSource data;
 
     public static SQLStorage mysql() {
-        return new SQLStorage(StorageMethod.MYSQL, "jdbc:mysql://" + configs.getRemoteAddress() + "/" + configs.getDatabaseName(), configs.getDbUsername(), configs.getDbPassword());
+        return new SQLStorage(StorageMethod.MYSQL, "jdbc:mysql://" + configs.remoteAddress + "/" + configs.databaseName, configs.dbUsername, configs.dbPassword);
     }
 
     public static SQLStorage h2() {
@@ -65,9 +65,7 @@ public class SQLStorage extends Storage {
             default -> CREATE_ORDER_TABLE = "CREATE TABLE IF NOT EXISTS " + ORDER_TABLE + " (id INTEGER PRIMARY KEY AUTO_INCREMENT, owner_most BIGINT, owner_least BIGINT, item BLOB, money_per DOUBLE, amount INT, delivered INT DEFAULT 0, in_storage INT DEFAULT 0, expires_at BIGINT)";
         }
 
-        createTables().thenAccept(ignored -> {
-            loadOrders().thenAccept(plugin.getDataCache()::setOrders);
-        });
+        createTables().thenAccept(ignored -> loadOrders().thenAccept(plugin.getDataCache()::setOrders));
     }
 
     @Override
@@ -97,7 +95,7 @@ public class SQLStorage extends Storage {
                     Connection connection = data.getConnection();
                     PreparedStatement create = connection.prepareStatement(CREATE_ORDER, Statement.RETURN_GENERATED_KEYS)
             ) {
-                long expiresAt = System.currentTimeMillis() + configs.getExpiresAfter();
+                long expiresAt = System.currentTimeMillis() + configs.expiresAfter;
                 create.setLong(1, owner.getMostSignificantBits());
                 create.setLong(2, owner.getLeastSignificantBits());
                 create.setBytes(3, item.serializeAsBytes());
@@ -207,7 +205,7 @@ public class SQLStorage extends Storage {
 
                 for (ItemStack item : items) {
                     if (!AlgoUtils.isSimilar(item, order.getItem())) {
-                        if (isShulkerBox(item) && plugin.getConfigs().isShulkerDelivering()) {
+                        if (isShulkerBox(item) && plugin.getConfigs().shulkerDelivering) {
                             deliverable = scanShulkerBox(item, order.getItem(), deliverable);
                         }
                         PlayerUtils.give(deliverer, item, true);
@@ -421,7 +419,7 @@ public class SQLStorage extends Storage {
 
     @Override
     public CompletableFuture<Void> performMigration() {
-        CompletableFuture<Void>  future = CompletableFuture.completedFuture(null);
+        CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
         return future;
     }
 
