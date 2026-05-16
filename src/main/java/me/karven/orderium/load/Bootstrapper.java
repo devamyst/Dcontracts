@@ -91,6 +91,14 @@ public class Bootstrapper implements PluginBootstrap {
                             return 1;
                         })
                 )
+                .then(Commands.literal("edit")
+                        .requires(playerAndPermission("admin.edit-gui"))
+                        .then(Commands.literal("main"))
+                        .then(Commands.literal("your_orders"))
+                        .then(Commands.literal("choose_item"))
+                        .then(Commands.literal("enchant"))
+                        .then(Commands.literal("deliver"))
+                )
         ;
         return builder.build();
     }
