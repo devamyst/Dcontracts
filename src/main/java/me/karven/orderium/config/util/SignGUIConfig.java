@@ -18,7 +18,7 @@ public class SignGUIConfig extends GUIConfigFile {
     public final @NotNull List<@NotNull String> signLines = new ArrayList<>();
 
     public SignGUIConfig() {
-        super("search.yml");
+        super("search");
     }
 
     public void reload() {

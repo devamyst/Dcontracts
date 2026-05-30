@@ -31,8 +31,8 @@ public class DeliverGUIConfig extends GUIConfigFile {
 
     @Override
     public void migrateV5(@NotNull ConfigFile oldConfig) {
-        title = oldConfig.getString("gui.deliver.title");
-        rows = oldConfig.getInteger("gui.deliver.rows");
+        title = oldConfig.getString("gui.delivery.title");
+        rows = oldConfig.getInteger("gui.delivery.rows");
 
         save();
 

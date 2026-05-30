@@ -50,9 +50,9 @@ public class CancelOrderDialogConfig extends ConfirmationDialogConfig {
     public void save() {
         config.set("cancel-order.title", title);
         config.set("cancel-order.can-close-with-escape", canCloseWithEsc);
-        body.reload(config);
-        yesButton.reload(config);
-        noButton.reload(config);
+        body.save(config);
+        yesButton.save(config);
+        noButton.save(config);
     }
 
     @Override
@@ -71,6 +71,8 @@ public class CancelOrderDialogConfig extends ConfirmationDialogConfig {
         body.migrateV5(oldConfig, "gui.cancel-order.body");
         yesButton.migrateV5(oldConfig, "gui.cancel-order.confirm");
         noButton.migrateV5(oldConfig, "gui.cancel-order.cancel");
+
+        saveToFile();
     }
 
     @Override

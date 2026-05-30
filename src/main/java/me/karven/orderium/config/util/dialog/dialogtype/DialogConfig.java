@@ -1,6 +1,7 @@
 package me.karven.orderium.config.util.dialog.dialogtype;
 
 import me.karven.orderium.config.util.GUIConfigFile;
+import me.karven.orderium.utils.Log;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class DialogConfig extends GUIConfigFile {
@@ -32,5 +33,15 @@ public abstract class DialogConfig extends GUIConfigFile {
     @Override
     public void applyDefaultValues() {
         canCloseWithEsc = true;
+    }
+
+    public void saveToFile() {
+        save();
+
+        try {
+            config.save();
+        } catch (Exception e) {
+            Log.error("Failed to save config to file", e);
+        }
     }
 }

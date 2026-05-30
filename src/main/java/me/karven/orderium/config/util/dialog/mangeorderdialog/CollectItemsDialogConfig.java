@@ -54,9 +54,9 @@ public class CollectItemsDialogConfig extends ConfirmationDialogConfig {
     public void save() {
         config.set("collect-items.title", title);
         config.set("collect-items.can-close-with-escape", canCloseWithEsc);
-        body.reload(config);
-        yesButton.reload(config);
-        noButton.reload(config);
+        body.save(config);
+        yesButton.save(config);
+        noButton.save(config);
         amountInputConfig.save(config);
     }
 
@@ -78,6 +78,8 @@ public class CollectItemsDialogConfig extends ConfirmationDialogConfig {
         yesButton.migrateV5(oldConfig, "gui.collect-items.confirm");
         noButton.migrateV5(oldConfig, "gui.collect-items.cancel");
         amountInputConfig.migrateV5(oldConfig, "gui.collect-items.amount-label");
+
+        saveToFile();
     }
 
     @Override

@@ -9,13 +9,14 @@ import me.karven.orderium.config.util.dialog.mangeorderdialog.CancelOrderDialogC
 import me.karven.orderium.config.util.dialog.mangeorderdialog.CollectItemsDialogConfig;
 import me.karven.orderium.config.util.dialog.mangeorderdialog.ManageOrderDialogConfig;
 import me.karven.orderium.config.util.gui.*;
+import me.karven.orderium.utils.Log;
 
 import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Config {
-    private static final File dataFolder = new File("plugins" + File.separator + "Orderium");
+    public static final File dataFolder = new File("plugins" + File.separator + "Orderium");
 
     public final ConfigFile configFile;
 
@@ -49,7 +50,7 @@ public class Config {
         }
 
         // Migrating old config file
-        final File backupConfig = new File(dataFolder + "config.yml.old");
+        final File backupConfig = new File(dataFolder, "config.yml.old");
         try {
             Files.copy(new File(dataFolder, "config.yml"), backupConfig);
         } catch (IOException e) {
@@ -76,6 +77,12 @@ public class Config {
 
         // Remove the gui section entirely after migration
         configFile.set("gui", null);
+
+        try {
+            configFile.save();
+        } catch (Exception e) {
+            Log.error("Failed to migrate config", e);
+        }
     }
 
     private void setDefaults() {

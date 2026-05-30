@@ -1,6 +1,7 @@
 package me.karven.orderium.config.util;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
+import me.karven.orderium.config.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -8,9 +9,14 @@ import java.io.File;
 public abstract class GUIConfigFile {
     protected final @NotNull ConfigFile config;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected GUIConfigFile(final @NotNull String guiName) {
+        final File guiFolder = new File(Config.dataFolder, "gui");
+        if (!guiFolder.exists() || !guiFolder.isDirectory()) {
+            guiFolder.mkdirs();
+        }
         try {
-            config = ConfigFile.loadConfig(new File("plugins" + File.separator + "Orderium" + File.separator + "gui", guiName + ".yml"));
+            config = ConfigFile.loadConfig(new File(guiFolder, guiName + ".yml"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

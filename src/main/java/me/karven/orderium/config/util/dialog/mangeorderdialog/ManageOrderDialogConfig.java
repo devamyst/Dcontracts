@@ -66,8 +66,10 @@ public class ManageOrderDialogConfig extends DialogConfig {
     public void migrateV5(@NotNull ConfigFile oldConfig) {
         title = oldConfig.getString("gui.manage-order.title");
         canCloseWithEsc = true;
-        collectItemsButtonConfig.migrateV5(oldConfig, "gui.manage-order.collect-items-");
-        cancelOrderButtonConfig.migrateV5(oldConfig, "gui.manage-order.cancel-order-");
+        collectItemsButtonConfig.migrateV5(oldConfig, "gui.manage-order.collect-items");
+        cancelOrderButtonConfig.migrateV5(oldConfig, "gui.manage-order.cancel-order");
+
+        saveToFile();
     }
 
     @Override
