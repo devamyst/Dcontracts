@@ -13,8 +13,9 @@ import me.karven.orderium.config.util.gui.*;
 import java.io.File;
 import java.io.IOException;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Config {
-    private static final String CONFIG_PATH = "plugins" + File.separator + "Orderium" + File.separator + "config.yml";
+    private static final File dataFolder = new File("plugins" + File.separator + "Orderium");
 
     public final ConfigFile configFile;
 
@@ -31,23 +32,26 @@ public class Config {
     public final CancelOrderDialogConfig cancelOrderDialogConfig = new CancelOrderDialogConfig();
 
     public Config() {
+        if (!dataFolder.exists() || !dataFolder.isDirectory()) {
+            dataFolder.mkdirs();
+        }
         try {
-            configFile = ConfigFile.loadConfig(new File(CONFIG_PATH));
+            configFile = ConfigFile.loadConfig(new File(dataFolder, "config.yml"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         final int configVersion = configFile.getInteger("config-version", -1);
 
-        // Migrating old config file
         if (configFile.isNew() || configVersion >= 5) {
             setDefaults();
             return;
         }
 
-        final File backupConfig = new File(CONFIG_PATH + ".old");
+        // Migrating old config file
+        final File backupConfig = new File(dataFolder + "config.yml.old");
         try {
-            Files.copy(new File(CONFIG_PATH), backupConfig);
+            Files.copy(new File(dataFolder, "config.yml"), backupConfig);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -82,5 +86,9 @@ public class Config {
         enchantGUIConfig.applyDefaultValues();
         deliverGUIConfig.applyDefaultValues();
         newOrderDialogConfig.applyDefaultValues();
+        confirmDeliveryDialogConfig.applyDefaultValues();
+        manageOrderDialogConfig.applyDefaultValues();
+        collectItemsDialogConfig.applyDefaultValues();
+        cancelOrderDialogConfig.applyDefaultValues();
     }
 }

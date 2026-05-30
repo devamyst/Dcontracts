@@ -10,7 +10,7 @@ public abstract class GUIConfigFile {
 
     protected GUIConfigFile(final @NotNull String guiName) {
         try {
-            config = ConfigFile.loadConfig(new File("plugins" + File.separator + "Orderium" + File.separator + "gui" + File.separator + guiName + ".yml"));
+            config = ConfigFile.loadConfig(new File("plugins" + File.separator + "Orderium" + File.separator + "gui", guiName + ".yml"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
