@@ -5,9 +5,9 @@ import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogActionCallback;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
-import me.karven.orderium.config.util.DialogButtonConfig;
-import me.karven.orderium.config.util.ItemlessItemDialogBodyConfig;
-import me.karven.orderium.config.util.TextDialogInputConfig;
+import me.karven.orderium.config.util.component.dialog.DialogButtonConfig;
+import me.karven.orderium.config.util.component.dialog.ItemlessItemDialogBodyConfig;
+import me.karven.orderium.config.util.component.dialog.TextDialogInputConfig;
 import me.karven.orderium.config.util.dialog.dialogtype.ConfirmationDialogConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +70,8 @@ public class NewOrderDialogConfig extends ConfirmationDialogConfig {
         yesButton.migrateV5(oldConfig, "gui.new-order.confirm");
         noButton.migrateV5(oldConfig, "gui.new-order.change-item");
         canCloseWithEsc = true;
+
+        saveToFile();
     }
 
     @Override

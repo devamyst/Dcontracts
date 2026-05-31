@@ -1,9 +1,9 @@
-package me.karven.orderium.config.util.gui;
+package me.karven.orderium.config.util.chestgui;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
-import me.karven.orderium.config.util.ButtonConfig;
 import me.karven.orderium.config.util.GUIConfigFile;
-import me.karven.orderium.config.util.OrderConfig;
+import me.karven.orderium.config.util.component.ButtonConfig;
+import me.karven.orderium.config.util.component.OrderConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;

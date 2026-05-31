@@ -1,11 +1,11 @@
-package me.karven.orderium.config.util.gui;
+package me.karven.orderium.config.util.chestgui;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
-import me.karven.orderium.config.util.ButtonConfig;
 import me.karven.orderium.config.util.GUIConfigFile;
-import me.karven.orderium.config.util.SortButtonConfig;
-import me.karven.orderium.config.util.SortsOrderConfig;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.config.util.component.ButtonConfig;
+import me.karven.orderium.config.util.component.SortButtonConfig;
+import me.karven.orderium.config.util.component.SortsOrderConfig;
+import me.karven.orderium.obj.SortType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -82,8 +82,8 @@ public class ChooseItemGUIConfig extends GUIConfigFile {
     public void applyDefaultValues() {
         title = "Choose Your Item";
         rows = 6;
-        sortsOrderConfig.orderArray.add(SortTypes.A_Z);
-        sortsOrderConfig.orderArray.add(SortTypes.Z_A);
+        sortsOrderConfig.orderArray.add(SortType.A_Z);
+        sortsOrderConfig.orderArray.add(SortType.Z_A);
         sortButton.slot = 48;
         sortButton.lore.add("");
         sortButton.lore.add("<white> • <a-z>");

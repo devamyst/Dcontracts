@@ -7,7 +7,7 @@ import me.karven.orderium.data.DataCache;
 import me.karven.orderium.gui.AdminToolGUI;
 import me.karven.orderium.gui.ChooseItemGUI;
 import me.karven.orderium.obj.OrderStatus;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.obj.StorageMethod;
 import me.karven.orderium.utils.ConvertUtils;
 import me.karven.orderium.utils.Log;
@@ -40,7 +40,7 @@ public class ConfigCache {
 
     public String mainGuiTitle;
     public List<String> orderLore;
-    public List<SortTypes> ordersSortsOrder;
+    public List<SortType> ordersSortsOrder;
     public final SlotInfo
             refreshButton = new SlotInfo(),
             yoButton = new SlotInfo(),
@@ -55,7 +55,7 @@ public class ConfigCache {
             newOrderButton = new SlotInfo();
 
     public String chooseItemTitle;
-    public List<SortTypes> chooseSortsOrder;
+    public List<SortType> chooseSortsOrder;
     public final SlotInfo
             chooseBackButton = new SlotInfo(),
             chooseNextButton = new SlotInfo(),
@@ -229,13 +229,13 @@ public class ConfigCache {
         maxCollectPerMinute = config.getInteger(("max-collect-per-minute"));
         enchantItem = config.getBoolean("enchantments");
         shulkerDelivering = config.getBoolean("shulker-delivering");
-        sortPlaceholders = new TagResolver[SortTypes.values().length];
+        sortPlaceholders = new TagResolver[SortType.values().length];
         int i = 0;
-        for (SortTypes sortType : SortTypes.values()) {
+        for (SortType sortType : SortType.values()) {
             @Subst("ignored")
             final String identifier = sortType.getIdentifier();
-            sortType.setDisplay(config.getString("sort-types." + identifier));
-            sortPlaceholders[i++] = Placeholder.parsed(identifier, sortType.getDisplay());
+            sortType.setDisplayActive(config.getString("sort-types." + identifier));
+            sortPlaceholders[i++] = Placeholder.parsed(identifier, sortType.getDisplayActive());
         }
 
         for (OrderStatus status : OrderStatus.values()) {
@@ -274,7 +274,7 @@ public class ConfigCache {
 
         mainGuiTitle = config.getString("gui.main.title");
         orderLore = config.getStringList("gui.main.order-lore");
-        ordersSortsOrder = config.getStringList("gui.main.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
+        ordersSortsOrder = config.getStringList("gui.main.sorts-order").stream().map(SortType::fromIdentifier).toList();
         refreshButton.deserialize(config.getConfigSection("gui.main.buttons.refresh"));
         yoButton.deserialize(config.getConfigSection("gui.main.buttons.your-orders"));
         ordersSortButton.deserialize(config.getConfigSection("gui.main.buttons.sort"));
@@ -287,7 +287,7 @@ public class ConfigCache {
         newOrderButton.deserialize(config.getConfigSection("gui.your-orders.buttons.new-order"));
 
         chooseItemTitle = config.getString("gui.choose-item.title");
-        chooseSortsOrder = config.getStringList("gui.choose-item.sorts-order").stream().map(SortTypes::fromIdentifier).toList();
+        chooseSortsOrder = config.getStringList("gui.choose-item.sorts-order").stream().map(SortType::fromIdentifier).toList();
         chooseBackButton.deserialize(config.getConfigSection("gui.choose-item.buttons.back"));
         chooseNextButton.deserialize(config.getConfigSection("gui.choose-item.buttons.next"));
         chooseSearchButton.deserialize(config.getConfigSection("gui.choose-item.buttons.search"));
@@ -460,12 +460,12 @@ public class ConfigCache {
 
         // SORT TYPES
         config.addComment("sort-types", "How should different types of sorting appear");
-        config.addDefault("sort-types." + SortTypes.MOST_MONEY_PER_ITEM.getIdentifier(), "Most Money Per Item");
-        config.addDefault("sort-types." + SortTypes.RECENTLY_LISTED.getIdentifier(), "Recently Listed");
-        config.addDefault("sort-types." + SortTypes.MOST_DELIVERED.getIdentifier(), "Most Delivered");
-        config.addDefault("sort-types." + SortTypes.MOST_PAID.getIdentifier(), "Most Paid");
-        config.addDefault("sort-types." + SortTypes.A_Z.getIdentifier(), "A - Z");
-        config.addDefault("sort-types." + SortTypes.Z_A.getIdentifier(), "Z - A");
+        config.addDefault("sort-types." + SortType.MOST_MONEY_PER_ITEM.getIdentifier(), "Most Money Per Item");
+        config.addDefault("sort-types." + SortType.RECENTLY_LISTED.getIdentifier(), "Recently Listed");
+        config.addDefault("sort-types." + SortType.MOST_DELIVERED.getIdentifier(), "Most Delivered");
+        config.addDefault("sort-types." + SortType.MOST_PAID.getIdentifier(), "Most Paid");
+        config.addDefault("sort-types." + SortType.A_Z.getIdentifier(), "A - Z");
+        config.addDefault("sort-types." + SortType.Z_A.getIdentifier(), "Z - A");
 
         // ORDER STATUS
         config.addComment("order-status", "How should different types of order status appear\nThey will be used with <order-status> placeholder");

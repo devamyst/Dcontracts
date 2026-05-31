@@ -4,7 +4,7 @@ import io.papermc.paper.dialog.Dialog;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.guiframework.InventoryItem;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.obj.orderitem.BlacklistedItem;
 import me.karven.orderium.obj.orderitem.EnchantableItem;
 import me.karven.orderium.obj.orderitem.OrderItem;
@@ -33,11 +33,11 @@ public class ChooseItemGUI {
         AZ.clear();
         ZA.clear();
 
-        createPages(AZ, SortTypes.A_Z);
-        createPages(ZA, SortTypes.Z_A);
+        createPages(AZ, SortType.A_Z);
+        createPages(ZA, SortType.Z_A);
     }
 
-    private static List<InventoryGUI> getPages(SortTypes sortType) {
+    private static List<InventoryGUI> getPages(SortType sortType) {
         switch (sortType) {
             case A_Z -> { return AZ; }
             case Z_A -> { return ZA; }
@@ -55,8 +55,8 @@ public class ChooseItemGUI {
         return pages.getFirst();
     }
 
-    private static void addButtons(InventoryGUI gui, List<InventoryGUI> pages, SortTypes sortType, final int idx, final int pagesAmount) {
-        final List<SortTypes> sortOrder = cache.chooseSortsOrder;
+    private static void addButtons(InventoryGUI gui, List<InventoryGUI> pages, SortType sortType, final int idx, final int pagesAmount) {
+        final List<SortType> sortOrder = cache.chooseSortsOrder;
         final int sortIdx = sortOrder.indexOf(sortType);
 
         if (idx > 0) gui.addItem(ConvertUtils.parseNewButton(
@@ -89,11 +89,11 @@ public class ChooseItemGUI {
         }), cache.chooseSearchButton.getSlot() + 45);
     }
 
-    private static void createPages(List<InventoryGUI> pages, SortTypes sortType) {
+    private static void createPages(List<InventoryGUI> pages, SortType sortType) {
         createPages(pages, sortType, plugin.getDataCache().getItems(sortType));
     }
 
-    private static void createPages(List<InventoryGUI> pages, SortTypes sortType, String search) {
+    private static void createPages(List<InventoryGUI> pages, SortType sortType, String search) {
         if (search.isEmpty()) {
             createPages(pages, sortType);
             return;
@@ -103,7 +103,7 @@ public class ChooseItemGUI {
         createPages(pages, sortType, items);
     }
 
-    private static void createPages(List<InventoryGUI> pages, SortTypes sortType, Collection<OrderItem> items) {
+    private static void createPages(List<InventoryGUI> pages, SortType sortType, Collection<OrderItem> items) {
         final int pagesAmount = ConvertUtils.ceil_div(items.size(), 45);
 
         InventoryGUI gui = initPage(pages, sortType, 0, pagesAmount);
@@ -150,7 +150,7 @@ public class ChooseItemGUI {
         pages.add(gui);
     }
 
-    private static InventoryGUI initPage(List<InventoryGUI> pages, SortTypes sortType, int idx, int pagesAmount) {
+    private static InventoryGUI initPage(List<InventoryGUI> pages, SortType sortType, int idx, int pagesAmount) {
         InventoryGUI gui = new InventoryGUI(6, mm.deserialize(cache.chooseItemTitle));
         addButtons(gui, pages, sortType, idx, pagesAmount);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);

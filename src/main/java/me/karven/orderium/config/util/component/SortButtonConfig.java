@@ -1,4 +1,4 @@
-package me.karven.orderium.config.util;
+package me.karven.orderium.config.util.component;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.karven.orderium.utils.ConvertUtils;

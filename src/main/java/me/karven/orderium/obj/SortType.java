@@ -3,7 +3,7 @@ package me.karven.orderium.obj;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public enum SortTypes {
+public enum SortType {
     MOST_MONEY_PER_ITEM("most-money-per-item"),
     RECENTLY_LISTED("recently-listed"),
     MOST_DELIVERED("most-delivered"),
@@ -12,26 +12,35 @@ public enum SortTypes {
     Z_A("z-a");
 
     private final String identifier;
-    private String display;
+    private String displayActive;
+    private String displayInactive;
 
     public @NotNull String getIdentifier() {
         return identifier;
     }
 
-    public String getDisplay() {
-        return display;
+    public String getDisplayActive() {
+        return displayActive;
     }
 
-    public void setDisplay(final @NotNull String display) {
-        this.display = display;
+    public String getDisplayInactive() {
+        return displayInactive;
     }
 
-    SortTypes(String identifier) {
+    public void setDisplayActive(final @NotNull String displayActive) {
+        this.displayActive = displayActive;
+    }
+
+    public void setDisplayInactive(final @NotNull String displayInactive) {
+        this.displayInactive = displayInactive;
+    }
+
+    SortType(String identifier) {
         this.identifier = identifier;
     }
 
-    public static @Nullable SortTypes fromIdentifier(String identifier) {
-        for (SortTypes sortType : SortTypes.values()) {
+    public static @Nullable SortType fromIdentifier(String identifier) {
+        for (SortType sortType : SortType.values()) {
             if (sortType.identifier.equals(identifier)) return sortType;
         }
         return null;

@@ -6,7 +6,7 @@ import io.papermc.paper.dialog.Dialog;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.utils.AlgoUtils;
 import me.karven.orderium.utils.ConvertUtils;
 import me.karven.orderium.utils.DispatchUtil;
@@ -41,7 +41,7 @@ public class MainGUI {
         this.search = "";
         this.sortIdx = sortIdx;
         this.player = p;
-        final SortTypes sortType = cache.ordersSortsOrder.get(sortIdx);
+        final SortType sortType = cache.ordersSortsOrder.get(sortIdx);
 
         Collection<Order> allOrders = plugin.getDataCache().getSortedOrders(sortType);
         orders = allOrders.stream().filter(Order::isActive).toList();
@@ -54,7 +54,7 @@ public class MainGUI {
         this.search = search;
         this.sortIdx = sortIdx;
         this.player = p;
-        final SortTypes sortType = cache.ordersSortsOrder.get(sortIdx);
+        final SortType sortType = cache.ordersSortsOrder.get(sortIdx);
 
         Collection<Order> allOrders = AlgoUtils.searchOrder(search, plugin.getDataCache().getSortedOrders(sortType));
         orders = allOrders.stream().filter(Order::isActive).toList();

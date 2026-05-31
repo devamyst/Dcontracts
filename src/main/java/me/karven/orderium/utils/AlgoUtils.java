@@ -7,7 +7,7 @@ import io.papermc.paper.datacomponent.item.PotionContents;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import me.karven.orderium.obj.Order;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.obj.orderitem.OrderItem;
 import me.karven.orderium.obj.orderitem.SearchableItem;
 import org.bukkit.*;
@@ -120,7 +120,7 @@ public class AlgoUtils {
         return true;
     }
 
-    public static Comparator<OrderItem> getComparator(SortTypes sortType) {
+    public static Comparator<OrderItem> getComparator(SortType sortType) {
         switch (sortType) {
             case A_Z -> { return getComparator(false); }
             case Z_A -> { return getComparator(true); }

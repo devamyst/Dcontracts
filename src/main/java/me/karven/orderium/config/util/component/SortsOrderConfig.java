@@ -1,7 +1,7 @@
-package me.karven.orderium.config.util;
+package me.karven.orderium.config.util.component;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SortsOrderConfig {
     private final String path;
-    public final @NotNull ArrayList<@NotNull SortTypes> orderArray = new ArrayList<>();
+    public final @NotNull ArrayList<@NotNull SortType> orderArray = new ArrayList<>();
 
     public SortsOrderConfig(final @NotNull String path) {
         this.path = path;
@@ -24,7 +24,7 @@ public class SortsOrderConfig {
     public void reload(final @NotNull List<@Nullable String> sortOrderString) {
         orderArray.clear();
         for (final String sortString : sortOrderString) {
-            final SortTypes sortType = SortTypes.fromIdentifier(sortString);
+            final SortType sortType = SortType.fromIdentifier(sortString);
             if (sortType == null) continue;
             orderArray.add(sortType);
         }
@@ -38,12 +38,12 @@ public class SortsOrderConfig {
         config.addDefault(path, stringSortsOrder());
     }
 
-    public @NotNull SortTypes index(final int index) {
+    public @NotNull SortType index(final int index) {
         return orderArray.get(index % orderArray.size());
     }
 
     private @NotNull List<String> stringSortsOrder() {
-        return orderArray.stream().map(SortTypes::getIdentifier).toList();
+        return orderArray.stream().map(SortType::getIdentifier).toList();
     }
 
     public void migrateV5(final @NotNull ConfigFile config, final @NotNull String oldPath) {

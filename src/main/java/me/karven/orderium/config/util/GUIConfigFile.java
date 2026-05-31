@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public abstract class GUIConfigFile {
+public abstract class GUIConfigFile implements IConfigFile {
     protected final @NotNull ConfigFile config;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

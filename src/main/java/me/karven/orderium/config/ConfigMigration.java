@@ -3,7 +3,7 @@ package me.karven.orderium.config;
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.karven.orderium.config.util.SlotInfo;
 import me.karven.orderium.obj.OrderStatus;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.utils.Log;
 import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.NotNull;
@@ -111,12 +111,12 @@ public class ConfigMigration {
 
         // SORT TYPES
         config.addComment("sort-types", "How should different types of sorting appear");
-        config.addDefault("sort-types." + SortTypes.MOST_MONEY_PER_ITEM.getIdentifier(), "Most Money Per Item");
-        config.addDefault("sort-types." + SortTypes.RECENTLY_LISTED.getIdentifier(), "Recently Listed");
-        config.addDefault("sort-types." + SortTypes.MOST_DELIVERED.getIdentifier(), "Most Delivered");
-        config.addDefault("sort-types." + SortTypes.MOST_PAID.getIdentifier(), "Most Paid");
-        config.addDefault("sort-types." + SortTypes.A_Z.getIdentifier(), "A - Z");
-        config.addDefault("sort-types." + SortTypes.Z_A.getIdentifier(), "Z - A");
+        config.addDefault("sort-types." + SortType.MOST_MONEY_PER_ITEM.getIdentifier(), "Most Money Per Item");
+        config.addDefault("sort-types." + SortType.RECENTLY_LISTED.getIdentifier(), "Recently Listed");
+        config.addDefault("sort-types." + SortType.MOST_DELIVERED.getIdentifier(), "Most Delivered");
+        config.addDefault("sort-types." + SortType.MOST_PAID.getIdentifier(), "Most Paid");
+        config.addDefault("sort-types." + SortType.A_Z.getIdentifier(), "A - Z");
+        config.addDefault("sort-types." + SortType.Z_A.getIdentifier(), "Z - A");
 
         // ORDER STATUS
         config.addComment("order-status", "How should different types of order status appear\nThey will be used with <order-status> placeholder");

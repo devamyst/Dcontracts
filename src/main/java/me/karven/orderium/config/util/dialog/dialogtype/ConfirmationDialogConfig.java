@@ -1,9 +1,9 @@
 package me.karven.orderium.config.util.dialog.dialogtype;
 
-import me.karven.orderium.config.util.DialogButtonConfig;
+import me.karven.orderium.config.util.component.dialog.DialogButtonConfig;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ConfirmationDialogConfig extends DialogConfig {
+public abstract class ConfirmationDialogConfig extends DialogConfigFile {
     public DialogButtonConfig yesButton;
     public DialogButtonConfig noButton;
 

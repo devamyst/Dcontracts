@@ -1,8 +1,9 @@
-package me.karven.orderium.config.util;
+package me.karven.orderium.config.util.component.dialog;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.input.TextDialogInput;
+import me.karven.orderium.config.util.component.ComponentConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 

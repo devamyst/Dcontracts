@@ -3,12 +3,10 @@ package me.karven.orderium.config;
 import com.google.common.io.Files;
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.karven.orderium.config.util.SignGUIConfig;
+import me.karven.orderium.config.util.chestgui.*;
 import me.karven.orderium.config.util.dialog.ConfirmDeliveryDialogConfig;
+import me.karven.orderium.config.util.dialog.ManageOrderDialogConfig;
 import me.karven.orderium.config.util.dialog.NewOrderDialogConfig;
-import me.karven.orderium.config.util.dialog.mangeorderdialog.CancelOrderDialogConfig;
-import me.karven.orderium.config.util.dialog.mangeorderdialog.CollectItemsDialogConfig;
-import me.karven.orderium.config.util.dialog.mangeorderdialog.ManageOrderDialogConfig;
-import me.karven.orderium.config.util.gui.*;
 import me.karven.orderium.utils.Log;
 
 import java.io.File;
@@ -29,8 +27,6 @@ public class Config {
     public final NewOrderDialogConfig newOrderDialogConfig = new NewOrderDialogConfig();
     public final ConfirmDeliveryDialogConfig confirmDeliveryDialogConfig = new ConfirmDeliveryDialogConfig();
     public final ManageOrderDialogConfig manageOrderDialogConfig = new ManageOrderDialogConfig();
-    public final CollectItemsDialogConfig collectItemsDialogConfig = new CollectItemsDialogConfig();
-    public final CancelOrderDialogConfig cancelOrderDialogConfig = new CancelOrderDialogConfig();
 
     public Config() {
         if (!dataFolder.exists() || !dataFolder.isDirectory()) {
@@ -72,8 +68,6 @@ public class Config {
 
         // Manage Order Dialogs
         manageOrderDialogConfig.migrateV5(configFile);
-        collectItemsDialogConfig.migrateV5(configFile);
-        cancelOrderDialogConfig.migrateV5(configFile);
 
         // Remove the gui section entirely after migration
         configFile.set("gui", null);
@@ -95,7 +89,5 @@ public class Config {
         newOrderDialogConfig.applyDefaultValues();
         confirmDeliveryDialogConfig.applyDefaultValues();
         manageOrderDialogConfig.applyDefaultValues();
-        collectItemsDialogConfig.applyDefaultValues();
-        cancelOrderDialogConfig.applyDefaultValues();
     }
 }

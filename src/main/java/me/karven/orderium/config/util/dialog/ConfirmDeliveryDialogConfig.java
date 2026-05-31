@@ -5,9 +5,9 @@ import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogActionCallback;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
-import me.karven.orderium.config.util.DialogButtonConfig;
-import me.karven.orderium.config.util.ItemlessItemDialogBodyConfig;
-import me.karven.orderium.config.util.MessageDialogBodyConfig;
+import me.karven.orderium.config.util.component.dialog.DialogButtonConfig;
+import me.karven.orderium.config.util.component.dialog.ItemlessItemDialogBodyConfig;
+import me.karven.orderium.config.util.component.dialog.MessageDialogBodyConfig;
 import me.karven.orderium.config.util.dialog.dialogtype.ConfirmationDialogConfig;
 import me.karven.orderium.utils.Values;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -75,5 +75,7 @@ public class ConfirmDeliveryDialogConfig extends ConfirmationDialogConfig {
         noButton.migrateV5(oldConfig, "gui.confirm-delivery.cancel");
         textBody.migrateV5(oldConfig, "gui.confirm-delivery.body");
         itemBody.migrateV5(oldConfig, "gui.confirm-delivery.transaction-message");
+
+        saveToFile();
     }
 }

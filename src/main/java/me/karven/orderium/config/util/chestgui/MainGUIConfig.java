@@ -1,8 +1,12 @@
-package me.karven.orderium.config.util.gui;
+package me.karven.orderium.config.util.chestgui;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
-import me.karven.orderium.config.util.*;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.config.util.GUIConfigFile;
+import me.karven.orderium.config.util.component.ButtonConfig;
+import me.karven.orderium.config.util.component.OrderConfig;
+import me.karven.orderium.config.util.component.SortButtonConfig;
+import me.karven.orderium.config.util.component.SortsOrderConfig;
+import me.karven.orderium.obj.SortType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -99,10 +103,10 @@ public class MainGUIConfig extends GUIConfigFile {
         orderConfig.lore.add("<white>Click to deliver <aqua><player><white>'s order");
         orderConfig.slots.addAll(IntStream.range(0, 45).boxed().toList());
 
-        sortsOrderConfig.orderArray.add(SortTypes.MOST_MONEY_PER_ITEM);
-        sortsOrderConfig.orderArray.add(SortTypes.MOST_DELIVERED);
-        sortsOrderConfig.orderArray.add(SortTypes.RECENTLY_LISTED);
-        sortsOrderConfig.orderArray.add(SortTypes.MOST_PAID);
+        sortsOrderConfig.orderArray.add(SortType.MOST_MONEY_PER_ITEM);
+        sortsOrderConfig.orderArray.add(SortType.MOST_DELIVERED);
+        sortsOrderConfig.orderArray.add(SortType.RECENTLY_LISTED);
+        sortsOrderConfig.orderArray.add(SortType.MOST_PAID);
 
         backButton.slot = 45;
         backButton.itemStack = ItemStack.of(Material.ARROW);

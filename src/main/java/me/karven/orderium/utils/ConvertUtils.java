@@ -6,7 +6,7 @@ import io.papermc.paper.registry.TypedKey;
 import me.karven.orderium.config.util.SlotInfo;
 import me.karven.orderium.guiframework.InventoryItem;
 import me.karven.orderium.obj.Order;
-import me.karven.orderium.obj.SortTypes;
+import me.karven.orderium.obj.SortType;
 import me.karven.orderium.obj.orderitem.BlacklistedItem;
 import me.karven.orderium.obj.orderitem.CustomItem;
 import net.kyori.adventure.key.Key;
@@ -200,12 +200,12 @@ public class ConvertUtils {
         return new InventoryItem(item, action);
     }
 
-    public static InventoryItem parseSortButton(SlotInfo info, SortTypes type, Consumer<InventoryClickEvent> action) {
+    public static InventoryItem parseSortButton(SlotInfo info, SortType type, Consumer<InventoryClickEvent> action) {
         final ItemStack item = info.getType().createItemStack();
         List<TagResolver> placeholders = new ArrayList<>(List.of(cache.sortPlaceholders));
         @Subst("ignored")
         final String identifier = type.getIdentifier();
-        placeholders.add(Placeholder.parsed(identifier, cache.sortPrefix + type.getDisplay()));
+        placeholders.add(Placeholder.parsed(identifier, cache.sortPrefix + type.getDisplayActive()));
         item.editMeta(meta -> {
             meta.displayName(mm.deserialize(info.getDisplayName(), TagResolver.resolver(placeholders)).decoration(TextDecoration.ITALIC, false));
             final List<Component> lore = info.getLore().stream().map(str -> mm.deserialize(str, TagResolver.resolver(placeholders)).decoration(TextDecoration.ITALIC, false)).toList();

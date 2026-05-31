@@ -4,11 +4,11 @@ import me.karven.orderium.config.util.GUIConfigFile;
 import me.karven.orderium.utils.Log;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class DialogConfig extends GUIConfigFile {
+public abstract class DialogConfigFile extends GUIConfigFile {
     public String title;
     public boolean canCloseWithEsc;
 
-    public DialogConfig(final @NotNull String guiName) {
+    public DialogConfigFile(final @NotNull String guiName) {
         super(guiName);
     }
 
