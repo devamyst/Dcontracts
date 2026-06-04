@@ -5,21 +5,28 @@ import me.karven.orderium.api.events.PlayerCollectItemsEvent;
 import me.karven.orderium.api.events.PlayerCreateOrderEvent;
 import me.karven.orderium.api.events.PlayerDeliverOrderEvent;
 import me.karven.orderium.gui.YourOrderGUI;
-import me.karven.orderium.utils.ConvertUtils;
+import me.karven.orderium.guiframework.InventoryItem;
 import me.karven.orderium.utils.EconUtils;
 import me.karven.orderium.utils.PDCUtils;
 import me.karven.orderium.utils.PlayerUtils;
+import me.karven.orderium.utils.Values;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
+import static me.karven.orderium.utils.ConvertUtils.formatNumber;
 
 // TODO: Replace `item` with OrderItem instead of ItemStack.
 // Problem: how to store it in database?
@@ -47,6 +54,44 @@ public class Order implements me.karven.orderium.api.Order {
 
     public boolean isActive() { return delivered < amount && expiresAt > System.currentTimeMillis(); }
 
+    public @NotNull InventoryItem item(final @NotNull List<@NotNull String> lore, final Consumer<InventoryClickEvent> action) {
+        final List<Component> parsedLore = lore.stream().map(this::deserializeText).toList();
+        final ItemStack itemStack = item.clone();
+        itemStack.lore(parsedLore);
+        return new InventoryItem(itemStack, action);
+    }
+
+    public @NotNull Component deserializeText(final @NotNull String text) {
+        final OfflinePlayer player = Bukkit.getOfflinePlayer(owner);
+        final String playerName = player.getName() == null ? owner.toString() : player.getName();
+        long millis = expiresAt - System.currentTimeMillis();
+        long sec = millis / 1000;
+        long min = sec / 60;
+        long hour = min / 60;
+        final long day = hour / 24;
+        hour %= 24;
+        min %= 60;
+        sec %= 60;
+        millis %= 1000;
+        return Values.minimessage.deserialize(text,
+                Placeholder.unparsed("money-per", formatNumber(moneyPer)),
+                Placeholder.unparsed("paid", formatNumber(moneyPer * delivered)),
+                Placeholder.unparsed("total", formatNumber(moneyPer * amount)),
+                Placeholder.unparsed("delivered", formatNumber(delivered)),
+                Placeholder.unparsed("amount", formatNumber(amount)),
+                Placeholder.unparsed("in-storage", formatNumber(inStorage)),
+                Placeholder.unparsed("player", playerName),
+                Placeholder.component("item", Component.translatable(item.translationKey())),
+                Placeholder.component("order-status", Values.minimessage.deserialize(getStatus().getText(),
+                        Placeholder.unparsed("day", String.valueOf(day)),
+                        Placeholder.unparsed("hour", String.valueOf(hour)),
+                        Placeholder.unparsed("minute", String.valueOf(min)),
+                        Placeholder.unparsed("second", String.valueOf(sec)),
+                        Placeholder.unparsed("millisecond", String.valueOf(millis))
+                ))
+        );
+    }
+
     /// Must be called in the player region
     public void deliver(Player p, Iterable<ItemStack> items, boolean isAsync) {
         PlayerDeliverOrderEvent.Pre preEvent = new PlayerDeliverOrderEvent.Pre(p, this, isAsync);
@@ -56,7 +101,7 @@ public class Order implements me.karven.orderium.api.Order {
             double moneyReceived = receive; // I don't like working with wrapped class at all so will use primitive
             if (moneyReceived == 0.0) return;
             EconUtils.addMoney(p, moneyReceived);
-            p.sendRichMessage(cache.delivered, Placeholder.unparsed("money", ConvertUtils.formatNumber(moneyReceived)));
+            p.sendRichMessage(cache.delivered, Placeholder.unparsed("money", formatNumber(moneyReceived)));
             PlayerUtils.playSound(p, cache.deliverSound);
 
             PlayerDeliverOrderEvent.Post postEvent = new PlayerDeliverOrderEvent.Post(p, this, isAsync);
@@ -70,7 +115,7 @@ public class Order implements me.karven.orderium.api.Order {
             ownerPlayer.sendRichMessage(
                     cache.receiveDelivery,
                     Placeholder.unparsed("deliverer", p.getName()),
-                    Placeholder.unparsed("amount",  ConvertUtils.formatNumber((int) (moneyReceived / moneyPer))),
+                    Placeholder.unparsed("amount",  formatNumber((int) (moneyReceived / moneyPer))),
                     Placeholder.component("item", (displayName == null ? Component.translatable(item.getType().getItemTranslationKey()) : displayName))
             );
         });
@@ -80,7 +125,7 @@ public class Order implements me.karven.orderium.api.Order {
     public Response collect(String rawAmount) {
         final Player p = Bukkit.getPlayer(getOwnerUniqueId());
         if (p == null || !p.isOnline() || rawAmount == null) return Response.INVALID;
-        final double dAmount = ConvertUtils.formatNumber(rawAmount);
+        final double dAmount = formatNumber(rawAmount);
         final int amount = (int) dAmount;
         if (dAmount == -1 || dAmount != amount) {
             p.sendRichMessage(cache.invalidInput);
@@ -231,9 +276,9 @@ public class Order implements me.karven.orderium.api.Order {
     /// Must be called in the player region
     public static Response create(Player p, ItemStack item, String rawMoneyPer, String rawAmount) {
         if (rawAmount == null || rawMoneyPer == null) return Response.INVALID;
-        final double dAmount = ConvertUtils.formatNumber(rawAmount);
+        final double dAmount = formatNumber(rawAmount);
         final int amount = (int) dAmount;
-        final double moneyPer = ConvertUtils.formatNumber(rawMoneyPer);
+        final double moneyPer = formatNumber(rawMoneyPer);
         if (dAmount == -1 || moneyPer == -1 || dAmount != amount) return Response.INVALID;
 
         return create(p, item, moneyPer, amount);
