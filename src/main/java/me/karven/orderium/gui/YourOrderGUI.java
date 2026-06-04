@@ -32,7 +32,7 @@ public class YourOrderGUI {
         for (Order order : orders) {
             gui.addItem(ConvertUtils.parseOrder(order, rawLore, event -> {
                 PlayerUtils.closeInv(p);
-                Dialog dialog = ManageOrderDialog.getDialog(order, p);
+                Dialog dialog = ManageOrderDialog.getDialog(order);
                 PlayerUtils.openDialog(p, dialog);
             }), slot++);
         }
