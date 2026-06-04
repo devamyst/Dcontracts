@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.karven.orderium.load.Orderium.plugin;
+import static me.karven.orderium.Orderium.plugin;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ConfigCache {
-    public static final ConfigCache cache = new ConfigCache();
+    public static ConfigCache cache;
 
     private final File configFile;
     private ConfigFile config;

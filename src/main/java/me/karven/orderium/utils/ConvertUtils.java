@@ -34,8 +34,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ConvertUtils {

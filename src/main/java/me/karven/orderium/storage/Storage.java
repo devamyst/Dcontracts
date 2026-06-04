@@ -26,8 +26,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
 
 public abstract class Storage {
     protected static ConfigCache configs;

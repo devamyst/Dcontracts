@@ -8,6 +8,7 @@ import me.karven.orderium.config.util.dialog.ManageOrderDialogConfig;
 import me.karven.orderium.config.util.dialog.NewOrderDialogConfig;
 import me.karven.orderium.obj.OrderStatus;
 import me.karven.orderium.obj.SortType;
+import me.karven.orderium.utils.DispatchUtil;
 import me.karven.orderium.utils.Log;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -20,13 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class Config {
+    public static Config config;
     public static final int CURRENT_CONFIG_VERSION = 5;
     public static final File dataFolder = new File("plugins" + File.separator + "Orderium");
 
-    public final ConfigFile configFile;
+    public ConfigFile configFile;
 
     public final MainGUIConfig mainGUIConfig = new MainGUIConfig();
     public final YourOrdersGUIConfig yourOrdersGUIConfig = new YourOrdersGUIConfig();
@@ -78,7 +81,6 @@ public class Config {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         setDefaults();
         if (configFile.isNew()) {
             // save default config to file if it's newly created
@@ -155,6 +157,15 @@ public class Config {
 
         setDefaultMessages();
         setDefaultSounds();
+    }
+
+    public CompletableFuture<Void> reloadAsync() {
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+        DispatchUtil.async(() -> {
+            reload();
+            future.complete(null);
+        });
+        return future;
     }
 
     public void reload() {

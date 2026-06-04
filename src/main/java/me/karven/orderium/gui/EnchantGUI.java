@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
 
 /**
  * GUI that lets players select enchantments of their item

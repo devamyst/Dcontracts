@@ -1,14 +1,17 @@
 package me.karven.orderium.config.util.component;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
+import me.karven.orderium.guiframework.InventoryItem;
 import me.karven.orderium.utils.ConvertUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ButtonConfig extends ComponentConfig {
     public ItemStack itemStack;
@@ -39,6 +42,10 @@ public class ButtonConfig extends ComponentConfig {
     @Override
     public void migrateV5(final @NotNull ConfigFile config, final @NotNull String oldPath) {
         migrateV5(config, oldPath, 45);
+    }
+
+    public @NotNull InventoryItem item(final @NotNull Consumer<InventoryClickEvent> action) {
+        return new InventoryItem(itemStack, action);
     }
 
     // Migrate config version 4 -> 5

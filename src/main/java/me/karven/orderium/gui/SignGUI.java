@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static me.karven.orderium.load.Orderium.plugin;
+import static me.karven.orderium.Orderium.plugin;
 
 @SuppressWarnings("UnstableApiUsage")
 public class SignGUI implements PacketListener {

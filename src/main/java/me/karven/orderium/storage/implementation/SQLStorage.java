@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
 
 public class SQLStorage extends Storage {
 

@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
+import static me.karven.orderium.Orderium.plugin;
+import static me.karven.orderium.config.Config.config;
 
 public class ChooseItemGUI {
     private static final List<InventoryGUI> AZ = new ArrayList<>();
@@ -46,47 +46,55 @@ public class ChooseItemGUI {
     }
 
     public static InventoryGUI getGUI(int sortIdx, int pageIdx) {
-        return getPages(cache.chooseSortsOrder.get(sortIdx)).get(pageIdx);
+        return getPages(config.chooseItemGUIConfig.sortsOrderConfig.index(sortIdx)).get(pageIdx);
     }
 
     public static InventoryGUI getGUI(int sortIdx, String search) {
         final List<InventoryGUI> pages = new ArrayList<>();
-        createPages(pages, cache.chooseSortsOrder.get(sortIdx), search);
+        createPages(pages, config.chooseItemGUIConfig.sortsOrderConfig.index(sortIdx), search);
         return pages.getFirst();
     }
 
     private static void addButtons(InventoryGUI gui, List<InventoryGUI> pages, SortType sortType, final int idx, final int pagesAmount) {
-        final List<SortType> sortOrder = cache.chooseSortsOrder;
+        final List<SortType> sortOrder = config.chooseItemGUIConfig.sortsOrderConfig.orderArray;
         final int sortIdx = sortOrder.indexOf(sortType);
 
-        if (idx > 0) gui.addItem(ConvertUtils.parseNewButton(
-                cache.chooseBackButton,
-                e -> PlayerUtils.clickBack(e, pages.get(idx - 1))
-        ), cache.chooseBackButton.getSlot() + 45);
+        if (idx > 0)
+            gui.addItem(
+                config.chooseItemGUIConfig.backButton.item(e -> PlayerUtils.clickBack(e, pages.get(idx - 1))),
+                config.chooseItemGUIConfig.backButton.slot
+        );
 
-        if (idx + 1 < pagesAmount) gui.addItem(ConvertUtils.parseNewButton(
-                cache.chooseNextButton,
-                e -> PlayerUtils.clickNext(e, pages.get(idx + 1))
-        ), cache.chooseNextButton.getSlot() + 45);
-
-        gui.addItem(ConvertUtils.parseSortButton(cache.chooseSortButton, sortType, e -> {
-            if (!(e.getWhoClicked() instanceof Player p)) return;
-            final int nextIdx = sortIdx == sortOrder.size() - 1 ? 0 : sortIdx + 1;
-            PlayerUtils.openGUI(p, getGUI(nextIdx, idx), false);
-            PlayerUtils.playSound(p, cache.sortSound);
-        }), cache.chooseSortButton.getSlot() + 45);
-
-        gui.addItem(ConvertUtils.parseNewButton(cache.chooseSearchButton, e -> {
-            if (!(e.getWhoClicked() instanceof Player p)) return;
-            SignGUI.newSession(
-                    p,
-                    (s) -> PlayerUtils.openGUI(p, ChooseItemGUI.getGUI(sortIdx, s), true),
-                    cache.lines,
-                    cache.signBlock,
-                    cache.searchLine
+        if (idx + 1 < pagesAmount)
+            gui.addItem(
+                    config.chooseItemGUIConfig.nextButton.item(e -> PlayerUtils.clickNext(e, pages.get(idx + 1))),
+                    config.chooseItemGUIConfig.nextButton.slot
             );
 
-        }), cache.chooseSearchButton.getSlot() + 45);
+        gui.addItem(
+                config.chooseItemGUIConfig.sortButton.item(e -> {
+                    if (!(e.getWhoClicked() instanceof Player p)) return;
+                    final int nextIdx = sortIdx == sortOrder.size() - 1 ? 0 : sortIdx + 1;
+                    PlayerUtils.openGUI(p, getGUI(nextIdx, idx), false);
+                    PlayerUtils.playSound(p, config.sortSound);
+                }, sortType),
+                config.chooseItemGUIConfig.sortButton.slot
+        );
+
+        gui.addItem(
+                config.chooseItemGUIConfig.searchButton.item(e -> {
+                    if (!(e.getWhoClicked() instanceof Player p)) return;
+                    SignGUI.newSession(
+                            p,
+                            (s) -> PlayerUtils.openGUI(p, ChooseItemGUI.getGUI(sortIdx, s), true),
+                            config.signGUIConfig.signLines,
+                            config.signGUIConfig.signType(),
+                            config.signGUIConfig.queryLine
+                    );
+
+                }),
+                config.chooseItemGUIConfig.searchButton.slot
+        );
     }
 
     private static void createPages(List<InventoryGUI> pages, SortType sortType) {
@@ -121,7 +129,7 @@ public class ChooseItemGUI {
                 if (e.getClick() != ClickType.RIGHT || !p.hasPermission("orderium.admin.blacklist")) {
 
                     if (
-                            !cache.enchantItem ||
+                            !config.enchantGUIConfig.enabled ||
                             !(orderItem instanceof EnchantableItem enchantableItem)
                     ) {
                         Dialog dialog = NewOrderDialog.getDialog(orderItem);
@@ -151,7 +159,7 @@ public class ChooseItemGUI {
     }
 
     private static InventoryGUI initPage(List<InventoryGUI> pages, SortType sortType, int idx, int pagesAmount) {
-        InventoryGUI gui = new InventoryGUI(6, mm.deserialize(cache.chooseItemTitle));
+        InventoryGUI gui = new InventoryGUI(6, mm.deserialize(config.chooseItemGUIConfig.title));
         addButtons(gui, pages, sortType, idx, pagesAmount);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);

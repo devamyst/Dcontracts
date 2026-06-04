@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
+import static me.karven.orderium.Orderium.plugin;
 import static me.karven.orderium.config.ConfigCache.cache;
-import static me.karven.orderium.load.Orderium.plugin;
 
 public class YourOrderGUI {
     public static void open(Player player) {
