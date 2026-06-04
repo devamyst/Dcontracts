@@ -55,10 +55,14 @@ public class Order implements me.karven.orderium.api.Order {
     public boolean isActive() { return delivered < amount && expiresAt > System.currentTimeMillis(); }
 
     public @NotNull InventoryItem item(final @NotNull List<@NotNull String> lore, final Consumer<InventoryClickEvent> action) {
+        return new InventoryItem(itemStack(lore), action);
+    }
+
+    public @NotNull ItemStack itemStack(final @NotNull List<@NotNull String> lore) {
         final List<Component> parsedLore = lore.stream().map(this::deserializeText).toList();
         final ItemStack itemStack = item.clone();
         itemStack.lore(parsedLore);
-        return new InventoryItem(itemStack, action);
+        return itemStack;
     }
 
     public @NotNull Component deserializeText(final @NotNull String text) {

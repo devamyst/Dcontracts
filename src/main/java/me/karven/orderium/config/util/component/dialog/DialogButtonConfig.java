@@ -8,6 +8,7 @@ import me.karven.orderium.config.util.component.ComponentConfig;
 import me.karven.orderium.utils.Values;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DialogButtonConfig extends ComponentConfig {
@@ -19,11 +20,11 @@ public class DialogButtonConfig extends ComponentConfig {
         super(path);
     }
 
-    public @NotNull ActionButton button(final @NotNull DialogActionCallback clickAction, final @NotNull TagResolver... placeholders) {
+    public @NotNull ActionButton button(final @Nullable DialogActionCallback clickAction, final @NotNull TagResolver... placeholders) {
         return ActionButton.builder(Values.minimessage.deserialize(label, placeholders))
                 .tooltip(Values.minimessage.deserialize(tooltip, placeholders))
                 .width(width)
-                .action(DialogAction.customClick(clickAction, Values.CLICK_CALLBACK_DEFAULT_OPTIONS))
+                .action(clickAction == null ? null : DialogAction.customClick(clickAction, Values.CLICK_CALLBACK_DEFAULT_OPTIONS))
                 .build();
     }
 

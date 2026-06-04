@@ -8,11 +8,13 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.karven.orderium.config.util.GUIConfigFile;
 import me.karven.orderium.config.util.IConfigFile;
 import me.karven.orderium.config.util.component.dialog.DialogButtonConfig;
-import me.karven.orderium.config.util.component.dialog.MessageDialogBodyConfig;
+import me.karven.orderium.config.util.component.dialog.ItemlessItemDialogBodyConfig;
 import me.karven.orderium.config.util.component.dialog.TextDialogInputConfig;
 import me.karven.orderium.utils.Log;
 import me.karven.orderium.utils.Values;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -148,14 +150,14 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
         public boolean canCloseWithEsc;
         public final @NotNull DialogButtonConfig yesButton = new DialogButtonConfig("collect-items.buttons.confirm");
         public final @NotNull DialogButtonConfig noButton = new DialogButtonConfig("collect-items.buttons.cancel");
-        public final @NotNull MessageDialogBodyConfig body = new MessageDialogBodyConfig("collect-items.body");
+        public final @NotNull ItemlessItemDialogBodyConfig body = new ItemlessItemDialogBodyConfig("collect-items.body");
         public final @NotNull TextDialogInputConfig amountInputConfig = new TextDialogInputConfig("collect-items.amount-input");
 
         public CollectItems(final @NotNull ManageOrderDialogConfig parent) {
             this.parent = parent;
         }
 
-        public @NotNull Dialog dialog(final @NotNull DialogActionCallback yesAction, final @NotNull DialogActionCallback noAction) {
+        public @NotNull Dialog dialog(final @NotNull ItemStack item, final @Nullable DialogActionCallback yesAction, final @Nullable DialogActionCallback noAction) {
             return Dialog.create(builder -> builder.empty()
                     .type(DialogType.confirmation(
                             yesButton.button(yesAction),
@@ -163,7 +165,7 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
                     ))
                     .base(DialogBase.builder(Values.minimessage.deserialize(title))
                             .canCloseWithEscape(canCloseWithEsc)
-                            .body(List.of(body.body()))
+                            .body(List.of(body.body(item)))
                             .inputs(List.of(amountInputConfig.input("amount")))
                             .build()
                     )
@@ -220,8 +222,12 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
             noButton.label = "<red>Cancel";
             noButton.tooltip = "Click to cancel the cancellation of this order";
             noButton.width = 150;
-            body.contents = "You are cancelling this order. It will be expired";
-            body.width = 200;
+            body.description.contents = "You are cancelling this order. It will be expired";
+            body.description.width = 200;
+            body.width = 16;
+            body.height = 16;
+            body.showDecoration = true;
+            body.showTooltip = true;
             amountInputConfig.label = "Amount";
             amountInputConfig.width = 200;
             amountInputConfig.labelVisible = true;
@@ -236,13 +242,13 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
         public boolean canCloseWithEsc;
         public final @NotNull DialogButtonConfig yesButton = new DialogButtonConfig("collect-items.buttons.confirm");
         public final @NotNull DialogButtonConfig noButton = new DialogButtonConfig("collect-items.buttons.cancel");
-        public final @NotNull MessageDialogBodyConfig body = new MessageDialogBodyConfig("cancel-order.body");
+        public final @NotNull ItemlessItemDialogBodyConfig body = new ItemlessItemDialogBodyConfig("cancel-order.body");
 
         public CancelOrder(final @NotNull ManageOrderDialogConfig parent) {
             this.parent = parent;
         }
 
-        public @NotNull Dialog dialog(final @NotNull DialogActionCallback yesAction, final @NotNull DialogActionCallback noAction) {
+        public @NotNull Dialog dialog(final @NotNull ItemStack item, final @NotNull DialogActionCallback yesAction, final @Nullable DialogActionCallback noAction) {
             return Dialog.create(builder -> builder.empty()
                     .type(DialogType.confirmation(
                             yesButton.button(yesAction),
@@ -250,7 +256,7 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
                     ))
                     .base(DialogBase.builder(Values.minimessage.deserialize(title))
                             .canCloseWithEscape(canCloseWithEsc)
-                            .body(List.of(body.body()))
+                            .body(List.of(body.body(item)))
                             .build()
                     )
             );
@@ -302,7 +308,12 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
             noButton.label = "<red>Cancel";
             noButton.tooltip = "Click to cancel the cancellation of this order";
             noButton.width = 150;
-            body.contents = "You are cancelling this order. It will be expired";
+            body.description.contents = "You are cancelling this order. It will be expired";
+            body.description.width = 200;
+            body.width = 16;
+            body.height = 16;
+            body.showDecoration = true;
+            body.showTooltip = true;
             body.width = 200;
         }
     }
