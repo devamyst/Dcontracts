@@ -15,7 +15,7 @@ public class DeliveryConfirmDialog {
     public static Dialog getDialog(Player p, Order order, int amount, Collection<ItemStack> items) {
         final String amountText = ConvertUtils.formatNumber(amount);
         final Dialog dialog = config.confirmDeliveryDialogConfig.dialog(
-                ConvertUtils.parseOrder(order, config.mainGUIConfig.orderConfig.lore),
+                order.itemStack(config.mainGUIConfig.orderConfig.lore),
                 amountText,
                 (view, audience) -> {
                     DialogListener.removeItems(p);

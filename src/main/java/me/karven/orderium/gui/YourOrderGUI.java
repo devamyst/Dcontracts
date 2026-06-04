@@ -4,7 +4,6 @@ import io.papermc.paper.dialog.Dialog;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
-import me.karven.orderium.utils.ConvertUtils;
 import me.karven.orderium.utils.PlayerUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -30,7 +29,7 @@ public class YourOrderGUI {
         final List<String> rawLore = config.yourOrdersGUIConfig.orderConfig.lore;
         int slot = 0;
         for (Order order : orders) {
-            gui.addItem(ConvertUtils.parseOrder(order, rawLore, event -> {
+            gui.addItem(order.item(rawLore, event -> {
                 PlayerUtils.closeInv(p);
                 Dialog dialog = ManageOrderDialog.getDialog(order);
                 PlayerUtils.openDialog(p, dialog);
