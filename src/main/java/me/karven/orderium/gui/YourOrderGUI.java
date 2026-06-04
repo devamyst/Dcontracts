@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.karven.orderium.Orderium.plugin;
-import static me.karven.orderium.config.ConfigCache.cache;
+import static me.karven.orderium.config.Config.config;
 
 public class YourOrderGUI {
     public static void open(Player player) {
@@ -24,10 +24,10 @@ public class YourOrderGUI {
         final UUID pUUID = p.getUniqueId();
         final List<Order> orders = plugin.getDataCache().getOrders(pUUID, isAsync);
         final MiniMessage mm = plugin.mm;
-        final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(cache.yoGuiTitle));
+        final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(config.yourOrdersGUIConfig.title));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
-        final List<String> rawLore = cache.yoLore;
+        final List<String> rawLore = config.yourOrdersGUIConfig.orderConfig.lore;
         int slot = 0;
         for (Order order : orders) {
             gui.addItem(ConvertUtils.parseOrder(order, rawLore, event -> {
@@ -38,10 +38,13 @@ public class YourOrderGUI {
         }
 
         if (orders.size() < 27) {
-            gui.addItem(ConvertUtils.parseNewButton(cache.newOrderButton, event -> {
-                InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
-                PlayerUtils.openGUI(p, chooseItemGUI, false);
-            }), slot);
+            gui.addItem(
+                    config.yourOrdersGUIConfig.newOrderButton.item(event -> {
+                        InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
+                        PlayerUtils.openGUI(p, chooseItemGUI, false);
+                    }),
+                    slot
+            );
         }
 
         PlayerUtils.openGUI(p, gui, isAsync);
