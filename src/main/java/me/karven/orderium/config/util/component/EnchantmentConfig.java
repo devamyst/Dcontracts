@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EnchantmentConfig {
-    public String activeName = "<aqua><enchantment-with-level>";
+    public String activeName = "<aqua><enchantment> <roman-numeral-level>";
     public String inactiveName = "<gray><enchantment>";
     public ItemStack itemRepresentation = ItemStack.of(Material.ENCHANTED_BOOK);
     public final @NotNull List<@NotNull Integer> slots = IntStream.range(18, 36).boxed().collect(Collectors.toCollection(ArrayList::new));
@@ -50,7 +50,7 @@ public class EnchantmentConfig {
     }
 
     public void migrateV5(@NotNull ConfigFile oldConfig) {
-        activeName = oldConfig.getString("gui.enchant-item.name-prefix.active") + "<enchantment-with-level>";
+        activeName = oldConfig.getString("gui.enchant-item.name-prefix.active") + "<enchantment> <level>";
         inactiveName = oldConfig.getString("gui.enchant-item.name-prefix.inactive") + "<enchantment>";
         final List<String> loreLines = oldConfig.getStringList("gui.enchant-item.lore");
         itemRepresentation = ItemStack.of(Material.ENCHANTED_BOOK);
