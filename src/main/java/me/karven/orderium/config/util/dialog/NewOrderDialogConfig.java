@@ -67,6 +67,7 @@ public class NewOrderDialogConfig extends ConfirmationDialogConfig {
     @Override
     public void migrateV5(@NotNull ConfigFile oldConfig) {
         bodyConfig.migrateV5(oldConfig, "gui.new-order.item-description");
+        bodyConfig.showDecoration = false;
         yesButton.migrateV5(oldConfig, "gui.new-order.confirm");
         noButton.migrateV5(oldConfig, "gui.new-order.change-item");
         canCloseWithEsc = true;
