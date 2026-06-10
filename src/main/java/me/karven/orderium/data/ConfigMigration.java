@@ -31,4 +31,18 @@ public class ConfigMigration {
             Log.error("Failed to migrate config version 3", e);
         }
     }
+
+    public static void migrateV4(final @NotNull ConfigFile config) {
+        config.addDefault("broadcast-order-creation", false);
+        config.addDefault("messages.order-creation-broadcast",
+                "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/orders");
+
+        config.set("config-version", 4);
+
+        try {
+            config.save();
+        } catch (Exception e) {
+            Log.error("Failed to migrate config version 4", e);
+        }
+    }
 }

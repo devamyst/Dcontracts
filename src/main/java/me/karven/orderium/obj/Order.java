@@ -255,23 +255,19 @@ public class Order implements me.karven.orderium.api.Order {
                 .thenAccept(order -> {
                     PlayerCreateOrderEvent.Post postEvent = new PlayerCreateOrderEvent.Post(owner, order, true);
                     postEvent.callEvent();
-                });
 
-        if (cache.broadcastOrderCreation) {
-            // Iterate through every player, for maybe the addition of player-specific broadcast toggle in the future
-            String itemName;
-            if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-                itemName = LegacyComponentSerializer.legacySection()
-                        .serialize(item.getItemMeta().displayName());
-            } else {
-                itemName = WordUtils.capitalizeFully(
-                        item.getType().name().replace('_', ' ')
-                );
-            }
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendRichMessage(cache.orderCreationBroadcast, Placeholder.unparsed("player", owner.getName()), Placeholder.unparsed("item", itemName));
-            }
-        }
+                    if (cache.broadcastOrderCreation) {
+                        Component message = ConvertUtils.delOrder(
+                                cache.orderCreationBroadcast,
+                                order,
+                                owner.getName()
+                        );
+
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.sendMessage(message);
+                        }
+                    }
+                });
         return Response.SUCCESS;
     }
 
