@@ -183,6 +183,7 @@ public class Order implements me.karven.orderium.api.Order {
     public void cancel(Player p) {
         PlayerCancelOrderEvent.Pre preEvent = new PlayerCancelOrderEvent.Pre(p, this, false);
         if (!preEvent.callEvent()) return;
+        YourOrderGUI.open(p, false);
 
         plugin.getStorage().cancelOrder(this).thenAccept(payBack -> {
             double reward = payBack;

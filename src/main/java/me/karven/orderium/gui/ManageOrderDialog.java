@@ -16,11 +16,10 @@ public class ManageOrderDialog {
                 item,
                 order.placeholders(),
                 (view, player) -> {
-                    if (!(player instanceof Player p)) return;
+                    if (!(player instanceof Player)) return;
 
                     final String rawAmount = view.getText("amount");
                     order.collect(rawAmount);
-                    YourOrderGUI.open(p);
                 },
                 null
         );

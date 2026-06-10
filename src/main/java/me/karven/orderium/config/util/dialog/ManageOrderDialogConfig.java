@@ -260,6 +260,8 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
                     ))
                     .base(DialogBase.builder(Values.minimessage.deserialize(title))
                             .canCloseWithEscape(canCloseWithEsc)
+                            .pause(false)
+                            .afterAction(DialogBase.DialogAfterAction.NONE)
                             .body(List.of(body.body(item)))
                             .build()
                     )
