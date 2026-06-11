@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+// TODO: Add a slot config for the display item
 public class EnchantGUIConfig extends GUIConfigFile {
     public boolean enabled;
     public String title;

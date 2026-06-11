@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+// TODO: Make a paginated dialog alternative
 @SuppressWarnings("UnstableApiUsage")
 public class NewOrderDialogConfig extends ConfirmationDialogConfig {
     public final @NotNull ItemlessItemDialogBodyConfig bodyConfig = new ItemlessItemDialogBodyConfig("body");

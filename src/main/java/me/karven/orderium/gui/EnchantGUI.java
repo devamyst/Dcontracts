@@ -49,10 +49,7 @@ public class EnchantGUI {
             return;
         }
         MiniMessage mm = plugin.mm;
-        int length = enchantable.size();
-        // Create the GUI. Use more rows if more than 9 enchantments
-        int enchantmentsRows = Math.min(4, length / 9 + 1); // amount of rows for enchantment books
-        this.gui = new InventoryGUI(2 + enchantmentsRows, mm.deserialize(config.enchantGUIConfig.title));
+        this.gui = new InventoryGUI(config.enchantGUIConfig.rows, mm.deserialize(config.enchantGUIConfig.title));
         gui.setOnClick(event -> event.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(event -> event.setCancelled(true), InteractLocation.GLOBAL);
 
@@ -70,7 +67,7 @@ public class EnchantGUI {
         gui.addItem(displayItem, 0);
         gui.addItem(confirmItem, config.enchantGUIConfig.confirmButton.slot);
 
-        int slot = 18;
+        int currentSlotIndex = 0;
         for (Enchantment enchantment : enchantable) {
             Component enchantmentName = enchantment.description();
             final TagResolver enchantmentPlaceholder = Placeholder.component("enchantment", enchantmentName);
@@ -115,7 +112,7 @@ public class EnchantGUI {
                 }
             };
             guiItem.setOnClick(clickAction);
-            gui.addItem(guiItem, slot++);
+            gui.addItem(guiItem, config.enchantGUIConfig.enchantmentConfig.slots.get(currentSlotIndex++));
         }
     }
 

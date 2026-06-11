@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
+// TODO: Add scrollable version in the future
+// https://github.com/PaperMC/Paper/pull/13898
 public class MainGUIConfig extends GUIConfigFile {
     public String title;
     public int rows;

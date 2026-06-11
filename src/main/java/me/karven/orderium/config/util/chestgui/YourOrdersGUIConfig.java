@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
+// TODO: Make this GUI paginated
+// And scrollable: https://github.com/PaperMC/Paper/pull/13898
 public class YourOrdersGUIConfig extends GUIConfigFile {
     public String title;
     public int rows;

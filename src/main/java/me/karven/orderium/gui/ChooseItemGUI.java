@@ -159,7 +159,7 @@ public class ChooseItemGUI {
     }
 
     private static InventoryGUI initPage(List<InventoryGUI> pages, SortType sortType, int idx, int pagesAmount) {
-        InventoryGUI gui = new InventoryGUI(6, mm.deserialize(config.chooseItemGUIConfig.title));
+        InventoryGUI gui = new InventoryGUI(config.chooseItemGUIConfig.rows, mm.deserialize(config.chooseItemGUIConfig.title));
         addButtons(gui, pages, sortType, idx, pagesAmount);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);

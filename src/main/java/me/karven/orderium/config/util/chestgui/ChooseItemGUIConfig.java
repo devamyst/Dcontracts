@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+// TODO: Add scrollable version in the future
+// https://github.com/PaperMC/Paper/pull/13898
 public class ChooseItemGUIConfig extends GUIConfigFile {
     public String title;
     public int rows;

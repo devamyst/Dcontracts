@@ -23,26 +23,25 @@ public class YourOrderGUI {
         final UUID pUUID = p.getUniqueId();
         final List<Order> orders = plugin.getDataCache().getOrders(pUUID, isAsync);
         final MiniMessage mm = plugin.mm;
-        final InventoryGUI gui = new InventoryGUI(3, mm.deserialize(config.yourOrdersGUIConfig.title));
+        final InventoryGUI gui = new InventoryGUI(config.yourOrdersGUIConfig.rows, mm.deserialize(config.yourOrdersGUIConfig.title));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         final List<String> rawLore = config.yourOrdersGUIConfig.orderConfig.lore;
-        int slot = 0;
+        int currentSlotIndex = 0;
         for (Order order : orders) {
             gui.addItem(order.item(rawLore, event -> {
                 PlayerUtils.closeInv(p);
                 Dialog dialog = ManageOrderDialog.getDialog(order);
                 PlayerUtils.openDialog(p, dialog);
-            }), slot++);
+            }), config.yourOrdersGUIConfig.orderConfig.slots.get(currentSlotIndex++));
         }
 
-        if (orders.size() < 27) {
+        if (orders.size() < config.yourOrdersGUIConfig.rows * 9) {
             gui.addItem(
                     config.yourOrdersGUIConfig.newOrderButton.item(event -> {
                         InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
                         PlayerUtils.openGUI(p, chooseItemGUI, false);
-                    }),
-                    slot
+                    }), config.yourOrdersGUIConfig.newOrderButton.slot
             );
         }
 

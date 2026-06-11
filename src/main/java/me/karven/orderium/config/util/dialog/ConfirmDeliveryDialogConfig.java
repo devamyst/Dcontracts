@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+// TODO: Add container alternative for all dialogs for geyser support
 @SuppressWarnings("UnstableApiUsage")
 public class ConfirmDeliveryDialogConfig extends ConfirmationDialogConfig {
     public final @NotNull MessageDialogBodyConfig textBody = new MessageDialogBodyConfig("text-body");
