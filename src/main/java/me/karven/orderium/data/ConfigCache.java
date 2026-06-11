@@ -124,6 +124,7 @@ public class ConfigCache {
     public String deliverSelf;
     public String collectingTooFast;
     public String exceedMaxCollect;
+    public String orderCreationBroadcast;
 
     public Sound nextPageSound;
     public Sound previousPageSound;
@@ -148,6 +149,8 @@ public class ConfigCache {
     public TagResolver[] sortPlaceholders;
     public boolean enchantItem;
     public boolean shulkerDelivering;
+
+    public boolean broadcastOrderCreation;
 
     public final List<@NotNull String> orderCommandAliases = new ArrayList<>();
 
@@ -184,18 +187,19 @@ public class ConfigCache {
     }
 
     private void migrateConfig() {
-        final int previousConfigVersion = config.getInteger("config-version", -1);
-        final int currentConfigVersion = 3;
+        final int currentConfigVersion = 4;
         config.addDefault("config-version", currentConfigVersion);
-        if (currentConfigVersion < previousConfigVersion) {
+        if (currentConfigVersion < configVersion()) {
             Log.warn("You are downgrading Orderium. This may cause issues and is not supported.");
             return;
         }
-            if (previousConfigVersion == -1) ConfigMigration.migrateV1(config);
-        if (previousConfigVersion == 1) ConfigMigration.migrateV2(config);
-        if (previousConfigVersion == 2) ConfigMigration.migrateV3(config);
+        if (configVersion() <= 3) ConfigMigration.migrateV4(config);
 
         config.addComment("config-version", "DO NOT TOUCH THIS FIELD!");
+    }
+
+    private int configVersion() {
+        return config.getInteger("config-version", -1);
     }
 
     public boolean loadCfg() {
@@ -257,6 +261,8 @@ public class ConfigCache {
         orderCommandAliases.clear();
         orderCommandAliases.addAll(config.getStringList("order-command-aliases"));
 
+        broadcastOrderCreation = config.getBoolean("broadcast-order-creation");
+
         orderCreationSuccessful = config.getString("messages.create-order-success");
         invalidInput = config.getString("messages.invalid-input");
         delivered = config.getString("messages.delivery");
@@ -265,6 +271,7 @@ public class ConfigCache {
         deliverSelf = config.getString("messages.deliver-self");
         exceedMaxCollect = config.getString("messages.exceeded-max-collect");
         collectingTooFast = config.getString("messages.collecting-too-fast");
+        orderCreationBroadcast = config.getString("messages.order-creation-broadcast");
 
         nextPageSound = getSound("next-page");
         previousPageSound = getSound("previous-page");
@@ -424,6 +431,8 @@ public class ConfigCache {
                         """
         );
 
+        config.addDefault("broadcast-order-creation", false, "Whether to broadcast to the server when an order has been created.");
+
         // MESSAGES
         config.addDefault("messages.create-order-success", "<gray>Your order has been created");
         config.addDefault("messages.invalid-input", "<red>Invalid number or format");
@@ -433,6 +442,7 @@ public class ConfigCache {
         config.addDefault("messages.deliver-self", "<red>You cannot deliver your own order");
         config.addDefault("messages.exceeded-max-collect", "<red>You are collecting too many items", "Message for max-collect");
         config.addDefault("messages.collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...", "Message for max-collect-per-minute");
+        config.addDefault("messages.order-creation-broadcast", "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/orders");
 
         // SOUNDS
         config.addDefault("sounds.next-page.sound", "minecraft:ui.button.click");

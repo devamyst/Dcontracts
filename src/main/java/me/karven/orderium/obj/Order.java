@@ -11,6 +11,8 @@ import me.karven.orderium.utils.PDCUtils;
 import me.karven.orderium.utils.PlayerUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -253,6 +255,18 @@ public class Order implements me.karven.orderium.api.Order {
                 .thenAccept(order -> {
                     PlayerCreateOrderEvent.Post postEvent = new PlayerCreateOrderEvent.Post(owner, order, true);
                     postEvent.callEvent();
+
+                    if (cache.broadcastOrderCreation) {
+                        Component message = ConvertUtils.delOrder(
+                                cache.orderCreationBroadcast,
+                                order,
+                                owner.getName()
+                        );
+
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.sendMessage(message);
+                        }
+                    }
                 });
         return Response.SUCCESS;
     }
