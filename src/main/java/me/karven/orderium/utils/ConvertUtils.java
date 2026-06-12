@@ -166,11 +166,9 @@ public class ConvertUtils {
 
     public static @NotNull ItemStack deserializeItem(final @NotNull ConfigSection section) {
         final HashMap<String, Object> serialized = new HashMap<>();
-        Log.info("Deserializing item. Key-value's list:");
         for (final String key : section.getKeys(false, true)) {
             if (!key.equals("components")) {
                 serialized.put(key, section.get(key));
-                Log.info(key + ": " + section.get(key));
                 continue;
             }
 
@@ -181,7 +179,6 @@ public class ConvertUtils {
             }
             serialized.put(key, componentMap);
         }
-        Log.info("");
 
         return ItemStack.deserialize(serialized);
     }
