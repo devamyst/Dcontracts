@@ -58,6 +58,7 @@ tasks {
         archiveClassifier = ''
         relocate("com.zaxxer", "orderium.zaxxer")
         relocate("org.bstats", "orderium.bstats")
+        relocate('dev.faststats', 'orderium.faststats')
     }
 }
 

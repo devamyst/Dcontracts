@@ -52,6 +52,7 @@ public final class Orderium extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        faststatsContext.ready();
         plugin = this;
         try {
             config = new Config();
@@ -81,8 +82,6 @@ public final class Orderium extends JavaPlugin {
         checkUpdates();
         registerListeners();
         startCollectLimitResetLoop();
-
-        faststatsContext.ready();
 
         Log.info("Orderium initialization complete");
     }
