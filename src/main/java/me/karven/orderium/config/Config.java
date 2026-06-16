@@ -6,6 +6,8 @@ import me.karven.orderium.config.util.chestgui.*;
 import me.karven.orderium.config.util.dialog.ConfirmDeliveryDialogConfig;
 import me.karven.orderium.config.util.dialog.ManageOrderDialogConfig;
 import me.karven.orderium.config.util.dialog.NewOrderDialogConfig;
+import me.karven.orderium.gui.AdminToolGUI;
+import me.karven.orderium.gui.ChooseItemGUI;
 import me.karven.orderium.obj.OrderStatus;
 import me.karven.orderium.obj.SortType;
 import me.karven.orderium.utils.DispatchUtil;
@@ -184,6 +186,12 @@ public class Config {
 
     public static void reload() throws Exception {
         config = new Config();
+
+        plugin.reloadBStats(config);
+        ChooseItemGUI.init();
+
+        AdminToolGUI.createBlacklist();
+        AdminToolGUI.createCustomItems();
     }
 
     public void reloadGUIs() {

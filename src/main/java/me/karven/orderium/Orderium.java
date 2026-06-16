@@ -5,7 +5,6 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import me.karven.orderium.config.Config;
 import me.karven.orderium.data.DataCache;
 import me.karven.orderium.gui.AdminToolGUI;
-import me.karven.orderium.gui.ChooseItemGUI;
 import me.karven.orderium.gui.SignGUI;
 import me.karven.orderium.guiframework.GUIListener;
 import me.karven.orderium.listener.ContainerContentListener;
@@ -27,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
+
 import static me.karven.orderium.config.Config.config;
 
 public final class Orderium extends JavaPlugin {
@@ -48,16 +48,15 @@ public final class Orderium extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        isFolia = isFolia();
+        storage = createStorage();
+        AdminToolGUI.init();
         try {
-            config = new Config();
+            Config.reload();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        isFolia = isFolia();
         OrderiumCommands.register();
-        storage = createStorage();
-        AdminToolGUI.init();
-        ChooseItemGUI.init();
         Bukkit.getPluginManager().registerEvents(new ServerLoadListener(), this);
         Log.info("Orderium enabled");
     }

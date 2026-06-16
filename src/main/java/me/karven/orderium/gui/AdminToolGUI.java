@@ -96,9 +96,6 @@ public class AdminToolGUI {
                     loreDeco("View the wiki for usage")
             ));
         });
-
-        createBlacklist();
-        createCustomItems();
     }
 
     private static Component nameDeco(String name) {
