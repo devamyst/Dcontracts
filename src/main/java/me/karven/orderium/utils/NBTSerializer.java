@@ -1,11 +1,9 @@
 package me.karven.orderium.utils;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
 import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
 import io.papermc.paper.datacomponent.DataComponentType;
-import io.papermc.paper.datacomponent.item.BannerPatternLayers;
-import io.papermc.paper.datacomponent.item.BundleContents;
-import io.papermc.paper.datacomponent.item.ChargedProjectiles;
-import io.papermc.paper.datacomponent.item.ItemLore;
+import io.papermc.paper.datacomponent.item.*;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.DyeColor;
@@ -14,13 +12,11 @@ import org.bukkit.Registry;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // Serialize an nbt data to a Map<String, Object> to store in config file
 @SuppressWarnings("UnstableApiUsage")
@@ -234,6 +230,59 @@ public abstract class NBTSerializer<T> {
         }
     };
 
+    public static final NBTSerializer<ResolvableProfile> PROFILE = new NBTSerializer<>() {
+        @Override
+        @NotNull Object serialize(final Object value) {
+            final ResolvableProfile profile = cast(value);
+            final Map<String, Object> serializedProfile = new LinkedHashMap<>(3);
+            if (profile.name() != null) serializedProfile.put("name", profile.name());
+            if (profile.uuid() != null) serializedProfile.put("id", profile.uuid().toString());
+            if (profile.properties().isEmpty()) return serializedProfile;
+            final List<Map<String, Object>> serializedProperties = new ArrayList<>();
+            for (final ProfileProperty property : profile.properties()) {
+                final Map<String, Object> serializedProperty = new LinkedHashMap<>(3);
+                serializedProperty.put("name", property.getName());
+                serializedProperty.put("value", property.getValue());
+                if (property.getSignature() != null) serializedProperty.put("signature", property.getSignature());
+                serializedProperties.add(serializedProperty);
+            }
+            serializedProfile.put("properties", serializedProperties);
+
+            return serializedProfile;
+        }
+
+        @Override
+        @NonNull ResolvableProfile deserialize(final @NotNull Object value) {
+            if (!(value instanceof Map<?, ?> data)) {
+                throw new IllegalArgumentException("object to deserialize is not a Map, it is " + value.getClass());
+            }
+            final ResolvableProfile.Builder builder = ResolvableProfile.resolvableProfile();
+            final @Subst("ignored") String name = (String) data.get("name");
+            final String uuid = (String) data.get("id");
+            final List<?> properties = (List<?>) data.get("properties");
+            if (name != null) builder.name(name);
+            if (uuid != null) builder.uuid(UUID.fromString(uuid));
+            if (properties == null) return builder.build();
+
+            for (final Object propertyObject : properties) {
+                if (!(propertyObject instanceof Map<?, ?> propertyData)) {
+                    Log.error("property is not a Map, it is " + propertyObject.getClass(), new IllegalArgumentException());
+                    continue;
+                }
+                final String propertyName = (String) propertyData.get("name");
+                final String propertyValue = (String) propertyData.get("value");
+                final String propertySignature = (String) propertyData.get("signature");
+                if (propertyName == null || propertyValue == null) {
+                    Log.error("property is missing name or value, skipping it", new IllegalArgumentException());
+                    continue;
+                }
+                builder.addProperty(new ProfileProperty(propertyName, propertyValue, propertySignature));
+            }
+
+            return builder.build();
+        }
+    };
+
     public static final NBTSerializer<Boolean> BOOLEAN = new NBTSerializer<>() {
         @Override
         @NotNull Object serialize(final Object value) {
@@ -283,6 +332,18 @@ public abstract class NBTSerializer<T> {
         }
     };
 
+    public static final NBTSerializer<Object> OBJECT = new NBTSerializer<>() {
+        @Override
+        @NotNull Object serialize(final Object value) {
+            return value;
+        }
+
+        @Override
+        @NonNull Object deserialize(final @NotNull Object value) {
+            return value;
+        }
+    };
+
     public static final NBTSerializer<ItemLore> LORE = new NBTSerializer<>() {
         @Override
         @NotNull Object serialize(final Object value) {
@@ -305,17 +366,21 @@ public abstract class NBTSerializer<T> {
         }
     };
 
-    private static final Map<String, NBTSerializer<?>> componentSerializers = Map.of(
-            "minecraft:banner_patterns", BANNER_PATTERNS,
-            "minecraft:base_color", BASE_COLOR,
-            "minecraft:bundle_contents", BUNDLE_CONTENTS,
-            "minecraft:charged_projectiles", CHARGED_PROJECTILES,
-            "minecraft:custom_name", TEXT_COMPONENT,
-            "minecraft:enchantment_glint_override", BOOLEAN,
-            "minecraft:item_model", KEY,
-            "minecraft:item_name", TEXT_COMPONENT,
-            "minecraft:lore", LORE
-    );
+    private static final Map<String, NBTSerializer<?>> componentSerializers = new HashMap<>();
+
+    static {
+        componentSerializers.put("minecraft:banner_patterns", BANNER_PATTERNS);
+        componentSerializers.put("minecraft:base_color", BASE_COLOR);
+        componentSerializers.put("minecraft:bundle_contents", BUNDLE_CONTENTS);
+        componentSerializers.put("minecraft:charged_projectiles", CHARGED_PROJECTILES);
+        componentSerializers.put("minecraft:custom_name", TEXT_COMPONENT);
+        componentSerializers.put("minecraft:enchantment_glint_override", BOOLEAN);
+        componentSerializers.put("minecraft:item_model", KEY);
+        componentSerializers.put("minecraft:item_name", TEXT_COMPONENT);
+        componentSerializers.put("minecraft:max_stack_size", OBJECT);
+        componentSerializers.put("minecraft:profile", PROFILE);
+        componentSerializers.put("minecraft:lore", LORE);
+    }
 
     abstract @NotNull Object serialize(final Object value);
 
