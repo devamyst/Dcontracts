@@ -34,11 +34,11 @@ import static me.karven.orderium.config.Config.config;
 public final class Orderium extends JavaPlugin {
     public static Orderium plugin;
     public final int bStatsID = 27569;
-    public final String faststatsToken = "241271513528286847e7c7ee08df7ec9";
     public org.bstats.bukkit.Metrics bStatsMetrics = null;
     public static boolean isFolia;
 
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    public final String faststatsToken = "241271513528286847e7c7ee08df7ec9";
     private final BukkitContext faststatsContext = new BukkitContext.Factory(this, faststatsToken)
             .errorTrackerService(ERROR_TRACKER)
             .metrics(dev.faststats.Metrics.Factory::create)
