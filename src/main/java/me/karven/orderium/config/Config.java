@@ -186,8 +186,8 @@ public class Config {
             }
             future.complete(null);
         });
-        if (reloading) {
-            final AssertionError error = new AssertionError("Reloading is still true after reloadAsync() completed. This should never happen.");
+        if (!reloading) {
+            final AssertionError error = new AssertionError("Reloading is false. This should never happen.");
             ERROR_TRACKER.trackError(error);
             throw error;
         }
