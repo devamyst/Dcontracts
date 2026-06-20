@@ -6,10 +6,7 @@ import me.karven.orderium.api.events.PlayerCreateOrderEvent;
 import me.karven.orderium.api.events.PlayerDeliverOrderEvent;
 import me.karven.orderium.gui.YourOrderGUI;
 import me.karven.orderium.guiframework.InventoryItem;
-import me.karven.orderium.utils.EconUtils;
-import me.karven.orderium.utils.PDCUtils;
-import me.karven.orderium.utils.PlayerUtils;
-import me.karven.orderium.utils.Values;
+import me.karven.orderium.utils.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -175,6 +172,8 @@ public class Order implements me.karven.orderium.api.Order {
 
             PlayerUtils.give(p, getItem().clone(), amount, true);
 
+            CustomMetrics.ITEMS_COLLECTED_CACHE.addAndGet(amount);
+
             PlayerCollectItemsEvent.Post postEvent = new PlayerCollectItemsEvent.Post(p, amount, this, true);
             postEvent.callEvent();
         });
@@ -309,9 +308,7 @@ public class Order implements me.karven.orderium.api.Order {
         strippedItem.setItemMeta(PDCUtils.removeOrderiumPD(strippedItem.getItemMeta()));
         plugin.getStorage().createOrder(owner.getUniqueId(), strippedItem, amount, moneyPer)
                 .thenAccept(order -> {
-                    PlayerCreateOrderEvent.Post postEvent = new PlayerCreateOrderEvent.Post(owner, order, true);
-                    postEvent.callEvent();
-
+                    CustomMetrics.ORDER_AMOUNT_CACHE.incrementAndGet();
                     if (config.broadcastOrderCreation) {
                         final Component message = order.deserializeText(config.orderCreationBroadcast);
 
@@ -319,6 +316,9 @@ public class Order implements me.karven.orderium.api.Order {
                             p.sendMessage(message);
                         }
                     }
+
+                    PlayerCreateOrderEvent.Post postEvent = new PlayerCreateOrderEvent.Post(owner, order, true);
+                    postEvent.callEvent();
                 });
         return Response.SUCCESS;
     }

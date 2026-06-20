@@ -13,10 +13,7 @@ import me.karven.orderium.listener.DisconnectListener;
 import me.karven.orderium.listener.ServerLoadListener;
 import me.karven.orderium.storage.Storage;
 import me.karven.orderium.storage.implementation.SQLStorage;
-import me.karven.orderium.utils.DispatchUtil;
-import me.karven.orderium.utils.Log;
-import me.karven.orderium.utils.PDCUtils;
-import me.karven.orderium.utils.UpdateUtils;
+import me.karven.orderium.utils.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -39,7 +36,13 @@ public final class Orderium extends JavaPlugin {
     public final String faststatsToken = "241271513528286847e7c7ee08df7ec9";
     private final BukkitContext faststatsContext = new BukkitContext.Factory(this, faststatsToken)
             .errorTrackerService(ERROR_TRACKER)
-            .metrics(dev.faststats.Metrics.Factory::create)
+            .metrics(factory -> factory
+                    .addMetric(CustomMetrics.API_USAGE)
+                    .addMetric(CustomMetrics.ORDER_AMOUNT)
+                    .addMetric(CustomMetrics.ITEMS_COLLECTED)
+                    .addMetric(CustomMetrics.EXPERIMENTAL_FEATURES)
+                    .onFlush(CustomMetrics::FLUSH)
+                    .create())
             .create();
 
     private Storage storage;
@@ -53,17 +56,20 @@ public final class Orderium extends JavaPlugin {
     public void setStorage(Storage storage) { this.storage = storage; }
 
     @Override
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void onEnable() {
         plugin = this;
         faststatsContext.ready();
         isFolia = isFolia();
         AdminToolGUI.init();
+
+        getDataFolder().mkdirs();
+        storage = createStorage();
         try {
             Config.reload();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        storage = createStorage();
         OrderiumCommands.register();
         Bukkit.getPluginManager().registerEvents(new ServerLoadListener(), this);
         Log.info("Orderium enabled");
