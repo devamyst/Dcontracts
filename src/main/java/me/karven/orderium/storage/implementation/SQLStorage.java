@@ -8,7 +8,6 @@ import me.karven.orderium.obj.Order;
 import me.karven.orderium.obj.StorageMethod;
 import me.karven.orderium.storage.Storage;
 import me.karven.orderium.utils.*;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -250,8 +249,8 @@ public class SQLStorage extends Storage {
         ItemContainerContents shulkerContent = shulkerBox.getData(DataComponentTypes.CONTAINER);
         List<ItemStack> declinedItems = new ArrayList<>();
         if (shulkerContent == null) return deliverable;
-        for (ItemStack item : shulkerContent.contents()) {
-            if (item.isEmpty()) {
+        for (final ItemStack item : shulkerContent.contents()) {
+            if (item == null || item.isEmpty()) {
                 // Add empty items to keep the order of the items in the shulker
                 declinedItems.add(ItemStack.empty());
                 continue;
@@ -279,15 +278,10 @@ public class SQLStorage extends Storage {
         return deliverable;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private boolean isShulkerBox(ItemStack item) {
-        Material type = item.getType();
-        return type == Material.SHULKER_BOX || type == Material.WHITE_SHULKER_BOX || type == Material.LIGHT_GRAY_SHULKER_BOX || type == Material.GRAY_SHULKER_BOX ||
-                type == Material.BLACK_SHULKER_BOX || type == Material.BROWN_SHULKER_BOX || type == Material.RED_SHULKER_BOX || type == Material.ORANGE_SHULKER_BOX ||
-                type == Material.YELLOW_SHULKER_BOX || type == Material.GREEN_SHULKER_BOX || type == Material.LIME_SHULKER_BOX || type == Material.CYAN_SHULKER_BOX ||
-                type == Material.LIGHT_BLUE_SHULKER_BOX || type == Material.BLUE_SHULKER_BOX || type == Material.PURPLE_SHULKER_BOX ||
-                type == Material.MAGENTA_SHULKER_BOX || type == Material.PINK_SHULKER_BOX;
+        return item.hasData(DataComponentTypes.CONTAINER);
     }
-
 
     @Override
     public CompletableFuture<Boolean> collectItems(Order order, int amount) {

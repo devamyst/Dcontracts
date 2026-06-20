@@ -3,6 +3,7 @@ package me.karven.orderium.gui;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemContainerContents;
 import io.papermc.paper.dialog.Dialog;
+import me.karven.orderium.config.Config;
 import me.karven.orderium.guiframework.InteractLocation;
 import me.karven.orderium.guiframework.InventoryGUI;
 import me.karven.orderium.obj.Order;
@@ -23,10 +24,10 @@ import java.util.Collection;
 import java.util.List;
 
 import static me.karven.orderium.Orderium.plugin;
-import static me.karven.orderium.config.Config.config;
 import static me.karven.orderium.utils.ConvertUtils.ceil_div;
 
 public class MainGUI {
+    private final Config config = Config.config;
     private final List<InventoryGUI> pages = new ArrayList<>();
     private final Collection<Order> orders;
     private final Player player;
@@ -126,7 +127,7 @@ public class MainGUI {
                 return;
             }
 
-            Dialog dialog = DeliveryConfirmDialog.getDialog(p, order, amount, items);
+            Dialog dialog = DeliveryConfirmDialog.getDialog(p, order, amount, order.moneyPer * amount, items);
 
             PlayerUtils.openDialog(p, dialog);
         });

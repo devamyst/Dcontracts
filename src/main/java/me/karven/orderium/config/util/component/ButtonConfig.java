@@ -3,9 +3,9 @@ package me.karven.orderium.config.util.component;
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.karven.orderium.guiframework.InventoryItem;
 import me.karven.orderium.utils.ConvertUtils;
+import me.karven.orderium.utils.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -27,20 +27,20 @@ public class ButtonConfig extends ComponentConfig {
         try {
             itemStack = ConvertUtils.deserializeItem(config.getConfigSection(path + ".item"));
         } catch (Exception e) {
-            itemStack = ItemStack.of(Material.STONE);
+            Log.error("Failed to deserialize item", e);
         }
         slot = config.getInteger(path + ".slot");
     }
 
     @Override
     public void save(final @NotNull ConfigFile config) {
-        config.set(path + ".item", itemStack.serialize());
+        config.set(path + ".item", ConvertUtils.serializeItem(itemStack));
         config.set(path + ".slot", slot);
     }
 
     @Override
     public void setDefault(final @NotNull ConfigFile config) {
-        config.addDefault(path + ".item", itemStack.serialize());
+        config.addDefault(path + ".item", ConvertUtils.serializeItem(itemStack));
         config.addDefault(path + ".slot", slot);
     }
 

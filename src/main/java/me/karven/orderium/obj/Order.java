@@ -82,6 +82,9 @@ public class Order implements me.karven.orderium.api.Order {
         min %= 60;
         sec %= 60;
         millis %= 1000;
+        final ItemMeta meta = item.getItemMeta();
+        final Component itemName = meta.hasCustomName() ? meta.customName() : Component.translatable(item.translationKey());
+        assert itemName != null;
         return new TagResolver[]{
                 Placeholder.unparsed("money-per", formatNumber(moneyPer)),
                 Placeholder.unparsed("paid", formatNumber(moneyPer * delivered)),
@@ -90,7 +93,7 @@ public class Order implements me.karven.orderium.api.Order {
                 Placeholder.unparsed("amount", formatNumber(amount)),
                 Placeholder.unparsed("in-storage", formatNumber(inStorage)),
                 Placeholder.unparsed("player", playerName),
-                Placeholder.component("item", Component.translatable(item.translationKey())),
+                Placeholder.component("item", itemName),
                 Placeholder.component("order-status", Values.minimessage.deserialize(getStatus().getText(),
                         Placeholder.unparsed("day", String.valueOf(day)),
                         Placeholder.unparsed("hour", String.valueOf(hour)),

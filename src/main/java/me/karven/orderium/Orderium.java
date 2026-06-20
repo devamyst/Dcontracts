@@ -7,7 +7,6 @@ import dev.faststats.bukkit.BukkitContext;
 import me.karven.orderium.config.Config;
 import me.karven.orderium.data.DataCache;
 import me.karven.orderium.gui.AdminToolGUI;
-import me.karven.orderium.gui.ChooseItemGUI;
 import me.karven.orderium.gui.SignGUI;
 import me.karven.orderium.guiframework.GUIListener;
 import me.karven.orderium.listener.ContainerContentListener;
@@ -58,16 +57,15 @@ public final class Orderium extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         faststatsContext.ready();
+        isFolia = isFolia();
+        AdminToolGUI.init();
         try {
-            config = new Config();
+            Config.reload();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        OrderiumCommands.register();
-        isFolia = isFolia();
         storage = createStorage();
-        AdminToolGUI.init();
-        ChooseItemGUI.init();
+        OrderiumCommands.register();
         Bukkit.getPluginManager().registerEvents(new ServerLoadListener(), this);
         Log.info("Orderium enabled");
     }

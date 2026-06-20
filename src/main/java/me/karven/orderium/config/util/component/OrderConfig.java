@@ -2,6 +2,7 @@ package me.karven.orderium.config.util.component;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.karven.orderium.utils.ConvertUtils;
+import me.karven.orderium.utils.Log;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,20 +31,20 @@ public class OrderConfig extends ComponentConfig {
         try {
             itemRepresentation = ConvertUtils.deserializeItem(config.getConfigSection(path + ".item"));
         } catch (Exception e) {
-            itemRepresentation = ItemStack.of(Material.STONE);
+            Log.error("Failed to deserialize item", e);
         }
     }
 
     public void save(final @NotNull ConfigFile config) {
         config.set(path + ".slots", slots);
         config.set(path + ".lore", lore);
-        config.set(path + ".item", itemRepresentation.serialize());
+        config.set(path + ".item", ConvertUtils.serializeItem(itemRepresentation));
     }
 
     public void setDefault(final @NotNull ConfigFile config) {
         config.addDefault(path + ".slots", slots);
         config.addDefault(path + ".lore", lore);
-        config.addDefault(path + ".item", itemRepresentation.serialize());
+        config.addDefault(path + ".item", ConvertUtils.serializeItem(itemRepresentation));
     }
 
     public void migrateV5(final @NotNull ConfigFile config, final @NotNull String oldPath) {
