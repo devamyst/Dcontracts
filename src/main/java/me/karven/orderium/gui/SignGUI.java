@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static me.karven.orderium.Orderium.plugin;
+import static me.karven.orderium.utils.Values.ERROR_TRACKER;
 
 @SuppressWarnings("UnstableApiUsage")
 public class SignGUI implements PacketListener {
@@ -70,26 +71,32 @@ public class SignGUI implements PacketListener {
     }
 
     @Override
-    public void onPacketReceive(@NotNull PacketReceiveEvent e) {
-        if (e.getPacketType() != PacketType.Play.Client.UPDATE_SIGN) return;
-        final Player player = e.getPlayer();
-        final SignInfo info = sessionsList.get(player);
-        if (info == null) return;
-        final WrapperPlayClientUpdateSign wrapper = new WrapperPlayClientUpdateSign(e);
-        final Position pos = info.position();
-        final Vector3i blockPos = new Vector3i(pos.blockX(), pos.blockY(), pos.blockZ());
-        if (!wrapper.getBlockPosition().equals(blockPos)) return;
-        final String[] lines = wrapper.getTextLines();
-        completeSession(player, lines[info.line()]);
+    public void onPacketReceive(@NotNull PacketReceiveEvent event) {
+        try {
 
-        World world = player.getWorld();
-        Location loc = pos.toLocation(world);
+            if (event.getPacketType() != PacketType.Play.Client.UPDATE_SIGN) return;
+            final Player player = event.getPlayer();
+            final SignInfo info = sessionsList.get(player);
+            if (info == null) return;
+            final WrapperPlayClientUpdateSign wrapper = new WrapperPlayClientUpdateSign(event);
+            final Position pos = info.position();
+            final Vector3i blockPos = new Vector3i(pos.blockX(), pos.blockY(), pos.blockZ());
+            if (!wrapper.getBlockPosition().equals(blockPos)) return;
+            final String[] lines = wrapper.getTextLines();
+            completeSession(player, lines[info.line()]);
 
-        Bukkit.getRegionScheduler().run(plugin, loc, event -> {
-            player.sendBlockChange(loc, world.getBlockData(loc));
-            if (world.getBlockState(loc) instanceof TileState tile) player.sendBlockUpdate(loc, tile);
-        });
+            World world = player.getWorld();
+            Location loc = pos.toLocation(world);
 
-        e.setCancelled(true);
+            Bukkit.getRegionScheduler().run(plugin, loc, task -> {
+                player.sendBlockChange(loc, world.getBlockData(loc));
+                if (world.getBlockState(loc) instanceof TileState tile) player.sendBlockUpdate(loc, tile);
+            });
+
+            event.setCancelled(true);
+        } catch (Exception e) {
+            Log.error("Failed while handling packet", e);
+            ERROR_TRACKER.trackError(e);
+        }
     }
 }
