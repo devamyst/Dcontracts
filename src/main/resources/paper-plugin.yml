@@ -1,42 +1,59 @@
-name: Orderium
+name: Contracts
 version: ${version}
-main: me.karven.orderium.Orderium
+main: me.devamy.contracts.Contracts
 api-version: '1.21'
 folia-supported: true
-authors: [ Karven ]
-description: An order plugin
+authors: [ DevAmy ]
+description: A fully-featured contract/order plugin with admin tools, multi-database support, and GeyserMC/Bedrock compatibility.
+
 permissions:
-  orderium.admin:
-    default: op
-    description: Access to /orderium command, this is required for any of its subcommands
-
-  orderium.admin.blacklist:
-    default: op
-    description: Access to modify the blacklist
-
-  orderium.admin.custom-items:
-    default: op
-    description: Access to modify the custom items
-
-  orderium.admin.edit-orders:
-    default: op
-    description: Access to editing anyone's orders
-
-  orderium.admin.reload:
-    default: op
-    description: Access to /orderium reload
-
-  orderium.bypass.max-collect:
-    default: op
-    description: Bypass max-collect value
-
-  orderium.bypass.max-collect-per-minute:
-    default: op
-    description: Bypass max-collect-per-minute value
-
-  orderium.use:
+  contracts.use:
     default: true
-    description: Access to the orders command
+    description: Allows access to the /contracts command
+
+  contracts.create:
+    default: true
+    description: Allows creating new contracts
+
+  contracts.admin:
+    default: op
+    description: Access to /contracts admin command and admin GUI
+
+  contracts.admin.blacklist:
+    default: op
+    description: Access to manage the item blacklist
+
+  contracts.admin.custom-items:
+    default: op
+    description: Access to manage custom items
+
+  contracts.admin.edit-contracts:
+    default: op
+    description: Access to editing anyone's contracts
+
+  contracts.admin.delete-contracts:
+    default: op
+    description: Access to deleting anyone's contracts
+
+  contracts.admin.reload:
+    default: op
+    description: Reload the plugin configuration
+
+  contracts.admin.convert:
+    default: op
+    description: Run the database converter tool
+
+  contracts.bypass.tax:
+    default: op
+    description: Bypass the configured tax on contract deliveries
+
+  contracts.bypass.max-collect:
+    default: op
+    description: Bypass the max-collect limit
+
+  contracts.bypass.max-collect-per-minute:
+    default: op
+    description: Bypass the max-collect-per-minute rate limit
 
 dependencies:
   server:
@@ -48,3 +65,11 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    Geyser-Spigot:
+      load: BEFORE
+      required: false
+      join-classpath: false
+    floodgate:
+      load: BEFORE
+      required: false
+      join-classpath: false

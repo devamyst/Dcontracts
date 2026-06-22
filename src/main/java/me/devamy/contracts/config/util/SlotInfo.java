@@ -1,0 +1,61 @@
+package me.devamy.contracts.config.util;
+
+import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
+import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
+import me.devamy.contracts.utils.ConvertUtils;
+import me.devamy.contracts.utils.Log;
+import org.bukkit.inventory.ItemType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+public class SlotInfo {
+    private int slot = -1;
+    private List<String> lore;
+    private String displayName;
+    private ItemType type;
+    private String itemModel = null;
+
+    public void setLore(@NotNull List<@NotNull String> lore) { this.lore = lore; }
+    public void setSlot(int slot) { this.slot = slot; }
+    public void setDisplayName(@NotNull String displayName) { this.displayName = displayName; }
+    public void setType(@NotNull ItemType type) { this.type = type; }
+    public void setItemModel(@NotNull String itemModel) { this.itemModel = itemModel; }
+
+    public List<@NotNull String> getLore() { return lore; }
+    public int getSlot() { return slot; }
+    public String getDisplayName() { return displayName; }
+    public ItemType getType() { return type; }
+    public String getItemModel() { return itemModel; }
+
+    public SlotInfo() {}
+
+    public SlotInfo(int slot, List<String> lore, String displayName, ItemType type) {
+        this.slot = slot;
+        this.lore = lore;
+        this.displayName = displayName;
+        this.type = type;
+    }
+
+
+    public void addDefault(ConfigFile config, String section) {
+        if (slot != -1) config.addDefault(section + ".slot", slot);
+        if (!lore.isEmpty()) config.addDefault(section + ".lore", lore);
+        config.addDefault(section + ".display-name", displayName);
+        config.addDefault(section + ".type", type.getKey().toString());
+        if (itemModel != null) config.addDefault(section + ".item-model", itemModel);
+    }
+
+    public void deserialize(ConfigSection section) {
+        if (section == null) {
+            Log.warn("Button deserialization failed because section is null");
+            return;
+        }
+        slot = section.get("slot") == null ? -1 : section.getInteger("slot");
+        lore = section.getStringList("lore");
+        displayName = section.getString("display-name");
+        itemModel = section.getString("item-model");
+
+        type = ConvertUtils.getItemType(section.getString("type", "minecraft:stone"));
+    }
+}

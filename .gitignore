@@ -120,3 +120,4 @@ runs/
 
 # Has secrets
 gradle.properties
+.aider*

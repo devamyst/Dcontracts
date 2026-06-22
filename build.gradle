@@ -27,13 +27,13 @@ repositories {
     }
     maven { url 'https://jitpack.io' }
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
-
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
-
     maven {
         name "faststatsReleases"
         url "https://repo.faststats.dev/releases"
     }
+    // Geyser / Floodgate
+    maven { url = uri("https://repo.opencollab.dev/main/") }
 }
 
 dependencies {
@@ -47,6 +47,11 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
     implementation("com.zaxxer:HikariCP:7.0.2")
+    // MySQL JDBC driver (shaded in)
+    implementation("com.mysql:mysql-connector-j:8.4.0")
+    // GeyserMC Bedrock support (optional at runtime)
+    compileOnly("org.geysermc.geyser:api:2.4.4-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
 }
 
 tasks {
@@ -56,9 +61,10 @@ tasks {
 
     shadowJar {
         archiveClassifier = ''
-        relocate("com.zaxxer", "orderium.zaxxer")
-        relocate("org.bstats", "orderium.bstats")
-        relocate('dev.faststats', 'orderium.faststats')
+        relocate("com.zaxxer", "contracts.zaxxer")
+        relocate("org.bstats", "contracts.bstats")
+        relocate('dev.faststats', 'contracts.faststats')
+        relocate("com.mysql", "contracts.mysql")
     }
 }
 
@@ -84,7 +90,7 @@ processResources {
 
 modrinth {
     token = findProperty("MODRINTH_TOKEN") as String
-    projectId = "orderium"
+    projectId = "contracts"
     versionNumber = version as String
     versionType = type
     uploadFile = shadowJar
