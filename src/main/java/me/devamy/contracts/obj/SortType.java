@@ -11,6 +11,9 @@ public enum SortType {
     MOST_PAID("most-paid", "<aqua>Most Paid", "Most Paid"),
     A_Z("a-z", "<aqua>A - Z", "A - Z"),
     Z_A("z-a", "<aqua>Z - A", "Z - A"),
+    OLDEST("oldest", "<aqua>Oldest", "Oldest"),
+    PRICIEST("priciest", "<aqua>Priciest", "Priciest"),
+    CHEAPEST("cheapest", "<aqua>Cheapest", "Cheapest"),
     ;
 
     private final @TagPattern String identifier;

@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemContainerContents;
+import me.devamy.contracts.config.DatabaseConfig;
 import me.devamy.contracts.obj.Order;
 import me.devamy.contracts.obj.StorageMethod;
 import me.devamy.contracts.storage.Storage;
@@ -38,16 +39,17 @@ public class SQLStorage extends Storage {
 
     private final HikariDataSource data;
 
-//    public static SQLStorage mysql() {
-//        return new SQLStorage(StorageMethod.MYSQL, "jdbc:mysql://" + configs.remoteAddress + "/" + configs.databaseName, configs.dbUsername, configs.dbPassword);
-//    }
+    public static SQLStorage mysql(DatabaseConfig dbConfig) {
+        return new SQLStorage(StorageMethod.MYSQL, dbConfig.getJdbcUrl(), dbConfig.username, dbConfig.password);
+    }
 
-    public static SQLStorage h2() {
-        return new SQLStorage(StorageMethod.H2, "jdbc:h2:" + dataDir + File.separator + "data-h2", "sa", "");
+    public static SQLStorage h2(DatabaseConfig dbConfig) {
+        return new SQLStorage(StorageMethod.H2, dbConfig.getJdbcUrl(), dbConfig.username, dbConfig.password);
     }
 
     public static SQLStorage sqlite() {
-        return new SQLStorage(StorageMethod.SQLITE, "jdbc:sqlite:" + dataDir + File.separator + "data.db", null, null);
+        DatabaseConfig dbConfig = DatabaseConfig.get();
+        return new SQLStorage(StorageMethod.SQLITE, dbConfig.getJdbcUrl(), null, null);
     }
 
     private SQLStorage(StorageMethod method, String jdbcUrl, String username, String password) {
@@ -55,8 +57,25 @@ public class SQLStorage extends Storage {
         HikariConfig conf = new HikariConfig();
         conf.setPoolName("contracts data pool");
         conf.setJdbcUrl(jdbcUrl);
-        if (username != null) conf.setUsername(username);
-        if (password != null) conf.setPassword(password);
+
+        if (username != null && !username.isEmpty()) conf.setUsername(username);
+        if (password != null && !password.isEmpty()) conf.setPassword(password);
+
+        if (method == StorageMethod.MYSQL) {
+            conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
+            conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
+            conf.setConnectionTimeout(DatabaseConfig.get().connectionTimeout);
+            conf.setIdleTimeout(DatabaseConfig.get().idleTimeout);
+            conf.setMaxLifetime(DatabaseConfig.get().maxLifetime);
+            conf.addDataSourceProperty("cachePrepStmts", "true");
+            conf.addDataSourceProperty("prepStmtCacheSize", "250");
+            conf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            conf.addDataSourceProperty("useServerPrepStmts", "true");
+        } else if (method == StorageMethod.H2) {
+            conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
+            conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
+        }
+
         data = new HikariDataSource(conf);
 
         switch (method) {

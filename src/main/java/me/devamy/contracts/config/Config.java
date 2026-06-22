@@ -6,6 +6,7 @@ import me.devamy.contracts.config.util.chestgui.*;
 import me.devamy.contracts.config.util.dialog.ConfirmDeliveryDialogConfig;
 import me.devamy.contracts.config.util.dialog.ManageOrderDialogConfig;
 import me.devamy.contracts.config.util.dialog.NewOrderDialogConfig;
+import me.devamy.contracts.gui.ContractAdminGUI;
 import me.devamy.contracts.gui.AdminToolGUI;
 import me.devamy.contracts.gui.ChooseItemGUI;
 import me.devamy.contracts.obj.OrderStatus;
@@ -21,12 +22,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static me.devamy.contracts.Contracts.plugin;
-import static me.devamy.contracts.utils.Values.ERROR_TRACKER;
 
 public class Config {
-    private static volatile boolean reloading = false;
+    private static final AtomicBoolean reloading = new AtomicBoolean(false);
     public static volatile Config config;
     public static final int CURRENT_CONFIG_VERSION = 5;
     public final File javaConfigFile = new File(plugin.getDataFolder(), "config.yml");
@@ -42,6 +43,7 @@ public class Config {
     public final NewOrderDialogConfig newOrderDialogConfig = new NewOrderDialogConfig();
     public final ConfirmDeliveryDialogConfig confirmDeliveryDialogConfig = new ConfirmDeliveryDialogConfig();
     public final ManageOrderDialogConfig manageOrderDialogConfig = new ManageOrderDialogConfig();
+    public final ContractAdminGUIConfig contractAdminGUIConfig = new ContractAdminGUIConfig();
 
     public boolean bStats;
     public boolean checkForUpdates;
@@ -76,6 +78,7 @@ public class Config {
     public final List<NamespacedKey> similarityCheck = new ArrayList<>();
 
     public Config() throws Exception {
+        ConfigMigrator.migrate("default-config.yml", javaConfigFile);
 
         try {
             configFile = ConfigFile.loadConfig(javaConfigFile);
@@ -102,6 +105,7 @@ public class Config {
         newOrderDialogConfig.saveToFile();
         confirmDeliveryDialogConfig.saveToFile();
         manageOrderDialogConfig.saveToFile();
+        contractAdminGUIConfig.saveToFile();
     }
 
     public void setDefaults() {
@@ -114,6 +118,7 @@ public class Config {
         newOrderDialogConfig.applyDefaultValues();
         confirmDeliveryDialogConfig.applyDefaultValues();
         manageOrderDialogConfig.applyDefaultValues();
+        contractAdminGUIConfig.applyDefaultValues();
 
         mainGUIConfig.setDefault();
         yourOrdersGUIConfig.setDefault();
@@ -124,7 +129,7 @@ public class Config {
         newOrderDialogConfig.setDefault();
         confirmDeliveryDialogConfig.setDefault();
         manageOrderDialogConfig.setDefault();
-
+        contractAdminGUIConfig.setDefault();
 
         configFile.addDefault("bstats", true);
         configFile.addDefault("check-for-updates", true);
@@ -172,8 +177,7 @@ public class Config {
     }
 
     public static CompletableFuture<Void> reloadAsync() {
-        if (reloading) return null;
-        reloading = true;
+        if (!reloading.compareAndSet(false, true)) return null;
         final CompletableFuture<Void> future = new CompletableFuture<>();
         DispatchUtil.async(() -> {
 
@@ -182,16 +186,12 @@ public class Config {
             } catch (Exception e) {
                 Log.error("Failed to reload config", e);
                 future.completeExceptionally(e);
+                reloading.set(false);
                 return;
             }
             future.complete(null);
+            reloading.set(false);
         });
-        if (!reloading) {
-            final AssertionError error = new AssertionError("Reloading is false. This should never happen.");
-            ERROR_TRACKER.trackError(error);
-            throw error;
-        }
-        reloading = false;
         return future;
     }
 
@@ -215,6 +215,7 @@ public class Config {
         newOrderDialogConfig.reload();
         confirmDeliveryDialogConfig.reload();
         manageOrderDialogConfig.reload();
+        contractAdminGUIConfig.reload();
     }
 
     public void reloadGUIsFromFile() {
@@ -227,6 +228,7 @@ public class Config {
         newOrderDialogConfig.reloadFromFile();
         confirmDeliveryDialogConfig.reloadFromFile();
         manageOrderDialogConfig.reloadFromFile();
+        contractAdminGUIConfig.reloadFromFile();
     }
 
 

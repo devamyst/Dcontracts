@@ -1,4 +1,4 @@
-# Contributing to Orderium
+# Contributing to Contracts
 
 This is a guide for people who want to help improve this project.
 

@@ -37,6 +37,9 @@ public final class DataCache {
     private final NavigableSet<Order> recentlyListed = new ConcurrentSkipListSet<>(Comparator.comparingLong(Order::getExpiresAt).reversed().thenComparing(Order::getId));
     private final NavigableSet<Order> mostDelivered = new ConcurrentSkipListSet<>(Comparator.comparingInt(Order::getDelivered).reversed().thenComparing(Order::getId));
     private final NavigableSet<Order> mostPaid = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getPaid).reversed().thenComparing(Order::getId));
+    private final NavigableSet<Order> oldest = new ConcurrentSkipListSet<>(Comparator.comparingLong(Order::getExpiresAt).thenComparing(Order::getId));
+    private final NavigableSet<Order> priciest = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).reversed().thenComparing(Order::getId));
+    private final NavigableSet<Order> cheapest = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).thenComparing(Order::getId));
 
     private void setBlacklistAndCustomItems(Collection<BlacklistedItem> blacklist, Collection<CustomItem> customItems) {
         this.blacklist.clear();
@@ -68,10 +71,16 @@ public final class DataCache {
         recentlyListed.clear();
         mostDelivered.clear();
         mostPaid.clear();
+        oldest.clear();
+        priciest.clear();
+        cheapest.clear();
         mostMoneyPerItem.addAll(orders);
         recentlyListed.addAll(orders);
         mostDelivered.addAll(orders);
         mostPaid.addAll(orders);
+        oldest.addAll(orders);
+        priciest.addAll(orders);
+        cheapest.addAll(orders);
     }
     public void updateOrder(Order order, double moneyPer, int amount, int delivered, int inStorage) {
 
@@ -79,6 +88,9 @@ public final class DataCache {
         recentlyListed.remove(order);
         mostDelivered.remove(order);
         mostPaid.remove(order);
+        oldest.remove(order);
+        priciest.remove(order);
+        cheapest.remove(order);
 
         order.moneyPer = moneyPer;
         order.amount = amount;
@@ -90,6 +102,9 @@ public final class DataCache {
         recentlyListed.add(order);
         mostDelivered.add(order);
         mostPaid.add(order);
+        oldest.add(order);
+        priciest.add(order);
+        cheapest.add(order);
     }
 
     public void deleteOrder(Order order, boolean isAsync) {
@@ -100,6 +115,9 @@ public final class DataCache {
         recentlyListed.remove(order);
         mostDelivered.remove(order);
         mostPaid.remove(order);
+        oldest.remove(order);
+        priciest.remove(order);
+        cheapest.remove(order);
 
         OrderRemoveEvent.Post postEvent = new  OrderRemoveEvent.Post(order, isAsync);
         postEvent.callEvent();
@@ -110,6 +128,9 @@ public final class DataCache {
         recentlyListed.add(order);
         mostDelivered.add(order);
         mostPaid.add(order);
+        oldest.add(order);
+        priciest.add(order);
+        cheapest.add(order);
     }
 
     public List<Order> getOrders(UUID ownerId, boolean isAsync) {
@@ -132,6 +153,9 @@ public final class DataCache {
             case RECENTLY_LISTED -> { return recentlyListed; }
             case MOST_DELIVERED -> { return mostDelivered; }
             case MOST_PAID -> { return mostPaid; }
+            case OLDEST -> { return oldest; }
+            case PRICIEST -> { return priciest; }
+            case CHEAPEST -> { return cheapest; }
         }
         return mostMoneyPerItem;
     }

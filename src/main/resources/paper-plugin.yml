@@ -43,6 +43,10 @@ permissions:
     default: op
     description: Run the database converter tool
 
+  contracts.admin.edit-orders:
+    default: op
+    description: Edit orders from the main GUI by right-clicking
+
   contracts.bypass.tax:
     default: op
     description: Bypass the configured tax on contract deliveries

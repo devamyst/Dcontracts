@@ -20,18 +20,18 @@ public class PDCUtils {
     public static final List<NamespacedKey> KEYS = List.of(collectedKey, blacklistKey, searchKey, idKey);
 
     public static void setID(ItemMeta meta, int id) {
-        meta.getPersistentDataContainer().set(collectedKey, PersistentDataType.INTEGER, id);
+        meta.getPersistentDataContainer().set(idKey, PersistentDataType.INTEGER, id);
     }
 
     public static int getID(ItemMeta meta) {
-        return meta.getPersistentDataContainer().getOrDefault(collectedKey, PersistentDataType.INTEGER, -1);
+        return meta.getPersistentDataContainer().getOrDefault(idKey, PersistentDataType.INTEGER, -1);
     }
 
     public static void setCollected(Player p, int amount) {
         DispatchUtil.entity(p, () -> p.getPersistentDataContainer().set(collectedKey, PersistentDataType.INTEGER, amount));
     }
 
-    public static ItemMeta removeOrderiumPD(ItemMeta meta) {
+    public static ItemMeta removePluginPD(ItemMeta meta) {
         for  (NamespacedKey key : KEYS) {
             meta.getPersistentDataContainer().remove(key);
         }

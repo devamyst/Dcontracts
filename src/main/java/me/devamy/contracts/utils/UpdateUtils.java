@@ -16,7 +16,6 @@ import static me.devamy.contracts.Contracts.plugin;
 public class UpdateUtils {
     private static final String API_URL = "https://api.modrinth.com/v2/project/";
     private static final String PROJECT_ID = "EH2l9h8i";
-    private static final String mcVer = Bukkit.getMinecraftVersion();
 
     /// Check for updates
     /// Returns the newer version if available, otherwise returns null
@@ -27,6 +26,7 @@ public class UpdateUtils {
     }
 
     private static String fetchLatestVer() {
+        final String mcVer = Bukkit.getMinecraftVersion();
         final String urlText =  API_URL + PROJECT_ID + "/version?game_versions=" + mcVer;
         try {
             HttpURLConnection connection = (HttpURLConnection) URI.create(urlText).toURL().openConnection();

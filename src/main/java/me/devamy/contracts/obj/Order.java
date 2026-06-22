@@ -107,26 +107,34 @@ public class Order implements me.devamy.contracts.api.Order {
         if (!preEvent.callEvent()) return;
 
         plugin.getStorage().deliverOrder(p, this, items).thenAccept(receive -> {
-            double moneyReceived = receive; // I don't like working with wrapped class at all so will use primitive
+            double moneyReceived = receive;
             if (moneyReceived == 0.0) return;
             EconUtils.addMoney(p, moneyReceived);
-            p.sendRichMessage(config.deliver, Placeholder.unparsed("money", formatNumber(moneyReceived)));
-            PlayerUtils.playSound(p, config.deliverSound);
+            DispatchUtil.entity(p, () -> {
+                p.sendRichMessage(config.deliver, Placeholder.unparsed("money", formatNumber(moneyReceived)));
+                PlayerUtils.playSound(p, config.deliverSound);
+            });
 
-            PlayerDeliverOrderEvent.Post postEvent = new PlayerDeliverOrderEvent.Post(p, this, isAsync);
-            postEvent.callEvent();
+            final PlayerDeliverOrderEvent.Post postEvent = new PlayerDeliverOrderEvent.Post(p, this, isAsync);
+            DispatchUtil.entity(p, postEvent::callEvent);
 
             final Player ownerPlayer = Bukkit.getPlayer(owner);
-            if (ownerPlayer == null || !ownerPlayer.isOnline()) return;
-            final ItemMeta meta = item.getItemMeta();
-            final Component displayName = meta == null ? null : meta.displayName();
-            assert item.getType().getItemTranslationKey() != null;
-            ownerPlayer.sendRichMessage(
-                    config.receiveDelivery,
-                    Placeholder.unparsed("deliverer", p.getName()),
-                    Placeholder.unparsed("amount",  formatNumber((int) (moneyReceived / moneyPer))),
-                    Placeholder.component("item", (displayName == null ? Component.translatable(item.getType().getItemTranslationKey()) : displayName))
-            );
+            if (ownerPlayer != null && ownerPlayer.isOnline()) {
+                final ItemMeta meta = item.getItemMeta();
+                final Component displayName = meta == null ? null : meta.displayName();
+                assert item.getType().getItemTranslationKey() != null;
+                final Component itemName = displayName == null
+                        ? Component.translatable(item.getType().getItemTranslationKey())
+                        : displayName;
+                DispatchUtil.entity(ownerPlayer, () ->
+                        ownerPlayer.sendRichMessage(
+                                config.receiveDelivery,
+                                Placeholder.unparsed("deliverer", p.getName()),
+                                Placeholder.unparsed("amount", formatNumber((int) (moneyReceived / moneyPer))),
+                                Placeholder.component("item", itemName)
+                        )
+                );
+            }
         });
     }
 
@@ -197,7 +205,7 @@ public class Order implements me.devamy.contracts.api.Order {
             YourOrderGUI.open(p, true);
             EconUtils.addMoney(Bukkit.getOfflinePlayer(getOwnerUniqueId()), reward);
             PlayerCancelOrderEvent.Post postEvent = new PlayerCancelOrderEvent.Post(p, this, true);
-            postEvent.callEvent();
+            DispatchUtil.entity(p, postEvent::callEvent);
         });
     }
 
@@ -305,7 +313,7 @@ public class Order implements me.devamy.contracts.api.Order {
             return Response.FAIL;
         }
         ItemStack strippedItem = item.clone();
-        strippedItem.setItemMeta(PDCUtils.removeOrderiumPD(strippedItem.getItemMeta()));
+        strippedItem.setItemMeta(PDCUtils.removePluginPD(strippedItem.getItemMeta()));
         plugin.getStorage().createOrder(owner.getUniqueId(), strippedItem, amount, moneyPer)
                 .thenAccept(order -> {
                     CustomMetrics.ORDER_AMOUNT_CACHE.incrementAndGet();
@@ -313,12 +321,12 @@ public class Order implements me.devamy.contracts.api.Order {
                         final Component message = order.deserializeText(config.orderCreationBroadcast);
 
                         for (Player p : Bukkit.getOnlinePlayers()) {
-                            p.sendMessage(message);
+                            DispatchUtil.entity(p, () -> p.sendMessage(message));
                         }
                     }
 
                     PlayerCreateOrderEvent.Post postEvent = new PlayerCreateOrderEvent.Post(owner, order, true);
-                    postEvent.callEvent();
+                    DispatchUtil.entity(owner, postEvent::callEvent);
                 });
         return Response.SUCCESS;
     }

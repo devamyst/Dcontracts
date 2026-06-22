@@ -15,8 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -146,29 +144,15 @@ public class InventoryGUI implements InventoryHolder {
     }
 
     public void update() {
-        List<HumanEntity> oldViewers = handle.getViewers();
-        ItemStack[] oldContents = handle.getContents();
-        handle = Bukkit.createInventory(this, rows * 9, title);
-
-        ItemStack[] newContents = new ItemStack[oldContents.length];
-        for (int i = 0; i < oldContents.length; i++) {
-            ItemStack item =  oldContents[i];
-            if (item == null || item.isEmpty()) {
-                newContents[i] = item;
-                continue;
-            }
+        for (int i = 0; i < handle.getSize(); i++) {
+            ItemStack item = handle.getItem(i);
+            if (item == null || item.isEmpty()) continue;
             int id = PDCUtils.getID(item.getItemMeta());
-            if (id == -1) {
-                newContents[i] = item;
-                continue;
+            if (id == -1) continue;
+            InventoryItem inventoryItem = items.get(id);
+            if (inventoryItem != null) {
+                handle.setItem(i, inventoryItem.getItem());
             }
-            newContents[i] = items.get(id).getItem();
-        }
-
-        handle.setContents(newContents);
-
-        for (HumanEntity player : new ArrayList<>(oldViewers)) {
-            player.openInventory(handle);
         }
     }
 }

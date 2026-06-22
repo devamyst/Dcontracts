@@ -1,0 +1,20 @@
+# ─────────────────────────────────────────────
+# Contracts v2 — Default Database Configuration
+# ─────────────────────────────────────────────
+# This file is shipped with the plugin as the reference default.
+# When the plugin loads, any new keys added in a future version
+# will be automatically merged into your existing database.yml.
+
+storage-method: SQLITE
+host: localhost
+port: 3306
+database: contracts
+username: root
+password: ""
+
+pool-settings:
+  maximum-pool-size: 10
+  minimum-idle: 2
+  connection-timeout: 5000
+  idle-timeout: 600000
+  max-lifetime: 1800000

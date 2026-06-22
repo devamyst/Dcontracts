@@ -10,7 +10,7 @@ public class PlayerDeliverOrderEvent {
     private PlayerDeliverOrderEvent() {}
 
     // TODO: Allow user to retrieve amount of items being delivered
-    public static class Pre extends OrderiumPlayerEvent implements Cancellable {
+    public static class Pre extends ContractsPlayerEvent implements Cancellable {
         private static final HandlerList HANDLER_LIST = new HandlerList();
         private boolean isCancelled = false;
 
@@ -37,7 +37,7 @@ public class PlayerDeliverOrderEvent {
         }
     }
 
-    public static class Post extends OrderiumPlayerEvent {
+    public static class Post extends ContractsPlayerEvent {
         private static final HandlerList HANDLER_LIST = new HandlerList();
 
         public Post(@NotNull Player player, @NotNull Order order, boolean isAsync) {

@@ -121,3 +121,4 @@ runs/
 # Has secrets
 gradle.properties
 .aider*
+AGENTS.md

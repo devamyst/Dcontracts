@@ -1,0 +1,299 @@
+# ─────────────────────────────────────────────
+# Contracts v2 — Default Configuration
+# ─────────────────────────────────────────────
+# This file is shipped with the plugin as the reference default.
+# When the plugin loads, any new keys added in a future version
+# will be automatically merged into your existing config.yml.
+
+config-version: 5
+
+# ── General Settings ─────────────────────────
+bstats: true
+check-for-updates: true
+log-transactions: true
+expires-after: 604800000
+minimum-price: 0.1
+max-collect: 1000
+max-collect-per-minute: 1000
+shulker-delivering: true
+broadcast-order-creation: false
+order-command-aliases:
+  - order
+  - orders
+
+# ── Similarity Check ─────────────────────────
+similarity-check:
+  - "minecraft:enchantments"
+  - "minecraft:bundle_contents"
+  - "minecraft:container"
+  - "minecraft:fireworks"
+  - "minecraft:instrument"
+  - "minecraft:potion_contents"
+  - "minecraft:stored_enchantments"
+  - "minecraft:max_stack_size"
+  - "minecraft:custom_model_data"
+  - "minecraft:ominous_bottle_amplifier"
+  - "minecraft:damage"
+  - "minecraft:custom_name"
+  - "minecraft:item_model"
+  - "minecraft:damage_type"
+  - "minecraft:consumable"
+
+# ── Sort Display ─────────────────────────────
+sorts-display:
+  active:
+    most-money-per-item: "<aqua>Most Money Per Item"
+    recently-listed: "<aqua>Recently Listed"
+    most-delivered: "<aqua>Most Delivered"
+    most-paid: "<aqua>Most Paid"
+    a-z: "<aqua>A - Z"
+    z-a: "<aqua>Z - A"
+    priciest: "<aqua>Priciest"
+    cheapest: "<aqua>Cheapest"
+    oldest: "<aqua>Oldest"
+  inactive:
+    most-money-per-item: "Most Money Per Item"
+    recently-listed: "Recently Listed"
+    most-delivered: "Most Delivered"
+    most-paid: "Most Paid"
+    a-z: "A - Z"
+    z-a: "Z - A"
+    priciest: "Priciest"
+    cheapest: "Cheapest"
+    oldest: "Oldest"
+
+# ── Order Status ─────────────────────────────
+order-status:
+  available: "<gray>Expires after <day>d <hour>h <minute>m <second>s"
+  expired: "<red>Order Expired"
+  completed: "<green>Order Completed"
+
+# ── Messages ─────────────────────────────────
+messages:
+  create-order-success: "<gray>Your order has been created"
+  invalid-input: "<red>Invalid number or format"
+  deliver: "<gray>You earned <green>$<money><gray> from delivering an order"
+  receive-delivery: "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>"
+  not-enough-money: "<red>You do not have enough money"
+  deliver-self: "<red>You cannot deliver your own order"
+  exceeded-max-collect: "<red>You are collecting too many items"
+  collecting-too-fast: "<red>You are collecting items too fast. Wait a minute..."
+  order-creation-broadcast: "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/orders"
+
+# ── Sounds ───────────────────────────────────
+sounds:
+  next-page:
+    sound: "minecraft:ui.button.click"
+    volume: 1.0
+    pitch: 1.0
+  previous-page:
+    sound: "minecraft:ui.button.click"
+    volume: 1.0
+    pitch: 1.0
+  refresh:
+    sound: "minecraft:ui.button.click"
+    volume: 1.0
+    pitch: 1.0
+  sort:
+    sound: "minecraft:ui.button.click"
+    volume: 1.0
+    pitch: 1.0
+  new-order:
+    sound: "minecraft:entity.villager.work_cartographer"
+    volume: 1.0
+    pitch: 1.0
+  deliver:
+    sound: "minecraft:entity.player.levelup"
+    volume: 1.0
+    pitch: 2.0
+
+# ── GUI: Main ────────────────────────────────
+gui:
+  main:
+    title: "Orders"
+    order-lore:
+      - ""
+      - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
+      - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
+      - "<green>$<money-per> <white>each"
+      - ""
+      - "<white>Click to deliver <aqua><player><white>'s order"
+    sorts-order:
+      - most-money-per-item
+      - recently-listed
+      - most-delivered
+      - most-paid
+    buttons:
+      refresh:
+        slot: 4
+        lore:
+          - "<white>Click to refresh"
+        name: "<aqua>Refresh"
+        item: PAPER
+      your-orders:
+        slot: 6
+        lore:
+          - "<white>Click to view your orders"
+        name: "<aqua>Your Orders"
+        item: CHEST
+      sort:
+        slot: 3
+        lore:
+          - ""
+          - "<white> • <most-money-per-item>"
+          - "<white> • <recently-listed>"
+          - "<white> • <most-delivered>"
+          - "<white> • <most-paid>"
+        name: "<aqua>Sort"
+        item: HOPPER
+      back:
+        slot: 0
+        lore:
+          - "<white>Click to go to the previous page"
+        name: "<aqua>Back"
+        item: ARROW
+      next:
+        slot: 8
+        lore:
+          - "<white>Click to go to the next page"
+        name: "<aqua>Next"
+        item: ARROW
+      search:
+        slot: 5
+        lore:
+          - "<white>Click to search"
+        name: "<aqua>Search"
+        item: OAK_SIGN
+
+  # ── GUI: Your Orders ─────────────────────
+  your-orders:
+    title: "Your Orders"
+    order-lore:
+      - ""
+      - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
+      - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
+      - "<green>$<money-per> <white>each"
+      - ""
+      - "<order-status>"
+    buttons:
+      new-order:
+        lore:
+          - "<white>Click to create a new order"
+        name: "<aqua>New Order"
+        item: MAP
+
+  # ── GUI: Choose Item ─────────────────────
+  choose-item:
+    title: "Choose Your Item"
+    sorts-order:
+      - a-z
+      - z-a
+    buttons:
+      back:
+        slot: 0
+        lore:
+          - "<white>Click to go to the previous page"
+        name: "<aqua>Back"
+        item: ARROW
+      next:
+        slot: 8
+        lore:
+          - "<white>Click to go to the next page"
+        name: "<aqua>Next"
+        item: ARROW
+      search:
+        slot: 5
+        lore:
+          - "<white>Click to search"
+        name: "<aqua>Search"
+        item: OAK_SIGN
+      sort:
+        slot: 3
+        lore:
+          - ""
+          - "<white> • <a-z>"
+          - "<white> • <z-a>"
+        name: "<aqua>Sort"
+        item: HOPPER
+
+  # ── GUI: Search Sign ─────────────────────
+  search-sign:
+    type: "minecraft:oak_sign"
+    search-line: 1
+    lines:
+      - ""
+      - "↑↑↑↑↑↑↑↑↑↑↑↑"
+      - "Search"
+      - ""
+
+  # ── GUI: Delivery ────────────────────────
+  delivery:
+    title: "Delivering..."
+    rows: 6
+
+  # ── GUI: Enchant Item ────────────────────
+  enchant-item:
+    title: "Enchant Your Item"
+    name-prefix:
+      active: "<aqua>"
+      inactive: "<gray>"
+    lore:
+      - ""
+      - "<gray>Right-click to decrease level"
+      - "<gray>Left-click to increase level"
+    confirm-button:
+      slot: 8
+      lore:
+        - "<white>Click to confirm your enchantments"
+      name: "<green>Confirm"
+      item: GREEN_WOOL
+
+  # ── GUI: New Order Dialog ────────────────
+  new-order:
+    title: "Create A New Order"
+    item-description: "You're creating an order for this item"
+    amount-label: "Amount"
+    money-per-label: "Money Per Item"
+    change-item-button: "Change Item..."
+    change-item-tooltip: "Click to change the item"
+    confirm-button: "<green>Confirm"
+    confirm-tooltip: "Click to confirm the order"
+    description-width: 210
+    input-width: 200
+    button-width: 150
+
+  # ── GUI: Confirm Delivery Dialog ─────────
+  confirm-delivery:
+    title: "Confirm your Delivery"
+    body: "You are delivering"
+    transaction-message: "You will get <green>$<money><white> in return"
+    confirm-button: "<green>Confirm"
+    confirm-tooltip: "Click to confirm the delivery"
+    cancel-button: "<red>Cancel"
+    cancel-tooltip: "Click to cancel the delivery"
+
+  # ── GUI: Manage Order Dialog ─────────────
+  manage-order:
+    title: "Manage Order"
+    body: "You are managing this order"
+    collect-items-button: "Collect Items"
+    collect-items-tooltip: "Click to collect items from this order"
+    cancel-order-button: "Cancel Order"
+    cancel-order-tooltip: "Click to cancel the order"
+
+    collect-items:
+      title: "Collect Items"
+      body: "You are collecting items from this order. You can collect up to <aqua><in-storage> <item>"
+      amount-label: "Amount"
+      cancel-button: "<red>Cancel"
+      cancel-tooltip: "Click to cancel"
+      confirm-button: "<green>Confirm"
+      confirm-tooltip: "Click to confirm"
+
+    cancel-order:
+      title: "Cancel Order"
+      body: "You are cancelling this order. It will be expired"
+      cancel-button: "<red>Cancel"
+      cancel-tooltip: "Click to cancel the cancellation of this order"
+      confirm-button: "<green>Confirm"
+      confirm-tooltip: "Click to confirm the cancellation of this order"

@@ -60,7 +60,7 @@ public class PlayerCreateOrderEvent {
         }
     }
 
-    public static class Post extends OrderiumPlayerEvent {
+    public static class Post extends ContractsPlayerEvent {
         private static final HandlerList HANDLER_LIST = new HandlerList();
 
         public Post(@NotNull Player player, @NotNull Order order, boolean isAsync) {

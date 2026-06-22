@@ -211,10 +211,10 @@ public class AlgoUtils {
     private static int compareBytes(byte[] a, byte[] b) {
         final int l1 = a.length;
         final int l2 = b.length;
-        if (l1 != l2) return 1;
-        for (int i = 0; i < l1; i++) {
-            if (a[i] != b[i]) return 1;
+        final int minLen = Math.min(l1, l2);
+        for (int i = 0; i < minLen; i++) {
+            if (a[i] != b[i]) return Byte.compare(a[i], b[i]);
         }
-        return 0;
+        return Integer.compare(l1, l2);
     }
 }

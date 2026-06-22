@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import dev.faststats.bukkit.BukkitContext;
 import me.devamy.contracts.config.Config;
+import me.devamy.contracts.config.DatabaseConfig;
 import me.devamy.contracts.data.DataCache;
 import me.devamy.contracts.gui.AdminToolGUI;
 import me.devamy.contracts.gui.SignGUI;
@@ -11,6 +12,7 @@ import me.devamy.contracts.guiframework.GUIListener;
 import me.devamy.contracts.listener.ContainerContentListener;
 import me.devamy.contracts.listener.DisconnectListener;
 import me.devamy.contracts.listener.ServerLoadListener;
+import me.devamy.contracts.obj.StorageMethod;
 import me.devamy.contracts.storage.Storage;
 import me.devamy.contracts.storage.implementation.SQLStorage;
 import me.devamy.contracts.utils.*;
@@ -64,6 +66,7 @@ public final class Contracts extends JavaPlugin {
         AdminToolGUI.init();
 
         getDataFolder().mkdirs();
+        DatabaseConfig.get(); // init early so database.yml is created before storage
         storage = createStorage();
         try {
             Config.reload();
@@ -72,7 +75,7 @@ public final class Contracts extends JavaPlugin {
         }
         ContractsCommands.register();
         Bukkit.getPluginManager().registerEvents(new ServerLoadListener(), this);
-        Log.info("Contracts enabled");
+        Log.info("Contracts v" + getPluginMeta().getVersion() + " enabled. Storage: " + DatabaseConfig.get().storageMethod);
     }
 
     @Override
@@ -121,7 +124,12 @@ public final class Contracts extends JavaPlugin {
     }
 
     public Storage createStorage() {
-        return SQLStorage.sqlite();
+        DatabaseConfig dbConfig = DatabaseConfig.get();
+        return switch (dbConfig.storageMethod) {
+            case MYSQL -> SQLStorage.mysql(dbConfig);
+            case H2 -> SQLStorage.h2(dbConfig);
+            case SQLITE -> SQLStorage.sqlite();
+        };
     }
 
     private boolean checkVault() {

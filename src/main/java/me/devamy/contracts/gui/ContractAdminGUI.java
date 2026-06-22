@@ -2,17 +2,17 @@ package me.devamy.contracts.gui;
 
 import io.papermc.paper.dialog.Dialog;
 import me.devamy.contracts.config.Config;
+import me.devamy.contracts.config.util.chestgui.ContractAdminGUIConfig;
 import me.devamy.contracts.data.DataCache;
 import me.devamy.contracts.guiframework.InteractLocation;
 import me.devamy.contracts.guiframework.InventoryGUI;
 import me.devamy.contracts.guiframework.InventoryItem;
 import me.devamy.contracts.obj.Order;
 import me.devamy.contracts.obj.SortType;
+import me.devamy.contracts.utils.BedrockUtils;
 import me.devamy.contracts.utils.ConvertUtils;
 import me.devamy.contracts.utils.PlayerUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,10 +20,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import static me.devamy.contracts.Contracts.plugin;
@@ -31,152 +29,166 @@ import static me.devamy.contracts.Contracts.plugin;
 /**
  * Admin GUI that shows ALL contracts (including expired / completed) with
  * edit and force-delete capabilities for any player — including offline players.
+ * Fully configurable via gui/admin.yml
  */
 @SuppressWarnings("UnstableApiUsage")
 public class ContractAdminGUI {
 
     private static final MiniMessage MM = MiniMessage.miniMessage();
 
-    // Available filter modes for the admin GUI
     public enum FilterMode {
         ALL, ACTIVE, EXPIRED, COMPLETED
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Static entry-point
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /** Opens the admin GUI for {@code admin} at page {@code page} with FilterMode.ALL */
     public static void open(Player admin, int page) {
-        open(admin, page, FilterMode.ALL, SortType.RECENTLY_LISTED);
+        open(admin, page, FilterMode.ALL, SortType.RECENTLY_LISTED, "");
     }
 
     public static void open(Player admin, int page, FilterMode filter, SortType sortType) {
-        new ContractAdminGUI(admin, page, filter, sortType).show();
+        open(admin, page, filter, sortType, "");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Instance
-    // ─────────────────────────────────────────────────────────────────────────
+    public static void open(Player admin, int page, FilterMode filter, SortType sortType, String search) {
+        new ContractAdminGUI(admin, page, filter, sortType, search).show();
+    }
 
     private final Player admin;
     private final int page;
     private final FilterMode filter;
     private final SortType sortType;
+    private final String search;
 
-    /** Slots 0-44: contract entries (5 rows × 9 = 45 slots for items, row 6 = controls) */
-    private static final int ITEMS_PER_PAGE = 45;
-    private static final int ROW_CONTROL = 5; // 0-indexed; row 6 = slots 45-53
-
-    private ContractAdminGUI(Player admin, int page, FilterMode filter, SortType sortType) {
+    private ContractAdminGUI(Player admin, int page, FilterMode filter, SortType sortType, String search) {
         this.admin = admin;
         this.page = page;
         this.filter = filter;
         this.sortType = sortType;
+        this.search = search;
     }
 
     private void show() {
         DataCache cache = plugin.getDataCache();
+        Config config = Config.config;
 
-        // Collect all contracts (sorted by chosen sort type) and apply filter
         Collection<Order> allOrders = cache.getSortedOrders(sortType);
         List<Order> filtered = applyFilter(allOrders);
 
-        int totalPages = Math.max(1, ConvertUtils.ceil_div(filtered.size(), ITEMS_PER_PAGE));
+        // Apply search if present
+        if (search != null && !search.isEmpty()) {
+            String q = search.toLowerCase().trim();
+            filtered = filtered.stream()
+                    .filter(o -> {
+                        OfflinePlayer op = Bukkit.getOfflinePlayer(o.getOwnerUniqueId());
+                        String name = op.getName();
+                        return (name != null && name.toLowerCase().contains(q))
+                                || String.valueOf(o.getId()).contains(q);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        int itemsPerPage = config.contractAdminGUIConfig.orderConfig.slots.size();
+        int totalPages = Math.max(1, ConvertUtils.ceil_div(filtered.size(), itemsPerPage));
         int currentPage = Math.min(page, totalPages - 1);
-        int startIdx = currentPage * ITEMS_PER_PAGE;
-        int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, filtered.size());
+        int startIdx = currentPage * itemsPerPage;
+        int endIdx = Math.min(startIdx + itemsPerPage, filtered.size());
         List<Order> pageOrders = filtered.subList(startIdx, endIdx);
 
-        InventoryGUI gui = new InventoryGUI(6,
-                MM.deserialize("<dark_gray>[</dark_gray><red>Admin</red><dark_gray>]</dark_gray> <white>Contracts</white> "
-                        + "<gray>- " + filterLabel() + " <yellow>(" + (currentPage + 1) + "/" + totalPages + ")"));
+        String titleStr = config.contractAdminGUIConfig.title
+                .replace("%page%", String.valueOf(currentPage + 1))
+                .replace("%total_pages%", String.valueOf(totalPages))
+                .replace("%filter%", filterLabel())
+                .replace("%sort%", sortLabel(sortType));
+
+        InventoryGUI gui = new InventoryGUI(config.contractAdminGUIConfig.rows, MM.deserialize(titleStr));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
 
-        // Fill contract items
-        int slot = 0;
+        // Fill contract items using configured slots
+        List<Integer> slots = config.contractAdminGUIConfig.orderConfig.slots;
+        int slotIdx = 0;
         for (Order order : pageOrders) {
-            gui.addItem(buildOrderItem(order, currentPage, filter, sortType), slot++);
+            if (slotIdx >= slots.size()) break;
+            gui.addItem(buildOrderItem(order, currentPage, filter, sortType, search), slots.get(slotIdx++));
         }
 
-        // Fill empty slots with gray glass
+        // Fill remaining order slots with filler
         ItemStack filler = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         filler.editMeta(m -> m.displayName(Component.empty()));
-        for (int s = slot; s < ITEMS_PER_PAGE; s++) gui.addItem(new InventoryItem(filler, e -> {}), s);
-
-        // ─── Control row (row 6, slots 45-53) ───────────────────────────────
-
-        // Previous page
-        if (currentPage > 0) {
-            final int prevPage = currentPage - 1;
-            gui.addItem(buildNavButton(Material.ARROW, "<white>◀ Previous Page",
-                    "<gray>Go to page <yellow>" + currentPage,
-                    e -> open(admin, prevPage, filter, sortType)), 45);
+        for (int i = slotIdx; i < slots.size(); i++) {
+            gui.addItem(new InventoryItem(filler.clone(), e -> {}), slots.get(i));
         }
 
-        // Filter cycle button
-        gui.addItem(buildFilterButton(currentPage, sortType), 48);
-
-        // Sort cycle button
-        gui.addItem(buildSortButton(currentPage, filter), 49);
-
-        // Next page
-        if (currentPage + 1 < totalPages) {
-            final int nextPage = currentPage + 1;
-            gui.addItem(buildNavButton(Material.ARROW, "<white>Next Page ▶",
-                    "<gray>Go to page <yellow>" + (currentPage + 2),
-                    e -> open(admin, nextPage, filter, sortType)), 53);
-        }
-
-        // Close / back button
-        gui.addItem(buildNavButton(Material.BARRIER, "<red>Close", "", e -> admin.closeInventory()), 50);
+        // Navigation buttons
+        addNavButtons(gui, currentPage, totalPages);
 
         PlayerUtils.openGUI(admin, gui, false);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Contract item builder
-    // ─────────────────────────────────────────────────────────────────────────
+    private void addNavButtons(InventoryGUI gui, int currentPage, int totalPages) {
+        ContractAdminGUIConfig cfg = Config.config.contractAdminGUIConfig;
 
-    private InventoryItem buildOrderItem(Order order, int currentPage, FilterMode filter, SortType sortType) {
+        // Back button
+        if (currentPage > 0) {
+            final int prev = currentPage - 1;
+            gui.addItem(cfg.backButton.item(e -> open(admin, prev, filter, sortType, search)), cfg.backButton.slot);
+        }
+
+        // Next button
+        if (currentPage + 1 < totalPages) {
+            final int next = currentPage + 1;
+            gui.addItem(cfg.nextButton.item(e -> open(admin, next, filter, sortType, search)), cfg.nextButton.slot);
+        }
+
+        // Filter button
+        FilterMode nextFilter = nextFilter();
+        gui.addItem(new InventoryItem(cfg.filterButton.itemStack.clone(), e -> open(admin, 0, nextFilter, sortType, search)), cfg.filterButton.slot);
+
+        // Sort button
+        SortType nextSort = nextSort();
+        gui.addItem(cfg.sortButton.item(e -> open(admin, 0, filter, nextSort, search), sortType), cfg.sortButton.slot);
+
+        // Refresh button
+        gui.addItem(cfg.refreshButton.item(e -> open(admin, currentPage, filter, sortType, search)), cfg.refreshButton.slot);
+
+        // Search button
+        gui.addItem(cfg.searchButton.item(e -> {
+            SignGUI.newSession(admin, s -> open(admin, 0, filter, sortType, s),
+                    Config.config.signGUIConfig.signLines, Config.config.signGUIConfig.signType(), Config.config.signGUIConfig.queryLine);
+        }), cfg.searchButton.slot);
+
+        // Close button
+        gui.addItem(cfg.closeButton.item(e -> admin.closeInventory()), cfg.closeButton.slot);
+    }
+
+    private InventoryItem buildOrderItem(Order order, int currentPage, FilterMode filter, SortType sortType, String search) {
         OfflinePlayer owner = Bukkit.getOfflinePlayer(order.getOwnerUniqueId());
-        String ownerName = owner.getName() != null ? owner.getName() : order.getOwnerUniqueId().toString();
+        String ownerName;
+        if (owner.getName() != null) {
+            ownerName = owner.getName();
+        } else if (BedrockUtils.hasFloodgate()) {
+            ownerName = BedrockUtils.getOfflineDisplayName(order.getOwnerUniqueId());
+        } else {
+            ownerName = order.getOwnerUniqueId().toString().substring(0, 8);
+        }
 
         ItemStack display = order.getItem().clone();
         display.editMeta(meta -> {
-            // Display name: owner + item
             Component origName = meta.hasCustomName() ? meta.customName()
                     : Component.translatable(display.getType().getItemTranslationKey() != null
                     ? display.getType().getItemTranslationKey() : display.getType().name().toLowerCase());
-            meta.displayName(Component.text("[Admin] ", NamedTextColor.DARK_RED)
-                    .decoration(TextDecoration.ITALIC, false)
-                    .append(Component.text(ownerName + "'s ", NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false))
-                    .append(origName != null ? origName.decoration(TextDecoration.ITALIC, false) : Component.empty()));
+            meta.displayName(Component.text()
+                    .append(MM.deserialize("<dark_red>[Admin] </dark_red>"))
+                    .append(MM.deserialize("<gold>" + ownerName + "'s </gold>"))
+                    .append(origName != null ? origName : Component.empty())
+                    .build());
 
-            // Lore with full contract details
-            String statusColor = order.isActive() ? "<green>" : (order.getDelivered() >= order.getAmount() ? "<aqua>" : "<red>");
-            long msLeft = order.getExpiresAt() - System.currentTimeMillis();
-            String timeLeft = msLeft > 0 ? formatTime(msLeft) : "<red>Expired";
-
-            List<Component> lore = Arrays.asList(
-                    Component.empty(),
-                    mm("<gray>ID: <white>#" + order.getId()),
-                    mm("<gray>Owner: <yellow>" + ownerName),
-                    mm("<gray>Status: " + statusColor + getStatusLabel(order)),
-                    Component.empty(),
-                    mm("<gray>Price/ea: <green>$" + ConvertUtils.formatNumber(order.getMoneyPer())),
-                    mm("<gray>Total Value: <green>$" + ConvertUtils.formatNumber(order.getMoneyPer() * order.getAmount())),
-                    mm("<gray>Amount: <white>" + order.getAmount()),
-                    mm("<gray>Delivered: <white>" + order.getDelivered()),
-                    mm("<gray>In Storage: <white>" + order.getInStorage()),
-                    mm("<gray>Expires In: <white>" + timeLeft),
-                    Component.empty(),
-                    mm("<yellow>Left-Click <gray>to <green>Edit"),
-                    mm("<red>Right-Click <gray>to <red>Delete"),
-                    mm("<gray>(Shift+Right) <gray>to <dark_red>Force-Cancel <gray>(no refund)")
-            );
-            meta.lore(lore);
+            List<String> loreLines = Config.config.contractAdminGUIConfig.orderConfig.lore;
+            if (loreLines != null && !loreLines.isEmpty()) {
+                List<Component> lore = loreLines.stream()
+                        .map(line -> order.deserializeText(line))
+                        .collect(Collectors.toList());
+                meta.lore(lore);
+            }
         });
 
         return new InventoryItem(display, event -> {
@@ -187,7 +199,6 @@ public class ContractAdminGUI {
                 admin.showDialog(editDialog);
 
             } else if (event.getClick() == ClickType.RIGHT && admin.hasPermission("contracts.admin.delete-contracts")) {
-                // Soft cancel (expire) with payback
                 admin.sendRichMessage("<gray>Cancelling contract #" + order.getId() + " (owner will be refunded)...");
                 plugin.getStorage().cancelOrder(order).thenAccept(payback -> {
                     if (payback == -1.0) {
@@ -199,69 +210,18 @@ public class ContractAdminGUI {
                         }
                         admin.sendRichMessage("<green>Contract #" + order.getId() + " cancelled. Owner refunded <yellow>$" + ConvertUtils.formatNumber(payback));
                     }
-                    open(admin, currentPage, filter, sortType);
+                    open(admin, currentPage, filter, sortType, search);
                 });
 
             } else if (event.getClick() == ClickType.SHIFT_RIGHT && admin.hasPermission("contracts.admin.delete-contracts")) {
-                // Hard delete — no refund
                 admin.sendRichMessage("<red>Force-deleting contract #" + order.getId() + " — no refund issued.");
                 plugin.getStorage().deleteOrder(order).thenAccept(v -> {
                     admin.sendRichMessage("<green>Contract #" + order.getId() + " force-deleted.");
-                    open(admin, currentPage, filter, sortType);
+                    open(admin, currentPage, filter, sortType, search);
                 });
             }
         });
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Control button builders
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private InventoryItem buildFilterButton(int currentPage, SortType sortType) {
-        FilterMode next = nextFilter();
-        ItemStack item = ItemStack.of(Material.HOPPER);
-        item.editMeta(meta -> {
-            meta.displayName(mm("<aqua>Filter: <white>" + filterLabel()).decoration(TextDecoration.ITALIC, false));
-            meta.lore(Arrays.asList(
-                    Component.empty(),
-                    mm("<gray>Current: <yellow>" + filterLabel()),
-                    mm("<gray>Click for next: <yellow>" + filterModeLabel(next)),
-                    Component.empty(),
-                    mm("<dark_gray>ALL / ACTIVE / EXPIRED / COMPLETED")
-            ));
-        });
-        return new InventoryItem(item, e -> open(admin, 0, next, sortType));
-    }
-
-    private InventoryItem buildSortButton(int currentPage, FilterMode filter) {
-        SortType next = nextSort();
-        ItemStack item = ItemStack.of(Material.COMPARATOR);
-        item.editMeta(meta -> {
-            meta.displayName(mm("<aqua>Sort: <white>" + sortLabel(sortType)).decoration(TextDecoration.ITALIC, false));
-            meta.lore(Arrays.asList(
-                    Component.empty(),
-                    mm("<gray>Current: <yellow>" + sortLabel(sortType)),
-                    mm("<gray>Click for next: <yellow>" + sortLabel(next)),
-                    Component.empty(),
-                    mm("<dark_gray>NEWEST / OLDEST / PRICIEST / CHEAPEST / MOST_MONEY / RECENTLY_LISTED")
-            ));
-        });
-        return new InventoryItem(item, e -> open(admin, 0, filter, next));
-    }
-
-    private static InventoryItem buildNavButton(Material mat, String name, String lore,
-                                                 java.util.function.Consumer<org.bukkit.event.inventory.InventoryClickEvent> action) {
-        ItemStack item = ItemStack.of(mat);
-        item.editMeta(meta -> {
-            meta.displayName(mm(name).decoration(TextDecoration.ITALIC, false));
-            if (!lore.isEmpty()) meta.lore(List.of(mm(lore).decoration(TextDecoration.ITALIC, false)));
-        });
-        return new InventoryItem(item, action);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ─────────────────────────────────────────────────────────────────────────
 
     private List<Order> applyFilter(Collection<Order> orders) {
         return orders.stream().filter(o -> switch (filter) {
@@ -278,15 +238,16 @@ public class ContractAdminGUI {
     }
 
     private SortType nextSort() {
-        // Cycle only through admin-relevant sorts
-        SortType[] sorts = {SortType.RECENTLY_LISTED, SortType.OLDEST, SortType.PRICIEST, SortType.CHEAPEST, SortType.MOST_MONEY_PER_ITEM};
+        SortType[] sorts = Config.config.contractAdminGUIConfig.sortsOrderConfig.orderArray.toArray(new SortType[0]);
+        if (sorts.length == 0) return SortType.RECENTLY_LISTED;
         for (int i = 0; i < sorts.length; i++) {
             if (sorts[i] == sortType) return sorts[(i + 1) % sorts.length];
         }
-        return SortType.RECENTLY_LISTED;
+        return sorts[0];
     }
 
     private String filterLabel() { return filterModeLabel(filter); }
+
     private static String filterModeLabel(FilterMode m) {
         return switch (m) {
             case ALL -> "All";
@@ -307,27 +268,5 @@ public class ContractAdminGUI {
             case A_Z -> "A-Z";
             case Z_A -> "Z-A";
         };
-    }
-
-    private static String getStatusLabel(Order o) {
-        if (o.getDelivered() >= o.getAmount()) return "Completed";
-        if (o.getExpiresAt() < System.currentTimeMillis()) return "Expired";
-        return "Active";
-    }
-
-    private static String formatTime(long ms) {
-        long sec = ms / 1000;
-        long min = sec / 60;
-        long hour = min / 60;
-        long day = hour / 24;
-        hour %= 24; min %= 60; sec %= 60;
-        if (day > 0) return day + "d " + hour + "h";
-        if (hour > 0) return hour + "h " + min + "m";
-        if (min > 0) return min + "m " + sec + "s";
-        return sec + "s";
-    }
-
-    private static Component mm(String s) {
-        return MM.deserialize(s);
     }
 }

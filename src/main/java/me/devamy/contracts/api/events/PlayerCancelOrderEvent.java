@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerCancelOrderEvent {
     private PlayerCancelOrderEvent() {}
 
-    public static class Pre extends OrderiumPlayerEvent implements Cancellable {
+    public static class Pre extends ContractsPlayerEvent implements Cancellable {
         private boolean cancelled = false;
         private static final HandlerList HANDLER_LIST = new HandlerList();
 
@@ -36,7 +36,7 @@ public class PlayerCancelOrderEvent {
         public static HandlerList getHandlerList() { return HANDLER_LIST; }
     }
 
-    public static class Post extends OrderiumPlayerEvent {
+    public static class Post extends ContractsPlayerEvent {
         private static final HandlerList HANDLER_LIST = new HandlerList();
 
         public Post(@NotNull Player player, @NotNull Order order, boolean isAsync) {
