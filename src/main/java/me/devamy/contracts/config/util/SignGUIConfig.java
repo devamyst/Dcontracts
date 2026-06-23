@@ -53,7 +53,7 @@ public class SignGUIConfig extends GUIConfigFile {
     @Override
     public void migrateV5(@NotNull ConfigFile oldConfig) {
         signTypeKey = getKey(oldConfig.getString("gui.search-sign.type"));
-        queryLine = oldConfig.getInteger("gui.search-sign.search-line") - 1;
+        queryLine = Math.max(0, oldConfig.getInteger("gui.search-sign.search-line") - 1);
         signLines.clear();
         signLines.addAll(oldConfig.getStringList("gui.search-sign.lines"));
 

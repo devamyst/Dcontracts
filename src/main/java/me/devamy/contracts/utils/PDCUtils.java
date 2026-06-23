@@ -20,10 +20,11 @@ public class PDCUtils {
     public static final List<NamespacedKey> KEYS = List.of(collectedKey, blacklistKey, searchKey, idKey);
 
     public static void setID(ItemMeta meta, int id) {
-        meta.getPersistentDataContainer().set(idKey, PersistentDataType.INTEGER, id);
+        if (meta != null) meta.getPersistentDataContainer().set(idKey, PersistentDataType.INTEGER, id);
     }
 
     public static int getID(ItemMeta meta) {
+        if (meta == null) return -1;
         return meta.getPersistentDataContainer().getOrDefault(idKey, PersistentDataType.INTEGER, -1);
     }
 
@@ -32,8 +33,10 @@ public class PDCUtils {
     }
 
     public static ItemMeta removePluginPD(ItemMeta meta) {
-        for  (NamespacedKey key : KEYS) {
-            meta.getPersistentDataContainer().remove(key);
+        if (meta != null) {
+            for (NamespacedKey key : KEYS) {
+                meta.getPersistentDataContainer().remove(key);
+            }
         }
         return meta;
     }
@@ -47,23 +50,28 @@ public class PDCUtils {
     }
 
     public static void setBlacklist(ItemMeta meta) {
-        final byte b = 1; // Weird thing I can't just put 1 in the method
+        if (meta == null) return;
+        final byte b = 1;
         meta.getPersistentDataContainer().set(blacklistKey, PersistentDataType.BYTE, b);
     }
 
     public static boolean isBlacklist(ItemMeta meta) {
+        if (meta == null) return false;
         return meta.getPersistentDataContainer().has(blacklistKey);
     }
 
     public static void setSearch(ItemMeta meta, String search) {
+        if (meta == null) return;
         meta.getPersistentDataContainer().set(searchKey, PersistentDataType.STRING, search);
     }
 
     public static String getSearch(ItemMeta meta) {
+        if (meta == null) return null;
         return meta.getPersistentDataContainer().get(searchKey, PersistentDataType.STRING);
     }
 
     public static boolean hasCustomSearch(ItemMeta meta) {
+        if (meta == null) return false;
         return meta.getPersistentDataContainer().has(searchKey);
     }
 

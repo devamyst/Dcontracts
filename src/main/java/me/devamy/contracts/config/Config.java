@@ -73,13 +73,9 @@ public class Config {
     public boolean shulkerDelivering;
     public boolean broadcastOrderCreation;
 
-    public final List<@NotNull String> orderCommandAliases = new ArrayList<>();
-
     public final List<NamespacedKey> similarityCheck = new ArrayList<>();
 
     public Config() throws Exception {
-        ConfigMigrator.migrate("default-config.yml", javaConfigFile);
-
         try {
             configFile = ConfigFile.loadConfig(javaConfigFile);
         } catch (Exception e) {
@@ -90,7 +86,13 @@ public class Config {
             setDefaults();
             save();
             load();
-        } else ContractsMigration.perform(this);
+        } else {
+            if (!ConfigMigrator.findMissingKeys("default-config.yml", javaConfigFile).isEmpty()) {
+                setDefaults();
+                save();
+            }
+            ContractsMigration.perform(this);
+        }
     }
 
     public void save() throws Exception {
@@ -131,13 +133,18 @@ public class Config {
         manageOrderDialogConfig.setDefault();
         contractAdminGUIConfig.setDefault();
 
-        configFile.addDefault("bstats", true);
-        configFile.addDefault("check-for-updates", true);
-        configFile.addDefault("log-transactions", true);
-        configFile.addDefault("expires-after", 7L * 24L * 60L * 60L * 1000L);
-        configFile.addDefault("minimum-price", 0.1);
-        configFile.addDefault("max-collect", 1000);
-        configFile.addDefault("max-collect-per-minute", 1000);
+        configFile.addDefault("bstats", true, "Whether to let bStats collect anonymous usage statistics");
+        configFile.addDefault("check-for-updates", true, "Whether to check for plugin updates on startup");
+        configFile.addDefault("log-transactions", true, "Whether to log player money transactions (Vault) to console");
+        configFile.addDefault("expires-after", 7L * 24L * 60L * 60L * 1000L, "After how many milliseconds an order expires (default: 7 days)");
+        configFile.addDefault("minimum-price", 0.1, "Minimum price per item a player can set when creating an order");
+        configFile.addDefault("max-collect", 1000, "Maximum items a player can collect from a single order at once");
+        configFile.addDefault("max-collect-per-minute", 1000,
+                """
+                Global rate limit: max items collected per minute across all orders.
+                Setting this too high may let players lag the server on large deliveries.
+                """
+        );
         configFile.addDefault("similarity-check", List.of(
                 "minecraft:enchantments",
                 "minecraft:bundle_contents",
@@ -153,15 +160,19 @@ public class Config {
                 "minecraft:damage",
                 "minecraft:custom_name",
                 "minecraft:item_model",
-                "minecraft:bundle_contents",
                 "minecraft:damage_type",
                 "minecraft:consumable"
-        ));
+        ),
+                """
+                Defines how two items are considered "similar" for delivery matching.
+                If all the listed data components match between items (regardless of item type),
+                they are treated as the same item for order delivery.
+                See: https://minecraft.wiki/w/Data_component_format#List_of_components
+                """
+        );
 
-        configFile.addDefault("shulker-delivering", true);
-        configFile.addDefault("broadcast-order-creation", false);
-
-        configFile.addDefault("order-command-aliases", List.of("order", "orders"));
+        configFile.addDefault("shulker-delivering", true, "Whether players can deliver orders using shulker boxes containing items");
+        configFile.addDefault("broadcast-order-creation", false, "Whether to broadcast a server-wide message when an order is created");
 
         for (final SortType sort : SortType.values()) {
             configFile.addDefault("sorts-display.active." + sort.getIdentifier(), sort.getDisplayActive());
@@ -177,7 +188,9 @@ public class Config {
     }
 
     public static CompletableFuture<Void> reloadAsync() {
-        if (!reloading.compareAndSet(false, true)) return null;
+        if (!reloading.compareAndSet(false, true)) {
+            return CompletableFuture.completedFuture(null);
+        }
         final CompletableFuture<Void> future = new CompletableFuture<>();
         DispatchUtil.async(() -> {
 
@@ -251,7 +264,7 @@ public class Config {
         expiresAfter = configFile.getLong("expires-after");
         minPrice = configFile.getDouble("minimum-price");
         maxCollect = configFile.getInteger("max-collect");
-        maxCollectPerMinute = configFile.getInteger(("max-collect-per-minute"));
+        maxCollectPerMinute = configFile.getInteger("max-collect-per-minute");
         shulkerDelivering = configFile.getBoolean("shulker-delivering");
         broadcastOrderCreation = configFile.getBoolean("broadcast-order-creation");
 
@@ -265,9 +278,6 @@ public class Config {
             }
             similarityCheck.add(new NamespacedKey(components[0], components[1]));
         }
-
-        orderCommandAliases.clear();
-        orderCommandAliases.addAll(configFile.getStringList("order-command-aliases"));
 
         orderCreationSuccessful = configFile.getString("messages.create-order-success");
         invalidInput = configFile.getString("messages.invalid-input");
@@ -291,7 +301,10 @@ public class Config {
 
     private Sound getSound(String name) {
         final String soundKey = configFile.getString("sounds." + name + ".sound");
-        assert soundKey != null;
+        if (soundKey == null) {
+            Log.warn("Missing sound key for '" + name + "'. Using default click sound.");
+            return Sound.sound(Key.key("minecraft:ui.button.click"), Sound.Source.UI, 1.0f, 1.0f);
+        }
         final String[] components = soundKey.split(":");
         final String namespace, key;
         if (components.length != 2) {
@@ -308,9 +321,9 @@ public class Config {
     }
 
     private void setDefaultSound(String name, Sound sound) {
-        configFile.addDefault("sounds." + name + ".sound", sound.name().asString());
-        configFile.addDefault("sounds." + name + ".volume", sound.volume());
-        configFile.addDefault("sounds." + name + ".pitch", sound.pitch());
+        configFile.addDefault("sounds." + name + ".sound", sound.name().asString(), "Sound effect for " + name);
+        configFile.addDefault("sounds." + name + ".volume", sound.volume(), "Volume (0.0 - 1.0)");
+        configFile.addDefault("sounds." + name + ".pitch", sound.pitch(), "Pitch (0.5 - 2.0)");
     }
 
     private void setDefaultSounds() {
@@ -324,14 +337,14 @@ public class Config {
     }
 
     private void setDefaultMessages() {
-        configFile.addDefault("messages.create-order-success", "<gray>Your order has been created");
-        configFile.addDefault("messages.invalid-input", "<red>Invalid number or format");
-        configFile.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering an order");
-        configFile.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>");
-        configFile.addDefault("messages.not-enough-money", "<red>You do not have enough money");
-        configFile.addDefault("messages.deliver-self", "<red>You cannot deliver your own order");
-        configFile.addDefault("messages.exceeded-max-collect", "<red>You are collecting too many items");
-        configFile.addDefault("messages.collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...");
-        configFile.addDefault("messages.order-creation-broadcast", "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/orders");
+        configFile.addDefault("messages.create-order-success", "<gray>Your order has been created", "Shown when an order is created successfully");
+        configFile.addDefault("messages.invalid-input", "<red>Invalid number or format", "Shown when a player enters invalid input");
+        configFile.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering an order", "Shown to the deliverer upon successful delivery");
+        configFile.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>", "Shown to the order owner when someone delivers");
+        configFile.addDefault("messages.not-enough-money", "<red>You do not have enough money", "Shown when a player lacks funds");
+        configFile.addDefault("messages.deliver-self", "<red>You cannot deliver your own order", "Shown when a player tries to deliver their own order");
+        configFile.addDefault("messages.exceeded-max-collect", "<red>You are collecting too many items", "Shown when exceeding max-collect limit");
+        configFile.addDefault("messages.collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...", "Shown when exceeding max-collect-per-minute rate limit");
+        configFile.addDefault("messages.order-creation-broadcast", "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/contracts", "Broadcast message when an order is created");
     }
 }

@@ -38,7 +38,7 @@ public final class DataCache {
     private final NavigableSet<Order> mostDelivered = new ConcurrentSkipListSet<>(Comparator.comparingInt(Order::getDelivered).reversed().thenComparing(Order::getId));
     private final NavigableSet<Order> mostPaid = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getPaid).reversed().thenComparing(Order::getId));
     private final NavigableSet<Order> oldest = new ConcurrentSkipListSet<>(Comparator.comparingLong(Order::getExpiresAt).thenComparing(Order::getId));
-    private final NavigableSet<Order> priciest = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).reversed().thenComparing(Order::getId));
+    private final NavigableSet<Order> priciest = new ConcurrentSkipListSet<>(Comparator.<Order>comparingDouble(o -> o.getMoneyPer() * o.getAmount()).reversed().thenComparing(Order::getId));
     private final NavigableSet<Order> cheapest = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).thenComparing(Order::getId));
 
     private void setBlacklistAndCustomItems(Collection<BlacklistedItem> blacklist, Collection<CustomItem> customItems) {

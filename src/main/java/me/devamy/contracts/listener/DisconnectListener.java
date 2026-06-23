@@ -19,8 +19,7 @@ public class DisconnectListener implements Listener {
         Player p = e.getPlayer();
         SignGUI.completeSession(p, ""); // Close the sign GUI manually if the player is in one
 
-        if (DialogListener.pendingItems().containsKey(p))
-            DialogListener.onCancel(p); // Close the dialog manually if the player is in one
+        DialogListener.onCancel(p); // Return items and remove pending delivery if any
 
         InventoryView view = p.getOpenInventory();
         if (view.getTopInventory().getHolder() instanceof InventoryGUI gui)

@@ -32,8 +32,14 @@ public class EnchantmentConfig {
             Log.error("Failed to deserialize item", e);
         }
         slots.clear();
-        final List<Integer> slotsFromConfig = config.getList("slots");
-        slots.addAll(slotsFromConfig);
+        final List<?> rawSlots = config.getList("slots");
+        if (rawSlots != null) {
+            for (Object obj : rawSlots) {
+                if (obj instanceof Number num) {
+                    slots.add(num.intValue());
+                }
+            }
+        }
     }
 
     public void save(@NotNull ConfigFile config) {

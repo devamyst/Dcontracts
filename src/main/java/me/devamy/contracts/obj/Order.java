@@ -80,8 +80,12 @@ public class Order implements me.devamy.contracts.api.Order {
         sec %= 60;
         millis %= 1000;
         final ItemMeta meta = item.getItemMeta();
-        final Component itemName = meta.hasCustomName() ? meta.customName() : Component.translatable(item.translationKey());
-        assert itemName != null;
+        final Component itemName;
+        if (meta != null && meta.hasCustomName()) {
+            itemName = meta.customName();
+        } else {
+            itemName = Component.translatable(item.translationKey());
+        }
         return new TagResolver[]{
                 Placeholder.unparsed("money-per", formatNumber(moneyPer)),
                 Placeholder.unparsed("paid", formatNumber(moneyPer * delivered)),
@@ -122,9 +126,9 @@ public class Order implements me.devamy.contracts.api.Order {
             if (ownerPlayer != null && ownerPlayer.isOnline()) {
                 final ItemMeta meta = item.getItemMeta();
                 final Component displayName = meta == null ? null : meta.displayName();
-                assert item.getType().getItemTranslationKey() != null;
+                final String translationKey = item.getType().getItemTranslationKey();
                 final Component itemName = displayName == null
-                        ? Component.translatable(item.getType().getItemTranslationKey())
+                        ? Component.translatable(translationKey != null ? translationKey : "item.minecraft.unknown")
                         : displayName;
                 DispatchUtil.entity(ownerPlayer, () ->
                         ownerPlayer.sendRichMessage(

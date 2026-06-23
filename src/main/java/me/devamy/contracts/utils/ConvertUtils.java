@@ -84,7 +84,7 @@ public class ConvertUtils {
             while (raw.next()) {
                 final byte[] itemBytes = raw.getBytes(1);
                 final String search = raw.getString(2);
-                items.add(new CustomItem(itemBytes, search.split(",")));
+                items.add(new CustomItem(itemBytes, search == null ? new String[0] : search.split(",")));
             }
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to fetch searchable item from database", e);
@@ -109,6 +109,7 @@ public class ConvertUtils {
     }
 
     public static int ceil_div(int a, int b) {
+        if (b <= 0) return 1;
         return 1 + ((a - 1) / b);
     }
 
@@ -164,7 +165,8 @@ public class ConvertUtils {
         return num;
     }
 
-    public static @NotNull ItemStack deserializeItem(final @NotNull ConfigSection section) {
+    public static @NotNull ItemStack deserializeItem(final @Nullable ConfigSection section) {
+        if (section == null) return ItemStack.empty();
         return NBTSerializer.deserializeItemStack(section);
     }
 

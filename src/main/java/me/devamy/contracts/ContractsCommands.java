@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 import static me.devamy.contracts.Contracts.plugin;
-import static me.devamy.contracts.config.Config.config;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ContractsCommands {
@@ -108,10 +107,19 @@ public class ContractsCommands {
                 .then(Commands.literal("admin")
                         .requires(permission("admin"))
 
-                        // /contracts admin (no args) → admin GUI
+                        // /contracts admin (no args) → admin GUI or text summary
                         .executes(ctx -> {
-                            if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
-                            ContractAdminGUI.open(player, 0);
+                            final Entity executor = ctx.getSource().getExecutor();
+                            final CommandSender sender = executor == null ? ctx.getSource().getSender() : executor;
+                            if (executor instanceof Player player) {
+                                ContractAdminGUI.open(player, 0);
+                            } else {
+                                sender.sendRichMessage("<gold>── Contracts Admin ──");
+                                sender.sendRichMessage("<yellow>/contracts admin reload <gray>Reload config");
+                                sender.sendRichMessage("<yellow>/contracts admin blacklist <gray>Manage blacklist (in-game)");
+                                sender.sendRichMessage("<yellow>/contracts admin custom_items <gray>Manage custom items (in-game)");
+                                sender.sendRichMessage("<yellow>/contracts admin convert <gray>Database converter (in-game)");
+                            }
                             return 1;
                         })
 
@@ -129,20 +137,30 @@ public class ContractsCommands {
 
                         // /contracts admin blacklist
                         .then(Commands.literal("blacklist")
-                                .requires(playerAndPermission("admin.blacklist"))
+                                .requires(permission("admin.blacklist"))
                                 .executes(ctx -> {
-                                    if (!(ctx.getSource().getExecutor() instanceof final Player p)) return 2;
-                                    PlayerUtils.openGUI(p, AdminToolGUI.getBlacklistGUI(), true);
+                                    final Entity executor = ctx.getSource().getExecutor();
+                                    final CommandSender sender = executor == null ? ctx.getSource().getSender() : executor;
+                                    if (executor instanceof Player p) {
+                                        PlayerUtils.openGUI(p, AdminToolGUI.getBlacklistGUI(), true);
+                                    } else {
+                                        sender.sendRichMessage("<yellow>Blacklist editor is only available in-game.");
+                                    }
                                     return 1;
                                 })
                         )
 
                         // /contracts admin custom_items
                         .then(Commands.literal("custom_items")
-                                .requires(playerAndPermission("admin.custom-items"))
+                                .requires(permission("admin.custom-items"))
                                 .executes(ctx -> {
-                                    if (!(ctx.getSource().getExecutor() instanceof final Player p)) return 2;
-                                    PlayerUtils.openGUI(p, AdminToolGUI.getCustomItemsGUI(), true);
+                                    final Entity executor = ctx.getSource().getExecutor();
+                                    final CommandSender sender = executor == null ? ctx.getSource().getSender() : executor;
+                                    if (executor instanceof Player p) {
+                                        PlayerUtils.openGUI(p, AdminToolGUI.getCustomItemsGUI(), true);
+                                    } else {
+                                        sender.sendRichMessage("<yellow>Custom items editor is only available in-game.");
+                                    }
                                     return 1;
                                 })
                         )
@@ -174,16 +192,8 @@ public class ContractsCommands {
             // Main command with all subcommands
             event.registrar().register(buildContractsRootCmd());
 
-            // Aliases: /contract, /order, /orders, /c — all open the main GUI
-            for (final String alias : java.util.List.of("contract", "order", "orders", "c")) {
-                event.registrar().register(buildMainContractsCmd(alias));
-            }
-
-            // Also honour any extra aliases from config
-            for (final String alias : config.orderCommandAliases) {
-                // Skip ones we already registered
-                if (alias.equals("contracts") || alias.equals("contract") ||
-                        alias.equals("order") || alias.equals("orders") || alias.equals("c")) continue;
+            // Aliases: /contract, /c — all open the main GUI
+            for (final String alias : java.util.List.of("contract", "c")) {
                 event.registrar().register(buildMainContractsCmd(alias));
             }
         });

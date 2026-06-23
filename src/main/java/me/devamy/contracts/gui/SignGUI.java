@@ -20,8 +20,9 @@ import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static me.devamy.contracts.Contracts.plugin;
@@ -29,8 +30,8 @@ import static me.devamy.contracts.utils.Values.ERROR_TRACKER;
 
 @SuppressWarnings("UnstableApiUsage")
 public class SignGUI implements PacketListener {
-    private static final HashMap<Player, SignInfo> sessionsList = new HashMap<>();
-    private static MiniMessage mm;
+    private static final Map<Player, SignInfo> sessionsList = new ConcurrentHashMap<>();
+    private static volatile MiniMessage mm;
 
     public static void newSession(Player p, Consumer<String> action, List<String> lines, BlockType blockType, int line) {
         if (blockType == null) {
@@ -40,16 +41,24 @@ public class SignGUI implements PacketListener {
         }
         if (sessionsList.containsKey(p)) return;
 
+        if (mm == null) mm = MiniMessage.miniMessage();
+
         final int x = (int) Math.floor(p.getX());
-        int y = (int) Math.ceil(p.getY());
+        int y = Math.max(1, (int) Math.ceil(p.getY()));
         final int z = (int) Math.floor(p.getZ());
         if (p.getPitch() < 0) {
-            y -= 4;
+            y = Math.max(1, y - 4);
         } else y += 5;
 
         Sign signState = (Sign) blockType.createBlockData().createBlockState();
         SignSide frontSide = signState.getSide(Side.FRONT);
-        for (int i = 0; i < 4; i++) frontSide.line(i, mm.deserialize(lines.get(i)));
+        for (int i = 0; i < 4; i++) {
+            if (i < lines.size()) {
+                frontSide.line(i, mm.deserialize(lines.get(i)));
+            } else {
+                frontSide.line(i, mm.deserialize(""));
+            }
+        }
         Location loc = new Location(p.getWorld(), x, y, z);
         Position position = Position.block(x, y, z);
         p.sendBlockChange(loc, signState.getBlockData());
@@ -83,7 +92,8 @@ public class SignGUI implements PacketListener {
             final Vector3i blockPos = new Vector3i(pos.blockX(), pos.blockY(), pos.blockZ());
             if (!wrapper.getBlockPosition().equals(blockPos)) return;
             final String[] lines = wrapper.getTextLines();
-            completeSession(player, lines[info.line()]);
+            int lineIdx = Math.max(0, Math.min(info.line(), lines.length - 1));
+            completeSession(player, lines[lineIdx]);
 
             World world = player.getWorld();
             Location loc = pos.toLocation(world);

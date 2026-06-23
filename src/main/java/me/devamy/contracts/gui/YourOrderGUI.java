@@ -29,7 +29,9 @@ public class YourOrderGUI {
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         final List<String> rawLore = config.yourOrdersGUIConfig.orderConfig.lore;
         int currentSlotIndex = 0;
+        final int slotCount = config.yourOrdersGUIConfig.orderConfig.slots.size();
         for (Order order : orders) {
+            if (currentSlotIndex >= slotCount) break;
             gui.addItem(order.item(rawLore, event -> {
                 Dialog dialog = ManageOrderDialog.getDialog(order);
                 PlayerUtils.openDialog(p, dialog);

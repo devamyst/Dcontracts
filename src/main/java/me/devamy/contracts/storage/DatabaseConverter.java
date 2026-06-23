@@ -307,7 +307,7 @@ public class DatabaseConverter {
                 case SQLITE -> {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-source");
-                    config.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder() + File.separator + "data.db");
+                    config.setJdbcUrl("jdbc:sqlite:" + new File(plugin.getDataFolder(), "data.db").getAbsolutePath());
                     return new HikariDataSource(config);
                 }
                 case MYSQL -> {
@@ -317,7 +317,8 @@ public class DatabaseConverter {
                 case H2 -> {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-source");
-                    config.setJdbcUrl("jdbc:h2:" + plugin.getDataFolder() + File.separator + "data-h2;MODE=MySQL");
+                    config.setJdbcUrl("jdbc:h2:" + new File(plugin.getDataFolder(), "data-h2").getAbsolutePath() + ";MODE=MySQL");
+                    config.setDriverClassName("contracts.h2.Driver");
                     config.setUsername("sa");
                     config.setPassword("");
                     return new HikariDataSource(config);
@@ -336,8 +337,7 @@ public class DatabaseConverter {
                 case SQLITE -> {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-target");
-                    String dbPath = plugin.getDataFolder() + File.separator + "data-converted.db";
-                    config.setJdbcUrl("jdbc:sqlite:" + dbPath);
+                    config.setJdbcUrl("jdbc:sqlite:" + new File(plugin.getDataFolder(), "data-converted.db").getAbsolutePath());
                     return new HikariDataSource(config);
                 }
                 case MYSQL -> {
@@ -346,7 +346,8 @@ public class DatabaseConverter {
                 case H2 -> {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-target");
-                    config.setJdbcUrl("jdbc:h2:" + plugin.getDataFolder() + File.separator + "data-converted-h2;MODE=MySQL");
+                    config.setJdbcUrl("jdbc:h2:" + new File(plugin.getDataFolder(), "data-converted-h2").getAbsolutePath() + ";MODE=MySQL");
+                    config.setDriverClassName("contracts.h2.Driver");
                     config.setUsername(user.isEmpty() ? "sa" : user);
                     config.setPassword(pass);
                     return new HikariDataSource(config);
@@ -363,6 +364,7 @@ public class DatabaseConverter {
         HikariConfig config = new HikariConfig();
         config.setPoolName(poolName);
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&allowPublicKeyRetrieval=true");
+        config.setDriverClassName("contracts.mysql.cj.jdbc.Driver");
         config.setUsername(user);
         config.setPassword(pass);
         config.setMaximumPoolSize(5);

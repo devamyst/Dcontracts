@@ -5,14 +5,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DialogListener {
-    private static final HashMap<Player, Collection<ItemStack>> pendingItems = new HashMap<>();
-
-    public static HashMap<Player, Collection<ItemStack>> pendingItems() {
-        return pendingItems;
-    }
+    private static final Map<Player, Collection<ItemStack>> pendingItems = new ConcurrentHashMap<>();
 
     public static void addItems(Player p, Collection<ItemStack> items) {
         pendingItems.put(p, items);

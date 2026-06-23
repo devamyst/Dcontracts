@@ -39,7 +39,7 @@ public abstract class Storage {
     protected Storage() {
         HikariConfig modifiedItemsConfig = new HikariConfig();
         modifiedItemsConfig.setPoolName("contracts items pool");
-        modifiedItemsConfig.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder() + File.separator + "modified_items.db");
+        modifiedItemsConfig.setJdbcUrl("jdbc:sqlite:" + new File(plugin.getDataFolder(), "modified_items.db").getAbsolutePath());
         this.modifiedItemDataSource = new HikariDataSource(modifiedItemsConfig);
 
         Collection<VanillaItem> itemsList = loadItems();
@@ -114,19 +114,15 @@ public abstract class Storage {
         try (
                 Connection connection = modifiedItemDataSource.getConnection();
                 PreparedStatement createCustomItemsTable = connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + CUSTOM_ITEMS_TABLE + " (item BLOB, search VARCHAR(65535))");
-                PreparedStatement createBlacklistTable = connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + BLACKLIST_TABLE + " (item BLOB)")
+                PreparedStatement createBlacklistTable = connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + BLACKLIST_TABLE + " (item BLOB)");
+                PreparedStatement getCustomItems = connection.prepareStatement("SELECT * FROM " + CUSTOM_ITEMS_TABLE);
+                PreparedStatement getBlacklist = connection.prepareStatement("SELECT * FROM " + BLACKLIST_TABLE)
         ) {
             createCustomItemsTable.executeUpdate();
             createBlacklistTable.executeUpdate();
 
-            PreparedStatement getCustomItems = connection.prepareStatement("SELECT * FROM " + CUSTOM_ITEMS_TABLE);
-            PreparedStatement getBlacklist = connection.prepareStatement("SELECT * FROM " + BLACKLIST_TABLE);
-
             Collection<BlacklistedItem> blacklist = ConvertUtils.convertBlacklistedItems(getBlacklist.executeQuery());
             Collection<CustomItem> customItems = ConvertUtils.convertCustomItems(getCustomItems.executeQuery());
-
-            getCustomItems.close();
-            getBlacklist.close();
 
             return new Pair<>(blacklist, customItems);
 

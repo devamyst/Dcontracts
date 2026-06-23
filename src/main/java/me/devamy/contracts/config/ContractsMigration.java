@@ -28,6 +28,16 @@ public class ContractsMigration {
         // No migration needed
         if (configVersion == Config.CURRENT_CONFIG_VERSION) {
             config.setDefaults();
+            config.mainGUIConfig.saveToFile();
+            config.yourOrdersGUIConfig.saveToFile();
+            config.chooseItemGUIConfig.saveToFile();
+            config.signGUIConfig.saveToFile();
+            config.enchantGUIConfig.saveToFile();
+            config.deliverGUIConfig.saveToFile();
+            config.newOrderDialogConfig.saveToFile();
+            config.confirmDeliveryDialogConfig.saveToFile();
+            config.manageOrderDialogConfig.saveToFile();
+            config.contractAdminGUIConfig.saveToFile();
             config.reloadGUIs();
             config.load();
             return;
@@ -112,7 +122,6 @@ public class ContractsMigration {
                         "minecraft:damage",
                         "minecraft:custom_name",
                         "minecraft:item_model",
-                        "minecraft:bundle_contents",
                         "minecraft:damage_type",
                         "minecraft:consumable"
                 ),
@@ -132,18 +141,12 @@ public class ContractsMigration {
         );
 
         config.addDefault("shulker-delivering", true, "Whether to allow players to deliver orders with items in shulker boxes");
-
-        config.addDefault("order-command-aliases", List.of("order", "orders"),
-                """
-                        Execute any of these commands (aliases) open the main GUI
-                        You need to restart the server to take effects
-                        """
-        );
+        config.addDefault("broadcast-order-creation", false, "Whether to broadcast a server-wide message when an order is created");
 
         // MESSAGES
         config.addDefault("messages.create-order-success", "<gray>Your order has been created");
         config.addDefault("messages.invalid-input", "<red>Invalid number or format");
-        config.addDefault("messages.delivery", "<gray>You earned <green>$<money><gray> from delivering an order");
+        config.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering an order");
         config.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>");
         config.addDefault("messages.not-enough-money", "<red>You do not have enough money");
         config.addDefault("messages.deliver-self", "<red>You cannot deliver your own order");

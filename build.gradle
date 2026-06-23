@@ -49,6 +49,8 @@ dependencies {
     implementation("com.zaxxer:HikariCP:7.0.2")
     // MySQL JDBC driver (shaded in)
     implementation("com.mysql:mysql-connector-j:8.4.0")
+    // H2 JDBC driver (shaded in)
+    implementation("com.h2database:h2:2.2.224")
     // GeyserMC Bedrock support (optional at runtime)
     compileOnly("org.geysermc.geyser:api:2.4.4-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
@@ -60,11 +62,14 @@ tasks {
     }
 
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        mergeServiceFiles()
         archiveClassifier = ''
         relocate("com.zaxxer", "contracts.zaxxer")
         relocate("org.bstats", "contracts.bstats")
         relocate('dev.faststats', 'contracts.faststats')
         relocate("com.mysql", "contracts.mysql")
+        relocate("org.h2", "contracts.h2")
     }
 }
 

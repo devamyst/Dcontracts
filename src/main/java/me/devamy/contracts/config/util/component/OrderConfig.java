@@ -23,8 +23,14 @@ public class OrderConfig extends ComponentConfig {
     public void reload(final @NotNull ConfigFile config) {
         slots.clear();
         lore.clear();
-        final List<Integer> slotsList = config.getList(path + ".slots");
-        slots.addAll(slotsList);
+        final List<?> rawSlots = config.getList(path + ".slots");
+        if (rawSlots != null) {
+            for (Object obj : rawSlots) {
+                if (obj instanceof Number num) {
+                    slots.add(num.intValue());
+                }
+            }
+        }
 
         final List<String> loreLines = config.getStringList(path + ".lore");
         lore.addAll(loreLines);

@@ -8,20 +8,40 @@
 config-version: 5
 
 # ── General Settings ─────────────────────────
+
+# Whether to let bStats collect anonymous usage statistics
 bstats: true
+
+# Whether to check for plugin updates on startup
 check-for-updates: true
+
+# Whether to log player money transactions (Vault) to console
 log-transactions: true
+
+# After how many milliseconds an order expires (default: 7 days)
 expires-after: 604800000
+
+# Minimum price per item a player can set when creating an order
 minimum-price: 0.1
+
+# Maximum items a player can collect from a single order at once
 max-collect: 1000
+
+# Global rate limit: max items collected per minute across all orders.
+# Setting this too high may let players lag the server on large deliveries.
 max-collect-per-minute: 1000
+
+# Whether players can deliver orders using shulker boxes containing items
 shulker-delivering: true
+
+# Whether to broadcast a server-wide message when an order is created
 broadcast-order-creation: false
-order-command-aliases:
-  - order
-  - orders
 
 # ── Similarity Check ─────────────────────────
+# Defines how two items are considered "similar" for delivery matching.
+# If all the listed data components match between items (regardless of item type),
+# they are treated as the same item for order delivery.
+# See: https://minecraft.wiki/w/Data_component_format#List_of_components
 similarity-check:
   - "minecraft:enchantments"
   - "minecraft:bundle_contents"
@@ -40,6 +60,7 @@ similarity-check:
   - "minecraft:consumable"
 
 # ── Sort Display ─────────────────────────────
+# How each sort option appears in the GUI (active = currently selected)
 sorts-display:
   active:
     most-money-per-item: "<aqua>Most Money Per Item"
@@ -63,12 +84,14 @@ sorts-display:
     oldest: "Oldest"
 
 # ── Order Status ─────────────────────────────
+# Text format for each order status (supports <day> <hour> <minute> <second> placeholders)
 order-status:
   available: "<gray>Expires after <day>d <hour>h <minute>m <second>s"
   expired: "<red>Order Expired"
   completed: "<green>Order Completed"
 
 # ── Messages ─────────────────────────────────
+# All user-facing messages (MiniMessage format supported)
 messages:
   create-order-success: "<gray>Your order has been created"
   invalid-input: "<red>Invalid number or format"
@@ -78,9 +101,10 @@ messages:
   deliver-self: "<red>You cannot deliver your own order"
   exceeded-max-collect: "<red>You are collecting too many items"
   collecting-too-fast: "<red>You are collecting items too fast. Wait a minute..."
-  order-creation-broadcast: "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/orders"
+  order-creation-broadcast: "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/contracts"
 
 # ── Sounds ───────────────────────────────────
+# Sound effects played during GUI interactions
 sounds:
   next-page:
     sound: "minecraft:ui.button.click"

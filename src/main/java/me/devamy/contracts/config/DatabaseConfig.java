@@ -27,7 +27,6 @@ public class DatabaseConfig {
 
     private DatabaseConfig() {
         File file = new File(plugin.getDataFolder(), "database.yml");
-        ConfigMigrator.migrate("default-database.yml", file);
         try {
             configFile = ConfigFile.loadConfig(file);
         } catch (Exception e) {
@@ -41,11 +40,18 @@ public class DatabaseConfig {
             } catch (Exception e) {
                 Log.error("Failed to save database.yml", e);
             }
+        } else if (!ConfigMigrator.findMissingKeys("default-database.yml", file).isEmpty()) {
+            setDefaults();
+            try {
+                configFile.save();
+            } catch (Exception e) {
+                Log.error("Failed to save database.yml", e);
+            }
         }
         load();
     }
 
-    public static DatabaseConfig get() {
+    public static synchronized DatabaseConfig get() {
         if (instance == null) {
             instance = new DatabaseConfig();
         }
@@ -57,17 +63,17 @@ public class DatabaseConfig {
     }
 
     private void setDefaults() {
-        configFile.addDefault("storage-method", "SQLITE");
-        configFile.addDefault("host", "localhost");
-        configFile.addDefault("port", 3306);
-        configFile.addDefault("database", "contracts");
-        configFile.addDefault("username", "root");
-        configFile.addDefault("password", "");
-        configFile.addDefault("pool-settings.maximum-pool-size", 10);
-        configFile.addDefault("pool-settings.minimum-idle", 2);
-        configFile.addDefault("pool-settings.connection-timeout", 5000);
-        configFile.addDefault("pool-settings.idle-timeout", 600000);
-        configFile.addDefault("pool-settings.max-lifetime", 1800000);
+        configFile.addDefault("storage-method", "SQLITE", "Storage backend: SQLITE, MYSQL, or H2");
+        configFile.addDefault("host", "localhost", "Database host (MySQL/H2 only)");
+        configFile.addDefault("port", 3306, "Database port (MySQL/H2 only)");
+        configFile.addDefault("database", "contracts", "Database name (MySQL/H2 only)");
+        configFile.addDefault("username", "root", "Database username (MySQL/H2 only)");
+        configFile.addDefault("password", "", "Database password (MySQL/H2 only)");
+        configFile.addDefault("pool-settings.maximum-pool-size", 10, "Maximum connections in the HikariCP pool");
+        configFile.addDefault("pool-settings.minimum-idle", 2, "Minimum idle connections to maintain");
+        configFile.addDefault("pool-settings.connection-timeout", 5000, "Maximum wait (ms) for a connection from the pool");
+        configFile.addDefault("pool-settings.idle-timeout", 600000, "Maximum time (ms) a connection may sit idle");
+        configFile.addDefault("pool-settings.max-lifetime", 1800000, "Maximum lifetime (ms) of a connection in the pool");
     }
 
     private void load() {
@@ -93,9 +99,9 @@ public class DatabaseConfig {
 
     public String getJdbcUrl() {
         return switch (storageMethod) {
-            case SQLITE -> "jdbc:sqlite:" + plugin.getDataFolder() + File.separator + "data.db";
+            case SQLITE -> "jdbc:sqlite:" + new File(plugin.getDataFolder(), "data.db").getAbsolutePath();
             case MYSQL -> "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8";
-            case H2 -> "jdbc:h2:" + plugin.getDataFolder() + File.separator + "data-h2;MODE=MySQL;DB_CLOSE_DELAY=-1";
+            case H2 -> "jdbc:h2:" + new File(plugin.getDataFolder(), "data-h2").getAbsolutePath() + ";MODE=MySQL;DB_CLOSE_DELAY=-1";
         };
     }
 

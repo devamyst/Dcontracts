@@ -62,6 +62,7 @@ public class SQLStorage extends Storage {
         if (password != null && !password.isEmpty()) conf.setPassword(password);
 
         if (method == StorageMethod.MYSQL) {
+            conf.setDriverClassName("contracts.mysql.cj.jdbc.Driver");
             conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
             conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
             conf.setConnectionTimeout(DatabaseConfig.get().connectionTimeout);
@@ -74,6 +75,7 @@ public class SQLStorage extends Storage {
         } else if (method == StorageMethod.H2) {
             conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
             conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
+            conf.setDriverClassName("contracts.h2.Driver");
         }
 
         data = new HikariDataSource(conf);
