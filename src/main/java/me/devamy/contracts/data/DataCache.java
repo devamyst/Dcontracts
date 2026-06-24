@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import static me.devamy.contracts.config.Config.config;
+
 public final class DataCache {
     private static final DataCache INSTANCE = new DataCache();
 
@@ -27,19 +29,36 @@ public final class DataCache {
     }
 
     private static final Registry<BlockType> BLOCK_REGISTRY = Registry.BLOCK;
-    private final NavigableSet<OrderItem> itemsAZ = new ConcurrentSkipListSet<>(AlgoUtils.getComparator(SortType.A_Z));
-    private final NavigableSet<OrderItem> itemsZA = new ConcurrentSkipListSet<>(AlgoUtils.getComparator(SortType.Z_A));
+
+    private static Comparator<OrderItem> itemComparator(SortType sortType) {
+        return AlgoUtils.getComparator(sortType);
+    }
+
+    private static NavigableSet<Order> newOrdersSet(Comparator<Order> comparator) {
+        return new ConcurrentSkipListSet<>(comparator);
+    }
+
+    private static final Comparator<Order> MOST_MONEY_PER_ITEM_COMPARATOR = Comparator.comparingDouble(Order::getMoneyPer).reversed().thenComparing(Order::getId);
+    private static final Comparator<Order> RECENTLY_LISTED_COMPARATOR = Comparator.comparingLong(Order::getExpiresAt).reversed().thenComparing(Order::getId);
+    private static final Comparator<Order> MOST_DELIVERED_COMPARATOR = Comparator.comparingInt(Order::getDelivered).reversed().thenComparing(Order::getId);
+    private static final Comparator<Order> MOST_PAID_COMPARATOR = Comparator.comparingDouble(Order::getPaid).reversed().thenComparing(Order::getId);
+    private static final Comparator<Order> OLDEST_COMPARATOR = Comparator.comparingLong(Order::getExpiresAt).thenComparing(Order::getId);
+    private static final Comparator<Order> PRICIEST_COMPARATOR = Comparator.<Order>comparingDouble(o -> o.getMoneyPer() * o.getAmount()).reversed().thenComparing(Order::getId);
+    private static final Comparator<Order> CHEAPEST_COMPARATOR = Comparator.comparingDouble(Order::getMoneyPer).thenComparing(Order::getId);
+
+    private volatile NavigableSet<OrderItem> itemsAZ = new ConcurrentSkipListSet<>(itemComparator(SortType.A_Z));
+    private volatile NavigableSet<OrderItem> itemsZA = new ConcurrentSkipListSet<>(itemComparator(SortType.Z_A));
 
     private final Set<CustomItem> customItems = ConcurrentHashMap.newKeySet();
     private final Set<BlacklistedItem> blacklist = ConcurrentHashMap.newKeySet();
 
-    private final NavigableSet<Order> mostMoneyPerItem = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).reversed().thenComparing(Order::getId));
-    private final NavigableSet<Order> recentlyListed = new ConcurrentSkipListSet<>(Comparator.comparingLong(Order::getExpiresAt).reversed().thenComparing(Order::getId));
-    private final NavigableSet<Order> mostDelivered = new ConcurrentSkipListSet<>(Comparator.comparingInt(Order::getDelivered).reversed().thenComparing(Order::getId));
-    private final NavigableSet<Order> mostPaid = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getPaid).reversed().thenComparing(Order::getId));
-    private final NavigableSet<Order> oldest = new ConcurrentSkipListSet<>(Comparator.comparingLong(Order::getExpiresAt).thenComparing(Order::getId));
-    private final NavigableSet<Order> priciest = new ConcurrentSkipListSet<>(Comparator.<Order>comparingDouble(o -> o.getMoneyPer() * o.getAmount()).reversed().thenComparing(Order::getId));
-    private final NavigableSet<Order> cheapest = new ConcurrentSkipListSet<>(Comparator.comparingDouble(Order::getMoneyPer).thenComparing(Order::getId));
+    private volatile NavigableSet<Order> mostMoneyPerItem = newOrdersSet(MOST_MONEY_PER_ITEM_COMPARATOR);
+    private volatile NavigableSet<Order> recentlyListed = newOrdersSet(RECENTLY_LISTED_COMPARATOR);
+    private volatile NavigableSet<Order> mostDelivered = newOrdersSet(MOST_DELIVERED_COMPARATOR);
+    private volatile NavigableSet<Order> mostPaid = newOrdersSet(MOST_PAID_COMPARATOR);
+    private volatile NavigableSet<Order> oldest = newOrdersSet(OLDEST_COMPARATOR);
+    private volatile NavigableSet<Order> priciest = newOrdersSet(PRICIEST_COMPARATOR);
+    private volatile NavigableSet<Order> cheapest = newOrdersSet(CHEAPEST_COMPARATOR);
 
     private void setBlacklistAndCustomItems(Collection<BlacklistedItem> blacklist, Collection<CustomItem> customItems) {
         this.blacklist.clear();
@@ -49,38 +68,58 @@ public final class DataCache {
     }
 
     public void setItems(Collection<VanillaItem> vanillaItems, Collection<BlacklistedItem> blacklistedItems, Collection<CustomItem> customItems) {
-        itemsAZ.clear();
-        itemsZA.clear();
-        itemsAZ.addAll(vanillaItems);
-        itemsZA.addAll(vanillaItems);
+        final NavigableSet<OrderItem> newItemsAZ = new ConcurrentSkipListSet<>(itemComparator(SortType.A_Z));
+        final NavigableSet<OrderItem> newItemsZA = new ConcurrentSkipListSet<>(itemComparator(SortType.Z_A));
+        newItemsAZ.addAll(vanillaItems);
+        newItemsZA.addAll(vanillaItems);
 
-        itemsAZ.addAll(customItems);
-        itemsZA.addAll(customItems);
+        newItemsAZ.addAll(customItems);
+        newItemsZA.addAll(customItems);
 
-        for (BlacklistedItem e : blacklistedItems) {
-            itemsAZ.removeIf(orderItem -> orderItem.getItemStack().equals(e.getItemStack()));
-            itemsZA.removeIf(orderItem -> orderItem.getItemStack().equals(e.getItemStack()));
+        for (final BlacklistedItem e : blacklistedItems) {
+            newItemsAZ.removeIf(orderItem -> orderItem.getItemStack().equals(e.getItemStack()));
+            newItemsZA.removeIf(orderItem -> orderItem.getItemStack().equals(e.getItemStack()));
         }
 
-        Log.info("Loaded " + itemsAZ.size() + " items.");
+        this.itemsAZ = newItemsAZ;
+        this.itemsZA = newItemsZA;
         setBlacklistAndCustomItems(blacklistedItems, customItems);
+
+        Log.info("Loaded " + newItemsAZ.size() + " items.");
     }
 
     public void setOrders(Collection<Order> orders) {
-        mostMoneyPerItem.clear();
-        recentlyListed.clear();
-        mostDelivered.clear();
-        mostPaid.clear();
-        oldest.clear();
-        priciest.clear();
-        cheapest.clear();
-        mostMoneyPerItem.addAll(orders);
-        recentlyListed.addAll(orders);
-        mostDelivered.addAll(orders);
-        mostPaid.addAll(orders);
-        oldest.addAll(orders);
-        priciest.addAll(orders);
-        cheapest.addAll(orders);
+        final boolean parallel = config != null && config.parallelProcessing;
+
+        final NavigableSet<Order> newMostMoneyPerItem = newOrdersSet(MOST_MONEY_PER_ITEM_COMPARATOR);
+        final NavigableSet<Order> newRecentlyListed = newOrdersSet(RECENTLY_LISTED_COMPARATOR);
+        final NavigableSet<Order> newMostDelivered = newOrdersSet(MOST_DELIVERED_COMPARATOR);
+        final NavigableSet<Order> newMostPaid = newOrdersSet(MOST_PAID_COMPARATOR);
+        final NavigableSet<Order> newOldest = newOrdersSet(OLDEST_COMPARATOR);
+        final NavigableSet<Order> newPriciest = newOrdersSet(PRICIEST_COMPARATOR);
+        final NavigableSet<Order> newCheapest = newOrdersSet(CHEAPEST_COMPARATOR);
+
+        if (parallel) {
+            final List<NavigableSet<Order>> sets = List.of(newMostMoneyPerItem, newRecentlyListed, newMostDelivered,
+                    newMostPaid, newOldest, newPriciest, newCheapest);
+            sets.parallelStream().forEach(set -> set.addAll(orders));
+        } else {
+            newMostMoneyPerItem.addAll(orders);
+            newRecentlyListed.addAll(orders);
+            newMostDelivered.addAll(orders);
+            newMostPaid.addAll(orders);
+            newOldest.addAll(orders);
+            newPriciest.addAll(orders);
+            newCheapest.addAll(orders);
+        }
+
+        this.mostMoneyPerItem = newMostMoneyPerItem;
+        this.recentlyListed = newRecentlyListed;
+        this.mostDelivered = newMostDelivered;
+        this.mostPaid = newMostPaid;
+        this.oldest = newOldest;
+        this.priciest = newPriciest;
+        this.cheapest = newCheapest;
     }
     public void updateOrder(Order order, double moneyPer, int amount, int delivered, int inStorage) {
 

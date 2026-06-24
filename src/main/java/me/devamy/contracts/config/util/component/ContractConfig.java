@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderConfig extends ComponentConfig {
+public class ContractConfig extends ComponentConfig {
     public final @NotNull List<@NotNull Integer> slots = new ArrayList<>();
-    // This is a item with type 'minecraft:stone'. It is used to represent the amount and components in the order item.
+    // This is a item with type 'minecraft:stone'. It is used to represent the amount and components in the contract item.
     public ItemStack itemRepresentation = ItemStack.of(Material.STONE);
     public final @NotNull List<@NotNull String> lore = new ArrayList<>();
 
-    public OrderConfig(@NotNull String path) {
+    public ContractConfig(@NotNull String path) {
         super(path);
     }
 
@@ -33,7 +33,7 @@ public class OrderConfig extends ComponentConfig {
         }
 
         final List<String> loreLines = config.getStringList(path + ".lore");
-        lore.addAll(loreLines);
+        if (loreLines != null) lore.addAll(loreLines);
         try {
             itemRepresentation = ConvertUtils.deserializeItem(config.getConfigSection(path + ".item"));
         } catch (Exception e) {

@@ -17,13 +17,13 @@ import java.util.List;
 
 // TODO: Make a paginated dialog alternative
 @SuppressWarnings("UnstableApiUsage")
-public class NewOrderDialogConfig extends ConfirmationDialogConfig {
+public class NewContractDialogConfig extends ConfirmationDialogConfig {
     public final @NotNull ItemlessItemDialogBodyConfig bodyConfig = new ItemlessItemDialogBodyConfig("body");
     public final @NotNull TextDialogInputConfig amountInputConfig = new TextDialogInputConfig("inputs.amount");
     public final @NotNull TextDialogInputConfig moneyPerItemInputConfig = new TextDialogInputConfig("inputs.money-per-item");
 
-    public NewOrderDialogConfig() {
-        super("new-order-dialog");
+    public NewContractDialogConfig() {
+        super("new-contract-dialog");
         yesButton = new DialogButtonConfig("buttons.confirm");
         noButton = new DialogButtonConfig("buttons.change-item");
     }
@@ -88,15 +88,15 @@ public class NewOrderDialogConfig extends ConfirmationDialogConfig {
     @Override
     public void applyDefaultValues() {
         super.applyDefaultValues();
-        title = "Create A New Order";
-        bodyConfig.description.contents = "You're creating an order for this item";
+        title = "Create A New Contract";
+        bodyConfig.description.contents = "You're creating a contract for this item";
         bodyConfig.description.width = 210;
         bodyConfig.showDecoration = true;
         bodyConfig.showTooltip = true;
         bodyConfig.width = 16;
         bodyConfig.height = 16;
         yesButton.label = "<green>Confirm";
-        yesButton.tooltip = "Click to confirm the order";
+        yesButton.tooltip = "Click to confirm the contract";
         yesButton.width = 150;
         noButton.label = "Change Item...";
         noButton.tooltip = "Click to change the item";

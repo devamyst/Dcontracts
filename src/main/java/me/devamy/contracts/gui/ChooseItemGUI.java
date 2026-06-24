@@ -10,6 +10,7 @@ import me.devamy.contracts.obj.orderitem.EnchantableItem;
 import me.devamy.contracts.obj.orderitem.OrderItem;
 import me.devamy.contracts.utils.AlgoUtils;
 import me.devamy.contracts.utils.ConvertUtils;
+import me.devamy.contracts.utils.Log;
 import me.devamy.contracts.utils.PDCUtils;
 import me.devamy.contracts.utils.PlayerUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -112,6 +113,10 @@ public class ChooseItemGUI {
     }
 
     private static void createPages(List<InventoryGUI> pages, SortType sortType, Collection<OrderItem> items) {
+        if (config.chooseItemGUIConfig.slots.isEmpty()) {
+            Log.error("ChooseItemGUI slots list is empty, cannot create pages", new IllegalStateException());
+            return;
+        }
         final int pagesAmount = ConvertUtils.ceil_div(items.size(), config.chooseItemGUIConfig.slots.size());
 
         InventoryGUI gui = initPage(pages, sortType, 0, pagesAmount);

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import static me.devamy.contracts.Contracts.plugin;
 
 public class Log {
-    private static final Logger logger = Logger.getLogger("Contracts");
+    private static final Logger logger = Logger.getLogger("Dcontracts");
 
     public static void error(String message, Throwable exception) {
         logger.log(Level.SEVERE, message, exception);

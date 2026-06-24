@@ -37,12 +37,15 @@ public class ChooseItemGUIConfig extends GUIConfigFile {
         rows = config.getInteger("rows");
         slots.clear();
         final List<?> rawSlots = config.getList("slots");
-        if (rawSlots != null) {
+        if (rawSlots != null && !rawSlots.isEmpty()) {
             for (Object obj : rawSlots) {
                 if (obj instanceof Number num) {
                     slots.add(num.intValue());
                 }
             }
+        }
+        if (slots.isEmpty()) {
+            slots.addAll(IntStream.range(0, 45).boxed().toList());
         }
         sortsOrderConfig.reload(config);
         sortButton.reload(config);

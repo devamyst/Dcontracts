@@ -33,12 +33,15 @@ public class EnchantmentConfig {
         }
         slots.clear();
         final List<?> rawSlots = config.getList("slots");
-        if (rawSlots != null) {
+        if (rawSlots != null && !rawSlots.isEmpty()) {
             for (Object obj : rawSlots) {
                 if (obj instanceof Number num) {
                     slots.add(num.intValue());
                 }
             }
+        }
+        if (slots.isEmpty()) {
+            slots.addAll(IntStream.range(18, 36).boxed().toList());
         }
     }
 

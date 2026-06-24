@@ -20,41 +20,41 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ManageOrderDialogConfig extends GUIConfigFile {
-    public final ManageOrder manageOrder = new ManageOrder(this);
+public class ManageContractDialogConfig extends GUIConfigFile {
+    public final ManageContract manageContract = new ManageContract(this);
     public final CollectItems collectItems = new CollectItems(this);
-    public final CancelOrder cancelOrder = new CancelOrder(this);
+    public final CancelContract cancelContract = new CancelContract(this);
 
-    public ManageOrderDialogConfig() {
-        super("manage-order");
+    public ManageContractDialogConfig() {
+        super("manage-contract");
     }
 
     @Override
     public void reload() {
-        manageOrder.reload();
+        manageContract.reload();
         collectItems.reload();
-        cancelOrder.reload();
+        cancelContract.reload();
     }
 
     @Override
     public void save() {
-        manageOrder.save();
+        manageContract.save();
         collectItems.save();
-        cancelOrder.save();
+        cancelContract.save();
     }
 
     @Override
     public void setDefault() {
-        manageOrder.setDefault();
+        manageContract.setDefault();
         collectItems.setDefault();
-        cancelOrder.setDefault();
+        cancelContract.setDefault();
     }
 
     @Override
     public void migrateV5(@NotNull ConfigFile oldConfig) {
-        manageOrder.migrateV5(oldConfig);
+        manageContract.migrateV5(oldConfig);
         collectItems.migrateV5(oldConfig);
-        cancelOrder.migrateV5(oldConfig);
+        cancelContract.migrateV5(oldConfig);
 
         save();
 
@@ -67,30 +67,30 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
     @Override
     public void applyDefaultValues() {
-        manageOrder.applyDefaultValues();
+        manageContract.applyDefaultValues();
         collectItems.applyDefaultValues();
-        cancelOrder.applyDefaultValues();
+        cancelContract.applyDefaultValues();
     }
 
-    public static class ManageOrder implements IConfigFile {
-        private final ManageOrderDialogConfig parent;
+    public static class ManageContract implements IConfigFile {
+        private final ManageContractDialogConfig parent;
         public String title;
         public boolean canCloseWithEsc;
-        public final @NotNull DialogButtonConfig collectItemsButtonConfig = new DialogButtonConfig("manage-order.buttons.collect-items");
-        public final @NotNull DialogButtonConfig cancelOrderButtonConfig = new DialogButtonConfig("manage-order.buttons.cancel-order");
+        public final @NotNull DialogButtonConfig collectItemsButtonConfig = new DialogButtonConfig("manage-contract.buttons.collect-items");
+        public final @NotNull DialogButtonConfig cancelContractButtonConfig = new DialogButtonConfig("manage-contract.buttons.cancel-contract");
 
-        public ManageOrder(final @NotNull ManageOrderDialogConfig parent) {
+        public ManageContract(final @NotNull ManageContractDialogConfig parent) {
             this.parent = parent;
         }
 
         public @NotNull Dialog dialog(
                 final @NotNull DialogActionCallback clickCollectItemsButtonAction,
-                final @NotNull DialogActionCallback clickCancelOrderButtonAction
+                final @NotNull DialogActionCallback clickCancelContractButtonAction
         ) {
             return Dialog.create(builder -> builder.empty()
                     .type(DialogType.multiAction(List.of(
                             collectItemsButtonConfig.button(clickCollectItemsButtonAction),
-                            cancelOrderButtonConfig.button(clickCancelOrderButtonAction)
+                            cancelContractButtonConfig.button(clickCancelContractButtonAction)
                     )).build())
                     .base(DialogBase.builder(Values.minimessage.deserialize(title))
                             .pause(false)
@@ -103,26 +103,26 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
         @Override
         public void reload() {
-            title = parent.config.getString("manage-order.title");
-            canCloseWithEsc = parent.config.getBoolean("manage-order.can-close-with-escape");
+            title = parent.config.getString("manage-contract.title");
+            canCloseWithEsc = parent.config.getBoolean("manage-contract.can-close-with-escape");
             collectItemsButtonConfig.reload(parent.config);
-            cancelOrderButtonConfig.reload(parent.config);
+            cancelContractButtonConfig.reload(parent.config);
         }
 
         @Override
         public void save() {
-            parent.config.set("manage-order.title", title);
-            parent.config.set("manage-order.can-close-with-escape", canCloseWithEsc);
+            parent.config.set("manage-contract.title", title);
+            parent.config.set("manage-contract.can-close-with-escape", canCloseWithEsc);
             collectItemsButtonConfig.save(parent.config);
-            cancelOrderButtonConfig.save(parent.config);
+            cancelContractButtonConfig.save(parent.config);
         }
 
         @Override
         public void setDefault() {
-            parent.config.addDefault("manage-order.title", title);
-            parent.config.addDefault("manage-order.can-close-with-escape", canCloseWithEsc);
+            parent.config.addDefault("manage-contract.title", title);
+            parent.config.addDefault("manage-contract.can-close-with-escape", canCloseWithEsc);
             collectItemsButtonConfig.setDefault(parent.config);
-            cancelOrderButtonConfig.setDefault(parent.config);
+            cancelContractButtonConfig.setDefault(parent.config);
         }
 
         @Override
@@ -130,24 +130,24 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
             title = oldConfig.getString("gui.manage-order.title");
             canCloseWithEsc = true;
             collectItemsButtonConfig.migrateV5(oldConfig, "gui.manage-order.collect-items");
-            cancelOrderButtonConfig.migrateV5(oldConfig, "gui.manage-order.cancel-order");
+            cancelContractButtonConfig.migrateV5(oldConfig, "gui.manage-order.cancel-order");
         }
 
         @Override
         public void applyDefaultValues() {
             canCloseWithEsc = true;
-            title = "Manage Order";
+            title = "Manage Contract";
             collectItemsButtonConfig.label = "Collect Items";
-            collectItemsButtonConfig.tooltip = "Click to collect items from this order";
+            collectItemsButtonConfig.tooltip = "Click to collect items from this contract";
             collectItemsButtonConfig.width = 150;
-            cancelOrderButtonConfig.label = "Cancel Order";
-            cancelOrderButtonConfig.tooltip = "Click to cancel the order";
-            cancelOrderButtonConfig.width = 150;
+            cancelContractButtonConfig.label = "Cancel Contract";
+            cancelContractButtonConfig.tooltip = "Click to cancel the contract";
+            cancelContractButtonConfig.width = 150;
         }
     }
 
     public static class CollectItems implements IConfigFile {
-        private final ManageOrderDialogConfig parent;
+        private final ManageContractDialogConfig parent;
         public String title;
         public boolean canCloseWithEsc;
         public final @NotNull DialogButtonConfig yesButton = new DialogButtonConfig("collect-items.buttons.confirm");
@@ -155,7 +155,7 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
         public final @NotNull ItemlessItemDialogBodyConfig body = new ItemlessItemDialogBodyConfig("collect-items.body");
         public final @NotNull TextDialogInputConfig amountInputConfig = new TextDialogInputConfig("collect-items.amount-input");
 
-        public CollectItems(final @NotNull ManageOrderDialogConfig parent) {
+        public CollectItems(final @NotNull ManageContractDialogConfig parent) {
             this.parent = parent;
         }
 
@@ -224,7 +224,7 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
             noButton.label = "<red>Cancel";
             noButton.tooltip = "Click to cancel";
             noButton.width = 150;
-            body.description.contents = "You are collecting items from this order. You can collect up to <aqua><in-storage> <item>";
+            body.description.contents = "You are collecting items from this contract. You can collect up to <aqua><in-storage> <item>";
             body.description.width = 200;
             body.width = 16;
             body.height = 16;
@@ -238,15 +238,15 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
         }
     }
 
-    public static class CancelOrder implements IConfigFile {
-        private final ManageOrderDialogConfig parent;
+    public static class CancelContract implements IConfigFile {
+        private final ManageContractDialogConfig parent;
         public String title;
         public boolean canCloseWithEsc;
         public final @NotNull DialogButtonConfig yesButton = new DialogButtonConfig("collect-items.buttons.confirm");
         public final @NotNull DialogButtonConfig noButton = new DialogButtonConfig("collect-items.buttons.cancel");
-        public final @NotNull ItemlessItemDialogBodyConfig body = new ItemlessItemDialogBodyConfig("cancel-order.body");
+        public final @NotNull ItemlessItemDialogBodyConfig body = new ItemlessItemDialogBodyConfig("cancel-contract.body");
 
-        public CancelOrder(final @NotNull ManageOrderDialogConfig parent) {
+        public CancelContract(final @NotNull ManageContractDialogConfig parent) {
             this.parent = parent;
         }
 
@@ -268,8 +268,8 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
         @Override
         public void reload() {
-            title = parent.config.getString("cancel-order.title");
-            canCloseWithEsc = parent.config.getBoolean("cancel-order.can-close-with-escape");
+            title = parent.config.getString("cancel-contract.title");
+            canCloseWithEsc = parent.config.getBoolean("cancel-contract.can-close-with-escape");
             body.reload(parent.config);
             yesButton.reload(parent.config);
             noButton.reload(parent.config);
@@ -277,8 +277,8 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
         @Override
         public void save() {
-            parent.config.set("cancel-order.title", title);
-            parent.config.set("cancel-order.can-close-with-escape", canCloseWithEsc);
+            parent.config.set("cancel-contract.title", title);
+            parent.config.set("cancel-contract.can-close-with-escape", canCloseWithEsc);
             body.save(parent.config);
             yesButton.save(parent.config);
             noButton.save(parent.config);
@@ -286,8 +286,8 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
         @Override
         public void setDefault() {
-            parent.config.addDefault("cancel-order.title", title);
-            parent.config.addDefault("cancel-order.can-close-with-escape", canCloseWithEsc);
+            parent.config.addDefault("cancel-contract.title", title);
+            parent.config.addDefault("cancel-contract.can-close-with-escape", canCloseWithEsc);
             body.setDefault(parent.config);
             yesButton.setDefault(parent.config);
             noButton.setDefault(parent.config);
@@ -304,15 +304,15 @@ public class ManageOrderDialogConfig extends GUIConfigFile {
 
         @Override
         public void applyDefaultValues() {
-            title = "Cancel Order";
+            title = "Cancel Contract";
             canCloseWithEsc = true;
             yesButton.label = "<green>Confirm";
-            yesButton.tooltip = "Click to confirm the cancellation of this order";
+            yesButton.tooltip = "Click to confirm the cancellation of this contract";
             yesButton.width = 150;
             noButton.label = "<red>Cancel";
-            noButton.tooltip = "Click to cancel the cancellation of this order";
+            noButton.tooltip = "Click to cancel the cancellation of this contract";
             noButton.width = 150;
-            body.description.contents = "You are cancelling this order. It will be expired";
+            body.description.contents = "You are cancelling this contract. It will be expired";
             body.description.width = 250;
             body.width = 16;
             body.height = 16;

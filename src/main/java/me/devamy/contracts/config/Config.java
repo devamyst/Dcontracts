@@ -4,8 +4,8 @@ import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.devamy.contracts.config.util.SignGUIConfig;
 import me.devamy.contracts.config.util.chestgui.*;
 import me.devamy.contracts.config.util.dialog.ConfirmDeliveryDialogConfig;
-import me.devamy.contracts.config.util.dialog.ManageOrderDialogConfig;
-import me.devamy.contracts.config.util.dialog.NewOrderDialogConfig;
+import me.devamy.contracts.config.util.dialog.ManageContractDialogConfig;
+import me.devamy.contracts.config.util.dialog.NewContractDialogConfig;
 import me.devamy.contracts.gui.ContractAdminGUI;
 import me.devamy.contracts.gui.AdminToolGUI;
 import me.devamy.contracts.gui.ChooseItemGUI;
@@ -13,6 +13,7 @@ import me.devamy.contracts.obj.OrderStatus;
 import me.devamy.contracts.obj.SortType;
 import me.devamy.contracts.utils.DispatchUtil;
 import me.devamy.contracts.utils.Log;
+import me.devamy.contracts.utils.ServerSoftware;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.NamespacedKey;
@@ -29,40 +30,40 @@ import static me.devamy.contracts.Contracts.plugin;
 public class Config {
     private static final AtomicBoolean reloading = new AtomicBoolean(false);
     public static volatile Config config;
-    public static final int CURRENT_CONFIG_VERSION = 5;
+    public static final int CURRENT_CONFIG_VERSION = 6;
     public final File javaConfigFile = new File(plugin.getDataFolder(), "config.yml");
 
     public ConfigFile configFile;
 
     public final MainGUIConfig mainGUIConfig = new MainGUIConfig();
-    public final YourOrdersGUIConfig yourOrdersGUIConfig = new YourOrdersGUIConfig();
+    public final YourContractsGUIConfig yourContractsGUIConfig = new YourContractsGUIConfig();
     public final ChooseItemGUIConfig chooseItemGUIConfig = new ChooseItemGUIConfig();
     public final SignGUIConfig signGUIConfig = new SignGUIConfig();
     public final EnchantGUIConfig enchantGUIConfig = new EnchantGUIConfig();
     public final DeliverGUIConfig deliverGUIConfig = new DeliverGUIConfig();
-    public final NewOrderDialogConfig newOrderDialogConfig = new NewOrderDialogConfig();
+    public final NewContractDialogConfig newContractDialogConfig = new NewContractDialogConfig();
     public final ConfirmDeliveryDialogConfig confirmDeliveryDialogConfig = new ConfirmDeliveryDialogConfig();
-    public final ManageOrderDialogConfig manageOrderDialogConfig = new ManageOrderDialogConfig();
+    public final ManageContractDialogConfig manageContractDialogConfig = new ManageContractDialogConfig();
     public final ContractAdminGUIConfig contractAdminGUIConfig = new ContractAdminGUIConfig();
 
     public boolean bStats;
     public boolean checkForUpdates;
 
     public String invalidInput;
-    public String orderCreationSuccessful;
+    public String contractCreationSuccessful;
     public String deliver;
     public String receiveDelivery;
     public String notEnoughMoney;
     public String deliverSelf;
     public String collectingTooFast;
     public String exceedMaxCollect;
-    public String orderCreationBroadcast;
+    public String contractCreationBroadcast;
 
     public Sound nextPageSound;
     public Sound previousPageSound;
     public Sound refreshSound;
     public Sound sortSound;
-    public Sound newOrderSound;
+    public Sound newContractSound;
     public Sound deliverSound;
 
     public boolean logTransactions;
@@ -71,7 +72,8 @@ public class Config {
     public int maxCollectPerMinute;
     public int maxCollect;
     public boolean shulkerDelivering;
-    public boolean broadcastOrderCreation;
+    public boolean broadcastContractCreation;
+    public boolean parallelProcessing;
 
     public final List<NamespacedKey> similarityCheck = new ArrayList<>();
 
@@ -96,52 +98,52 @@ public class Config {
     }
 
     public void save() throws Exception {
-        configFile.set("config-version", 5);
+        configFile.set("config-version", 6);
         configFile.save();
         mainGUIConfig.saveToFile();
-        yourOrdersGUIConfig.saveToFile();
+        yourContractsGUIConfig.saveToFile();
         chooseItemGUIConfig.saveToFile();
         signGUIConfig.saveToFile();
         enchantGUIConfig.saveToFile();
         deliverGUIConfig.saveToFile();
-        newOrderDialogConfig.saveToFile();
+        newContractDialogConfig.saveToFile();
         confirmDeliveryDialogConfig.saveToFile();
-        manageOrderDialogConfig.saveToFile();
+        manageContractDialogConfig.saveToFile();
         contractAdminGUIConfig.saveToFile();
     }
 
     public void setDefaults() {
         mainGUIConfig.applyDefaultValues();
-        yourOrdersGUIConfig.applyDefaultValues();
+        yourContractsGUIConfig.applyDefaultValues();
         chooseItemGUIConfig.applyDefaultValues();
         signGUIConfig.applyDefaultValues();
         enchantGUIConfig.applyDefaultValues();
         deliverGUIConfig.applyDefaultValues();
-        newOrderDialogConfig.applyDefaultValues();
+        newContractDialogConfig.applyDefaultValues();
         confirmDeliveryDialogConfig.applyDefaultValues();
-        manageOrderDialogConfig.applyDefaultValues();
+        manageContractDialogConfig.applyDefaultValues();
         contractAdminGUIConfig.applyDefaultValues();
 
         mainGUIConfig.setDefault();
-        yourOrdersGUIConfig.setDefault();
+        yourContractsGUIConfig.setDefault();
         chooseItemGUIConfig.setDefault();
         signGUIConfig.setDefault();
         enchantGUIConfig.setDefault();
         deliverGUIConfig.setDefault();
-        newOrderDialogConfig.setDefault();
+        newContractDialogConfig.setDefault();
         confirmDeliveryDialogConfig.setDefault();
-        manageOrderDialogConfig.setDefault();
+        manageContractDialogConfig.setDefault();
         contractAdminGUIConfig.setDefault();
 
         configFile.addDefault("bstats", true, "Whether to let bStats collect anonymous usage statistics");
         configFile.addDefault("check-for-updates", true, "Whether to check for plugin updates on startup");
         configFile.addDefault("log-transactions", true, "Whether to log player money transactions (Vault) to console");
-        configFile.addDefault("expires-after", 7L * 24L * 60L * 60L * 1000L, "After how many milliseconds an order expires (default: 7 days)");
-        configFile.addDefault("minimum-price", 0.1, "Minimum price per item a player can set when creating an order");
-        configFile.addDefault("max-collect", 1000, "Maximum items a player can collect from a single order at once");
+        configFile.addDefault("expires-after", 7L * 24L * 60L * 60L * 1000L, "After how many milliseconds a contract expires (default: 7 days)");
+        configFile.addDefault("minimum-price", 0.1, "Minimum price per item a player can set when creating a contract");
+        configFile.addDefault("max-collect", 1000, "Maximum items a player can collect from a single contract at once");
         configFile.addDefault("max-collect-per-minute", 1000,
                 """
-                Global rate limit: max items collected per minute across all orders.
+                Global rate limit: max items collected per minute across all contracts.
                 Setting this too high may let players lag the server on large deliveries.
                 """
         );
@@ -166,13 +168,19 @@ public class Config {
                 """
                 Defines how two items are considered "similar" for delivery matching.
                 If all the listed data components match between items (regardless of item type),
-                they are treated as the same item for order delivery.
+                they are treated as the same item for contract delivery.
                 See: https://minecraft.wiki/w/Data_component_format#List_of_components
                 """
         );
 
-        configFile.addDefault("shulker-delivering", true, "Whether players can deliver orders using shulker boxes containing items");
-        configFile.addDefault("broadcast-order-creation", false, "Whether to broadcast a server-wide message when an order is created");
+        configFile.addDefault("shulker-delivering", true, "Whether players can deliver contracts using shulker boxes containing items");
+        configFile.addDefault("broadcast-contract-creation", false, "Whether to broadcast a server-wide message when a contract is created");
+        configFile.addDefault("parallel-processing", ServerSoftware.isParallelSupported(),
+                """
+                Whether to use parallel processing for expensive operations (loading, GUI building, etc.).
+                Enabled by default on Paper, Purpur, Pufferfish, and Folia.
+                Disable if you experience stability issues.
+                """);
 
         for (final SortType sort : SortType.values()) {
             configFile.addDefault("sorts-display.active." + sort.getIdentifier(), sort.getDisplayActive());
@@ -180,7 +188,7 @@ public class Config {
         }
 
         for (final OrderStatus status : OrderStatus.values()) {
-            configFile.addDefault("order-status." + status.getIdentifier(), status.getText());
+            configFile.addDefault("contract-status." + status.getIdentifier(), status.getText());
         }
 
         setDefaultMessages();
@@ -220,27 +228,27 @@ public class Config {
 
     public void reloadGUIs() {
         mainGUIConfig.reload();
-        yourOrdersGUIConfig.reload();
+        yourContractsGUIConfig.reload();
         chooseItemGUIConfig.reload();
         signGUIConfig.reload();
         enchantGUIConfig.reload();
         deliverGUIConfig.reload();
-        newOrderDialogConfig.reload();
+        newContractDialogConfig.reload();
         confirmDeliveryDialogConfig.reload();
-        manageOrderDialogConfig.reload();
+        manageContractDialogConfig.reload();
         contractAdminGUIConfig.reload();
     }
 
     public void reloadGUIsFromFile() {
         mainGUIConfig.reloadFromFile();
-        yourOrdersGUIConfig.reloadFromFile();
+        yourContractsGUIConfig.reloadFromFile();
         chooseItemGUIConfig.reloadFromFile();
         signGUIConfig.reloadFromFile();
         enchantGUIConfig.reloadFromFile();
         deliverGUIConfig.reloadFromFile();
-        newOrderDialogConfig.reloadFromFile();
+        newContractDialogConfig.reloadFromFile();
         confirmDeliveryDialogConfig.reloadFromFile();
-        manageOrderDialogConfig.reloadFromFile();
+        manageContractDialogConfig.reloadFromFile();
         contractAdminGUIConfig.reloadFromFile();
     }
 
@@ -254,7 +262,7 @@ public class Config {
         }
 
         for (final OrderStatus status : OrderStatus.values()) {
-            final String display = configFile.getString("order-status." + status.getIdentifier());
+            final String display = configFile.getString("contract-status." + status.getIdentifier());
             if (display != null) status.setText(display);
         }
 
@@ -266,7 +274,8 @@ public class Config {
         maxCollect = configFile.getInteger("max-collect");
         maxCollectPerMinute = configFile.getInteger("max-collect-per-minute");
         shulkerDelivering = configFile.getBoolean("shulker-delivering");
-        broadcastOrderCreation = configFile.getBoolean("broadcast-order-creation");
+        broadcastContractCreation = configFile.getBoolean("broadcast-contract-creation");
+        parallelProcessing = configFile.getBoolean("parallel-processing");
 
         final List<String> rawDataComponents = configFile.getStringList("similarity-check");
         similarityCheck.clear();
@@ -279,7 +288,7 @@ public class Config {
             similarityCheck.add(new NamespacedKey(components[0], components[1]));
         }
 
-        orderCreationSuccessful = configFile.getString("messages.create-order-success");
+        contractCreationSuccessful = configFile.getString("messages.create-contract-success");
         invalidInput = configFile.getString("messages.invalid-input");
         deliver = configFile.getString("messages.deliver");
         receiveDelivery = configFile.getString("messages.receive-delivery");
@@ -287,13 +296,13 @@ public class Config {
         deliverSelf = configFile.getString("messages.deliver-self");
         exceedMaxCollect = configFile.getString("messages.exceeded-max-collect");
         collectingTooFast = configFile.getString("messages.collecting-too-fast");
-        orderCreationBroadcast = configFile.getString("messages.order-creation-broadcast");
+        contractCreationBroadcast = configFile.getString("messages.contract-creation-broadcast");
 
         nextPageSound = getSound("next-page");
         previousPageSound = getSound("previous-page");
         refreshSound = getSound("refresh");
         sortSound = getSound("sort");
-        newOrderSound = getSound("new-order");
+        newContractSound = getSound("new-contract");
         deliverSound = getSound("deliver");
 
         plugin.reloadBStats(this);
@@ -332,19 +341,19 @@ public class Config {
         setDefaultSound("previous-page", clickSound);
         setDefaultSound("refresh", clickSound);
         setDefaultSound("sort", clickSound);
-        setDefaultSound("new-order", Sound.sound(Key.key("minecraft:entity.villager.work_cartographer"), Sound.Source.UI, 1, 1));
+        setDefaultSound("new-contract", Sound.sound(Key.key("minecraft:entity.villager.work_cartographer"), Sound.Source.UI, 1, 1));
         setDefaultSound("deliver", Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.UI, 1, 2));
     }
 
     private void setDefaultMessages() {
-        configFile.addDefault("messages.create-order-success", "<gray>Your order has been created", "Shown when an order is created successfully");
+        configFile.addDefault("messages.create-contract-success", "<gray>Your contract has been created", "Shown when a contract is created successfully");
         configFile.addDefault("messages.invalid-input", "<red>Invalid number or format", "Shown when a player enters invalid input");
-        configFile.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering an order", "Shown to the deliverer upon successful delivery");
-        configFile.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>", "Shown to the order owner when someone delivers");
+        configFile.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering a contract", "Shown to the deliverer upon successful delivery");
+        configFile.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>", "Shown to the contract owner when someone delivers");
         configFile.addDefault("messages.not-enough-money", "<red>You do not have enough money", "Shown when a player lacks funds");
-        configFile.addDefault("messages.deliver-self", "<red>You cannot deliver your own order", "Shown when a player tries to deliver their own order");
+        configFile.addDefault("messages.deliver-self", "<red>You cannot deliver your own contract", "Shown when a player tries to deliver their own contract");
         configFile.addDefault("messages.exceeded-max-collect", "<red>You are collecting too many items", "Shown when exceeding max-collect limit");
         configFile.addDefault("messages.collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...", "Shown when exceeding max-collect-per-minute rate limit");
-        configFile.addDefault("messages.order-creation-broadcast", "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/contracts", "Broadcast message when an order is created");
+        configFile.addDefault("messages.contract-creation-broadcast", "<green><player> <white>has just created a new contract for <green><item> <white>in <gray>/contracts", "Broadcast message when a contract is created");
     }
 }

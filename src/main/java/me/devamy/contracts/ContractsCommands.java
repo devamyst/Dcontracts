@@ -46,9 +46,13 @@ public class ContractsCommands {
     // ─────────────────────────────────────────────────────────────
     private static LiteralCommandNode<CommandSourceStack> buildMainContractsCmd(String cmdName) {
         return Commands.literal(cmdName)
-                .requires(playerAndPermission("use"))
+                .requires(permission("use"))
                 .executes(ctx -> {
-                    if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
+                    if (!(ctx.getSource().getExecutor() instanceof Player player)) {
+                        ctx.getSource().getSender().sendRichMessage(
+                                "<red>This command is only available to players in-game. Use <yellow>/contracts admin<red> for admin commands.");
+                        return 1;
+                    }
                     MainGUI mainGUI = new MainGUI(player, 0);
                     PlayerUtils.openGUI(player, mainGUI.getGUI(), true);
                     return 1;
@@ -56,7 +60,11 @@ public class ContractsCommands {
                 // /contracts <search>
                 .then(Commands.argument("search", StringArgumentType.greedyString())
                         .executes(ctx -> {
-                            if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
+                            if (!(ctx.getSource().getExecutor() instanceof Player player)) {
+                                ctx.getSource().getSender().sendRichMessage(
+                                        "<red>This command is only available to players in-game.");
+                                return 1;
+                            }
                             final String search = StringArgumentType.getString(ctx, "search");
                             MainGUI mainGUI = new MainGUI(player, 0, search);
                             PlayerUtils.openGUI(player, mainGUI.getGUI(), true);
@@ -71,11 +79,15 @@ public class ContractsCommands {
     // ─────────────────────────────────────────────────────────────
     private static LiteralCommandNode<CommandSourceStack> buildContractsRootCmd() {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("contracts")
-                .requires(playerAndPermission("use"))
+                .requires(permission("use"))
 
                 // /contracts (no args) → open main GUI
                 .executes(ctx -> {
-                    if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
+                    if (!(ctx.getSource().getExecutor() instanceof Player player)) {
+                        ctx.getSource().getSender().sendRichMessage(
+                                "<red>This command is only available to players in-game. Use <yellow>/contracts admin<red> for admin commands.");
+                        return 1;
+                    }
                     MainGUI mainGUI = new MainGUI(player, 0);
                     PlayerUtils.openGUI(player, mainGUI.getGUI(), true);
                     return 1;
@@ -84,7 +96,11 @@ public class ContractsCommands {
                 // /contracts <search>
                 .then(Commands.argument("search", StringArgumentType.greedyString())
                         .executes(ctx -> {
-                            if (!(ctx.getSource().getExecutor() instanceof Player player)) return 2;
+                            if (!(ctx.getSource().getExecutor() instanceof Player player)) {
+                                ctx.getSource().getSender().sendRichMessage(
+                                        "<red>This command is only available to players in-game.");
+                                return 1;
+                            }
                             // Check if first word is a subcommand — handled below, so this is only search
                             final String search = StringArgumentType.getString(ctx, "search");
                             MainGUI mainGUI = new MainGUI(player, 0, search);

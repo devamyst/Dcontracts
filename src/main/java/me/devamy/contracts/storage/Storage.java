@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import static me.devamy.contracts.Contracts.plugin;
 
 public abstract class Storage {
-    protected static final File dataDir = new File("plugins", "Contracts");
+    protected static final File dataDir = new File("plugins", "Dcontracts");
     protected final String ORDER_TABLE = "contracts_orders";
     protected final String TRANSACTION_TABLE = "contracts_transactions";
     private final String CUSTOM_ITEMS_TABLE = "contracts_custom_items_v2";
@@ -38,7 +38,7 @@ public abstract class Storage {
 
     protected Storage() {
         HikariConfig modifiedItemsConfig = new HikariConfig();
-        modifiedItemsConfig.setPoolName("contracts items pool");
+        modifiedItemsConfig.setPoolName("dcontracts items pool");
         modifiedItemsConfig.setJdbcUrl("jdbc:sqlite:" + new File(plugin.getDataFolder(), "modified_items.db").getAbsolutePath());
         this.modifiedItemDataSource = new HikariDataSource(modifiedItemsConfig);
 

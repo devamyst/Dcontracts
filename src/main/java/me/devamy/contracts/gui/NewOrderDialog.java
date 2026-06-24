@@ -26,7 +26,7 @@ public class NewOrderDialog {
         final Config config = Config.config;
         final ItemStack item = orderItem instanceof SearchableItem searchableItem ? searchableItem.getParsedItemStack() : orderItem.getItemStack();
 
-        return config.newOrderDialogConfig.dialog(
+        return config.newContractDialogConfig.dialog(
                 item,
                 (view, player) -> {
                     if (!(player instanceof Player p)) {
@@ -35,15 +35,15 @@ public class NewOrderDialog {
 
                     PlayerUtils.closeInv(p);
 
-                    // Create new order
+                    // Create new contract
                     final Order.Response response = Order.create(p, item, view.getText("money_per"), view.getText("amount"));
 
                     switch (response) {
                         case INVALID -> p.sendRichMessage(config.invalidInput);
                         case FAIL -> p.sendRichMessage(config.notEnoughMoney);
                         case SUCCESS -> {
-                            p.sendRichMessage(config.orderCreationSuccessful);
-                            PlayerUtils.playSound(p, config.newOrderSound);
+                            p.sendRichMessage(config.contractCreationSuccessful);
+                            PlayerUtils.playSound(p, config.newContractSound);
                         }
                     }
 

@@ -1,10 +1,10 @@
-name: Contracts
+name: Dcontracts
 version: ${version}
 main: me.devamy.contracts.Contracts
 api-version: '1.21'
 folia-supported: true
 authors: [ DevAmy ]
-description: A fully-featured contract/order plugin with admin tools, multi-database support, and GeyserMC/Bedrock compatibility.
+description: A fully-featured contract plugin with admin tools, multi-database support, and GeyserMC/Bedrock compatibility.
 
 permissions:
   contracts.use:
@@ -43,9 +43,9 @@ permissions:
     default: op
     description: Run the database converter tool
 
-  contracts.admin.edit-orders:
+  contracts.admin.edit-contracts:
     default: op
-    description: Edit orders from the main GUI by right-clicking
+    description: Edit contracts from the main GUI by right-clicking
 
   contracts.bypass.tax:
     default: op

@@ -50,7 +50,8 @@ public class ButtonConfig extends ComponentConfig {
     }
 
     public @NotNull InventoryItem item(final @NotNull Consumer<InventoryClickEvent> action) {
-        return new InventoryItem(itemStack.clone(), action);
+        final ItemStack item = itemStack != null && !itemStack.isEmpty() ? itemStack.clone() : ItemStack.of(org.bukkit.Material.STONE);
+        return new InventoryItem(item, action);
     }
 
     // Migrate config version 4 -> 5

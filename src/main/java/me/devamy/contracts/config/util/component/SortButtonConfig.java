@@ -51,19 +51,24 @@ public class SortButtonConfig extends ButtonConfig {
 
     @Override
     public @NonNull InventoryItem item(final @NotNull Consumer<InventoryClickEvent> action) {
-        final ItemStack item = itemStack.clone();
+        final ItemStack item = resolveItem();
         final List<Component> parsedLore = lore.stream().map(line -> Values.minimessage.deserialize(line, TagResolver.resolver(getPlaceholders(null)))).toList();
-        item.lore(parsedLore);
+        if (!item.isEmpty()) item.lore(parsedLore);
 
         return new InventoryItem(item, action);
     }
 
     public @NotNull InventoryItem item(final @NotNull Consumer<InventoryClickEvent> action, final @NotNull SortType sort) {
-        final ItemStack item = itemStack.clone();
+        final ItemStack item = resolveItem();
         final List<Component> parsedLore = lore.stream().map(line -> Values.minimessage.deserialize(line, TagResolver.resolver(getPlaceholders(sort)))).toList();
-        item.lore(parsedLore);
+        if (!item.isEmpty()) item.lore(parsedLore);
 
         return new InventoryItem(item, action);
+    }
+
+    private ItemStack resolveItem() {
+        if (itemStack != null && !itemStack.isEmpty()) return itemStack.clone();
+        return ItemStack.of(org.bukkit.Material.HOPPER);
     }
 
     private List<TagResolver> getPlaceholders(final SortType activeSort) {

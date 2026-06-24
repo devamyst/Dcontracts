@@ -46,7 +46,7 @@ public class MainGUI {
         Collection<Order> allOrders = plugin.getDataCache().getSortedOrders(sortType);
         orders = allOrders.stream().filter(Order::isActive).toList();
 
-        this.amount = ceil_div(orders.size(), config.mainGUIConfig.orderConfig.slots.size());
+        this.amount = ceil_div(orders.size(), config.mainGUIConfig.contractConfig.slots.size());
         setupPages();
     }
 
@@ -59,7 +59,7 @@ public class MainGUI {
         Collection<Order> allOrders = AlgoUtils.searchOrder(search, plugin.getDataCache().getSortedOrders(sortType));
         orders = allOrders.stream().filter(Order::isActive).toList();
 
-        this.amount = ceil_div(orders.size(), config.mainGUIConfig.orderConfig.slots.size());
+        this.amount = ceil_div(orders.size(), config.mainGUIConfig.contractConfig.slots.size());
         setupPages();
     }
 
@@ -72,13 +72,13 @@ public class MainGUI {
         int currentSlotIndex = 0;
 
         for (final Order order : orders) {
-            if (currentSlotIndex == config.mainGUIConfig.orderConfig.slots.size()) {
+            if (currentSlotIndex == config.mainGUIConfig.contractConfig.slots.size()) {
                 currentSlotIndex = 0;
                 pages.add(page);
                 page = initPage();
                 addButtons(page, ++curr);
             }
-            page.addItem(order.item(config.mainGUIConfig.orderConfig.lore, e -> {
+            page.addItem(order.item(config.mainGUIConfig.contractConfig.lore, e -> {
                 HumanEntity who = e.getWhoClicked();
                 if (e.getClick() == ClickType.RIGHT && who.hasPermission("contracts.admin.edit-orders")) {
                     Dialog dialog = AdminToolGUI.createEditOrder(order);
@@ -91,7 +91,7 @@ public class MainGUI {
                 }
                 InventoryGUI deliverGUI = setupDeliverGUI(order);
                 deliverGUI.open(who);
-            }), config.mainGUIConfig.orderConfig.slots.get(currentSlotIndex));
+            }), config.mainGUIConfig.contractConfig.slots.get(currentSlotIndex));
             currentSlotIndex++;
         }
         pages.add(page);
@@ -217,8 +217,8 @@ public class MainGUI {
         );
 
         gui.addItem(
-                config.mainGUIConfig.yourOrdersButton.item(event -> YourOrderGUI.open(player)),
-                config.mainGUIConfig.yourOrdersButton.slot
+                config.mainGUIConfig.yourContractsButton.item(event -> YourOrderGUI.open(player)),
+                config.mainGUIConfig.yourContractsButton.slot
         );
     }
 

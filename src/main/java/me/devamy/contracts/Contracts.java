@@ -73,9 +73,18 @@ public final class Contracts extends JavaPlugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        ServerSoftware.logStatus();
+        if (ServerSoftware.isParallelSupported() && config.parallelProcessing) {
+            Log.info("Parallel processing is enabled");
+        } else if (ServerSoftware.isParallelSupported() && !config.parallelProcessing) {
+            Log.info("Parallel processing is available but disabled in config");
+        } else {
+            Log.info("Parallel processing is not supported on this server software (" + ServerSoftware.getDisplayName() + "). " +
+                    "If this server is a fork of Paper, Purpur, or Pufferfish, enable 'parallel-processing' in config.yml");
+        }
         ContractsCommands.register();
         Bukkit.getPluginManager().registerEvents(new ServerLoadListener(), this);
-        Log.info("Contracts v" + getPluginMeta().getVersion() + " enabled. Storage: " + DatabaseConfig.get().storageMethod);
+        Log.info("Dcontracts v" + getPluginMeta().getVersion() + " enabled. Storage: " + DatabaseConfig.get().storageMethod);
     }
 
     @Override
@@ -85,7 +94,7 @@ public final class Contracts extends JavaPlugin {
 
     public void postEconomyRegistration() {
         if (economy == null) {
-            Log.severe("No economy plugin found. Contracts cannot work without an economy.");
+            Log.severe("No economy plugin found. Dcontracts cannot work without an economy.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -93,7 +102,7 @@ public final class Contracts extends JavaPlugin {
         registerListeners();
         startCollectLimitResetLoop();
 
-        Log.info("Contracts initialization complete");
+        Log.info("Dcontracts initialization complete");
     }
 
     private void registerListeners() {
@@ -117,8 +126,8 @@ public final class Contracts extends JavaPlugin {
             Bukkit.getAsyncScheduler().runNow(this, task -> {
                 final String newVer = UpdateUtils.checkForUpdates();
                 if (newVer == null) return;
-                Log.warn("A new version of Contracts (" + newVer + ") is available");
-                Log.info(mm.deserialize("<aqua>Download it on <green>Modrinth<gray>: <blue><u>https://modrinth.com/plugin/contracts/version/" + newVer));
+                Log.warn("A new version of Dcontracts (" + newVer + ") is available");
+                Log.info(mm.deserialize("<aqua>Download it on <green>Modrinth<gray>: <blue><u>https://modrinth.com/plugin/dcontracts/version/" + newVer));
             });
         }
     }

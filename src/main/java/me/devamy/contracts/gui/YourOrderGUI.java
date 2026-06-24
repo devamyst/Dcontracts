@@ -24,26 +24,26 @@ public class YourOrderGUI {
         final UUID pUUID = p.getUniqueId();
         final List<Order> orders = plugin.getDataCache().getOrders(pUUID, isAsync);
         final MiniMessage mm = plugin.mm;
-        final InventoryGUI gui = new InventoryGUI(config.yourOrdersGUIConfig.rows, mm.deserialize(config.yourOrdersGUIConfig.title));
+        final InventoryGUI gui = new InventoryGUI(config.yourContractsGUIConfig.rows, mm.deserialize(config.yourContractsGUIConfig.title));
         gui.setOnClick(e -> e.setCancelled(true), InteractLocation.GLOBAL);
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
-        final List<String> rawLore = config.yourOrdersGUIConfig.orderConfig.lore;
+        final List<String> rawLore = config.yourContractsGUIConfig.contractConfig.lore;
         int currentSlotIndex = 0;
-        final int slotCount = config.yourOrdersGUIConfig.orderConfig.slots.size();
+        final int slotCount = config.yourContractsGUIConfig.contractConfig.slots.size();
         for (Order order : orders) {
             if (currentSlotIndex >= slotCount) break;
             gui.addItem(order.item(rawLore, event -> {
                 Dialog dialog = ManageOrderDialog.getDialog(order);
                 PlayerUtils.openDialog(p, dialog);
-            }), config.yourOrdersGUIConfig.orderConfig.slots.get(currentSlotIndex++));
+            }), config.yourContractsGUIConfig.contractConfig.slots.get(currentSlotIndex++));
         }
 
-        if (orders.size() < config.yourOrdersGUIConfig.rows * 9) {
+        if (orders.size() < config.yourContractsGUIConfig.rows * 9) {
             gui.addItem(
-                    config.yourOrdersGUIConfig.newOrderButton.item(event -> {
+                    config.yourContractsGUIConfig.newContractButton.item(event -> {
                         InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
                         PlayerUtils.openGUI(p, chooseItemGUI, false);
-                    }), config.yourOrdersGUIConfig.newOrderButton.slot
+                    }), config.yourContractsGUIConfig.newContractButton.slot
             );
         }
 

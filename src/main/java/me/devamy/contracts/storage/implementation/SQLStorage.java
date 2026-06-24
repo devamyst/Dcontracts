@@ -14,10 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static me.devamy.contracts.Contracts.plugin;
@@ -356,8 +353,15 @@ public class SQLStorage extends Storage {
         return future;
     }
 
+    private static final Set<String> ALLOWED_COLUMNS = Set.of("delivered", "in_storage", "amount", "money_per");
+
     public CompletableFuture<Void> updateOrder(Order order, String var, Object value) {
         CompletableFuture<Void> future = new CompletableFuture<>();
+        if (!ALLOWED_COLUMNS.contains(var)) {
+            Log.error("Blocked SQL update with disallowed column: " + var, new IllegalArgumentException());
+            future.completeExceptionally(new IllegalArgumentException("Invalid column: " + var));
+            return future;
+        }
         DispatchUtil.async(() -> {
             try (
                     Connection connection = data.getConnection();

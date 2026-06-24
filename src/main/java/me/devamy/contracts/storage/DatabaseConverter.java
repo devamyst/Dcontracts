@@ -66,7 +66,7 @@ public class DatabaseConverter {
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
 
         gui.addItem(storageTypeItem(StorageMethod.SQLITE, "SQLite",
-                "<gray>Stored in <yellow>plugins/Contracts/data.db</yellow>",
+                "<gray>Stored in <yellow>plugins/Dcontracts/data.db</yellow>",
                 e -> showTargetPicker(admin, StorageMethod.SQLITE)), 11);
 
         gui.addItem(storageTypeItem(StorageMethod.MYSQL, "MySQL",
@@ -90,7 +90,7 @@ public class DatabaseConverter {
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
 
         gui.addItem(storageTypeItem(StorageMethod.SQLITE, "SQLite",
-                "<gray>Stored in <yellow>plugins/Contracts/data.db</yellow>",
+                "<gray>Stored in <yellow>plugins/Dcontracts/data.db</yellow>",
                 e -> {
                     if (sourceMethod == StorageMethod.SQLITE) {
                         admin.sendRichMessage("<red>Source and target cannot be the same type.");
@@ -318,7 +318,7 @@ public class DatabaseConverter {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-source");
                     config.setJdbcUrl("jdbc:h2:" + new File(plugin.getDataFolder(), "data-h2").getAbsolutePath() + ";MODE=MySQL");
-                    config.setDriverClassName("contracts.h2.Driver");
+                    config.setDriverClassName("dcontracts.h2.Driver");
                     config.setUsername("sa");
                     config.setPassword("");
                     return new HikariDataSource(config);
@@ -347,7 +347,7 @@ public class DatabaseConverter {
                     HikariConfig config = new HikariConfig();
                     config.setPoolName("converter-target");
                     config.setJdbcUrl("jdbc:h2:" + new File(plugin.getDataFolder(), "data-converted-h2").getAbsolutePath() + ";MODE=MySQL");
-                    config.setDriverClassName("contracts.h2.Driver");
+                    config.setDriverClassName("dcontracts.h2.Driver");
                     config.setUsername(user.isEmpty() ? "sa" : user);
                     config.setPassword(pass);
                     return new HikariDataSource(config);
@@ -364,7 +364,7 @@ public class DatabaseConverter {
         HikariConfig config = new HikariConfig();
         config.setPoolName(poolName);
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&allowPublicKeyRetrieval=true");
-        config.setDriverClassName("contracts.mysql.cj.jdbc.Driver");
+        config.setDriverClassName("dcontracts.mysql.cj.jdbc.Driver");
         config.setUsername(user);
         config.setPassword(pass);
         config.setMaximumPoolSize(5);

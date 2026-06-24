@@ -14,7 +14,7 @@ public class DeliveryConfirmDialog {
     public static Dialog getDialog(Player p, Order order, int amount, double reward, Collection<ItemStack> items) {
         final Config config = Config.config;
         final Dialog dialog = config.confirmDeliveryDialogConfig.dialog(
-                order.itemStack(config.mainGUIConfig.orderConfig.lore),
+                order.itemStack(config.mainGUIConfig.contractConfig.lore),
                 ConvertUtils.formatNumber(amount),
                 ConvertUtils.formatNumber(reward),
                 (view, audience) -> {

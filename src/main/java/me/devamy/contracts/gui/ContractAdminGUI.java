@@ -86,7 +86,7 @@ public class ContractAdminGUI {
                     .collect(Collectors.toList());
         }
 
-        int itemsPerPage = config.contractAdminGUIConfig.orderConfig.slots.size();
+        int itemsPerPage = config.contractAdminGUIConfig.contractConfig.slots.size();
         int totalPages = Math.max(1, ConvertUtils.ceil_div(filtered.size(), itemsPerPage));
         int currentPage = Math.min(page, totalPages - 1);
         int startIdx = currentPage * itemsPerPage;
@@ -104,7 +104,7 @@ public class ContractAdminGUI {
         gui.setOnDrag(e -> e.setCancelled(true), InteractLocation.GLOBAL);
 
         // Fill contract items using configured slots
-        List<Integer> slots = config.contractAdminGUIConfig.orderConfig.slots;
+        List<Integer> slots = config.contractAdminGUIConfig.contractConfig.slots;
         int slotIdx = 0;
         for (Order order : pageOrders) {
             if (slotIdx >= slots.size()) break;
@@ -182,7 +182,7 @@ public class ContractAdminGUI {
                     .append(origName != null ? origName : Component.empty())
                     .build());
 
-            List<String> loreLines = Config.config.contractAdminGUIConfig.orderConfig.lore;
+            List<String> loreLines = Config.config.contractAdminGUIConfig.contractConfig.lore;
             if (loreLines != null && !loreLines.isEmpty()) {
                 List<Component> lore = loreLines.stream()
                         .map(line -> order.deserializeText(line))

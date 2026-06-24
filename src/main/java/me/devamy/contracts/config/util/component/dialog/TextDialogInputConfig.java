@@ -66,7 +66,7 @@ public class TextDialogInputConfig extends ComponentConfig {
     @Override
     public void migrateV5(final @NotNull ConfigFile oldConfig, final @NotNull String path) {
         label = oldConfig.getString(path);
-        if (path.startsWith("gui.new-order")) {
+        if (path.startsWith("gui.new-order") || path.startsWith("gui.new-contract")) {
             width = oldConfig.getInteger("gui.new-order.button-width");
         } else width = 200;
         labelVisible = true;

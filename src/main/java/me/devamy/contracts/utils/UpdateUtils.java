@@ -30,7 +30,7 @@ public class UpdateUtils {
         final String urlText =  API_URL + PROJECT_ID + "/version?game_versions=" + mcVer;
         try {
             HttpURLConnection connection = (HttpURLConnection) URI.create(urlText).toURL().openConnection();
-            connection.setRequestProperty("User-Agent", "Contracts Update Checker");
+            connection.setRequestProperty("User-Agent", "Dcontracts Update Checker");
             connection.setRequestMethod("GET");
             connection.connect();
             final int resCode = connection.getResponseCode();

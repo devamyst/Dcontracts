@@ -1,4 +1,4 @@
-# Contributing to Contracts
+# Contributing to Dcontracts
 
 This is a guide for people who want to help improve this project.
 

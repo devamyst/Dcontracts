@@ -43,9 +43,9 @@ it is active and inactive.
 ## FastStats
 
 The plugin now uses [FastStats](https://faststats.dev/) to collect anonymous data.
-Besides default metrics it collects, Contracts also tracks errors at different places, and these data:
+Besides default metrics it collects, Dcontracts also tracks errors at different places, and these data:
 
-- API Usage: a boolean determines if your server is using API from Contracts
+- API Usage: a boolean determines if your server is using API from Dcontracts
 - Experimental features: a string array contains names of experimental features being used
 - Order amount: an integer shows the amount of orders have been created
 - Items collected: an integer shows the amount of items collected from all orders

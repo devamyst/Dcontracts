@@ -321,8 +321,8 @@ public class Order implements me.devamy.contracts.api.Order {
         plugin.getStorage().createOrder(owner.getUniqueId(), strippedItem, amount, moneyPer)
                 .thenAccept(order -> {
                     CustomMetrics.ORDER_AMOUNT_CACHE.incrementAndGet();
-                    if (config.broadcastOrderCreation) {
-                        final Component message = order.deserializeText(config.orderCreationBroadcast);
+                    if (config.broadcastContractCreation) {
+                        final Component message = order.deserializeText(config.contractCreationBroadcast);
 
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             DispatchUtil.entity(p, () -> p.sendMessage(message));

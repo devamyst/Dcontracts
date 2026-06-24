@@ -3,7 +3,7 @@ package me.devamy.contracts.config.util.chestgui;
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import me.devamy.contracts.config.util.GUIConfigFile;
 import me.devamy.contracts.config.util.component.ButtonConfig;
-import me.devamy.contracts.config.util.component.OrderConfig;
+import me.devamy.contracts.config.util.component.ContractConfig;
 import me.devamy.contracts.config.util.component.SortButtonConfig;
 import me.devamy.contracts.config.util.component.SortsOrderConfig;
 import me.devamy.contracts.obj.SortType;
@@ -19,7 +19,7 @@ public class ContractAdminGUIConfig extends GUIConfigFile {
 
     public String title;
     public int rows;
-    public final @NotNull OrderConfig orderConfig = new OrderConfig("order-item");
+    public final @NotNull ContractConfig contractConfig = new ContractConfig("contract-item");
     public final @NotNull SortsOrderConfig sortsOrderConfig = new SortsOrderConfig("sort-button.order");
     public final @NotNull SortButtonConfig sortButton = new SortButtonConfig("sort-button");
     public final @NotNull ButtonConfig refreshButton = new ButtonConfig("refresh-button");
@@ -38,21 +38,21 @@ public class ContractAdminGUIConfig extends GUIConfigFile {
         title = "<dark_gray>[</dark_gray><red>Admin</red><dark_gray>]</dark_gray> <white>Contracts</white>";
         rows = 6;
 
-        orderConfig.lore.add("");
-        orderConfig.lore.add("<gray>ID: <white>#<id>");
-        orderConfig.lore.add("<gray>Owner: <yellow><player>");
-        orderConfig.lore.add("<gray>Status: <order-status>");
-        orderConfig.lore.add("");
-        orderConfig.lore.add("<gray>Price/ea: <green>$<money-per>");
-        orderConfig.lore.add("<gray>Total: <green>$<total>");
-        orderConfig.lore.add("<gray>Amount: <white><amount>");
-        orderConfig.lore.add("<gray>Delivered: <white><delivered>");
-        orderConfig.lore.add("<gray>In Storage: <white><in-storage>");
-        orderConfig.lore.add("");
-        orderConfig.lore.add("<yellow>Left-Click <gray>to <green>Edit</green>");
-        orderConfig.lore.add("<red>Right-Click <gray>to <red>Cancel</red> <gray>(refund)");
-        orderConfig.lore.add("<dark_red>Shift+Right <gray>to <dark_red>Force-Delete</dark_red>");
-        orderConfig.slots.addAll(IntStream.range(0, 45).boxed().toList());
+        contractConfig.lore.add("");
+        contractConfig.lore.add("<gray>ID: <white>#<id>");
+        contractConfig.lore.add("<gray>Owner: <yellow><player>");
+        contractConfig.lore.add("<gray>Status: <contract-status>");
+        contractConfig.lore.add("");
+        contractConfig.lore.add("<gray>Price/ea: <green>$<money-per>");
+        contractConfig.lore.add("<gray>Total: <green>$<total>");
+        contractConfig.lore.add("<gray>Amount: <white><amount>");
+        contractConfig.lore.add("<gray>Delivered: <white><delivered>");
+        contractConfig.lore.add("<gray>In Storage: <white><in-storage>");
+        contractConfig.lore.add("");
+        contractConfig.lore.add("<yellow>Left-Click <gray>to <green>Edit</green>");
+        contractConfig.lore.add("<red>Right-Click <gray>to <red>Cancel</red> <gray>(refund)");
+        contractConfig.lore.add("<dark_red>Shift+Right <gray>to <dark_red>Force-Delete</dark_red>");
+        contractConfig.slots.addAll(IntStream.range(0, 45).boxed().toList());
 
         sortsOrderConfig.orderArray.add(SortType.RECENTLY_LISTED);
         sortsOrderConfig.orderArray.add(SortType.OLDEST);
@@ -121,7 +121,7 @@ public class ContractAdminGUIConfig extends GUIConfigFile {
     public void setDefault() {
         config.addDefault("title", title);
         config.addDefault("rows", rows);
-        orderConfig.setDefault(config);
+        contractConfig.setDefault(config);
         sortsOrderConfig.setDefault(config);
         sortButton.setDefault(config);
         refreshButton.setDefault(config);
@@ -134,7 +134,7 @@ public class ContractAdminGUIConfig extends GUIConfigFile {
 
     @Override
     public void reload() {
-        orderConfig.reload(config);
+        contractConfig.reload(config);
         sortsOrderConfig.reload(config);
         sortButton.reload(config);
         refreshButton.reload(config);
@@ -151,7 +151,7 @@ public class ContractAdminGUIConfig extends GUIConfigFile {
     public void save() {
         config.set("title", title);
         config.set("rows", rows);
-        orderConfig.save(config);
+        contractConfig.save(config);
         sortsOrderConfig.save(config);
         sortButton.save(config);
         refreshButton.save(config);

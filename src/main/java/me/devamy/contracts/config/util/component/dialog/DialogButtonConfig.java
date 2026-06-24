@@ -53,7 +53,7 @@ public class DialogButtonConfig extends ComponentConfig {
     public void migrateV5(@NotNull ConfigFile oldConfig, @NotNull String path) {
         label = oldConfig.getString(path + "-button");
         tooltip = oldConfig.getString(path + "-tooltip");
-        if (path.startsWith("gui.new-order."))
+        if (path.startsWith("gui.new-order.") || path.startsWith("gui.new-contract."))
             width = oldConfig.getInteger("gui.new-order.button-width");
         else
             width = 150;

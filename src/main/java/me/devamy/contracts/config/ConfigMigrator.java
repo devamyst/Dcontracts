@@ -98,7 +98,7 @@ public class ConfigMigrator {
 
             if (existingValue == null) {
                 addedKeys.add(fullPath);
-            } else if (defaultValue instanceof Map && existingValue instanceof Map) {
+            } else if (defaultValue instanceof Map<?, ?> && existingValue instanceof Map<?, ?>) {
                 deepFindMissing(
                         (Map<String, Object>) defaultValue,
                         (Map<String, Object>) existingValue,

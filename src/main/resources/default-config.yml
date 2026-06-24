@@ -1,11 +1,11 @@
 # ─────────────────────────────────────────────
-# Contracts v2 — Default Configuration
+# Dcontracts v2 — Default Configuration
 # ─────────────────────────────────────────────
 # This file is shipped with the plugin as the reference default.
 # When the plugin loads, any new keys added in a future version
 # will be automatically merged into your existing config.yml.
 
-config-version: 5
+config-version: 6
 
 # ── General Settings ─────────────────────────
 
@@ -18,29 +18,33 @@ check-for-updates: true
 # Whether to log player money transactions (Vault) to console
 log-transactions: true
 
-# After how many milliseconds an order expires (default: 7 days)
+# After how many milliseconds a contract expires (default: 7 days)
 expires-after: 604800000
 
-# Minimum price per item a player can set when creating an order
+# Minimum price per item a player can set when creating a contract
 minimum-price: 0.1
 
-# Maximum items a player can collect from a single order at once
+# Maximum items a player can collect from a single contract at once
 max-collect: 1000
 
-# Global rate limit: max items collected per minute across all orders.
+# Global rate limit: max items collected per minute across all contracts.
 # Setting this too high may let players lag the server on large deliveries.
 max-collect-per-minute: 1000
 
-# Whether players can deliver orders using shulker boxes containing items
+# Whether players can deliver contracts using shulker boxes containing items
 shulker-delivering: true
 
-# Whether to broadcast a server-wide message when an order is created
-broadcast-order-creation: false
+# Whether to broadcast a server-wide message when a contract is created
+broadcast-contract-creation: false
+
+# Whether to use parallel processing for expensive operations (loading, GUI building, etc.).
+# Enabled by default on Paper, Purpur, Pufferfish, and Folia.
+parallel-processing: true
 
 # ── Similarity Check ─────────────────────────
 # Defines how two items are considered "similar" for delivery matching.
 # If all the listed data components match between items (regardless of item type),
-# they are treated as the same item for order delivery.
+# they are treated as the same item for contract delivery.
 # See: https://minecraft.wiki/w/Data_component_format#List_of_components
 similarity-check:
   - "minecraft:enchantments"
@@ -83,25 +87,25 @@ sorts-display:
     cheapest: "Cheapest"
     oldest: "Oldest"
 
-# ── Order Status ─────────────────────────────
-# Text format for each order status (supports <day> <hour> <minute> <second> placeholders)
-order-status:
+# ── Contract Status ─────────────────────────
+# Text format for each contract status (supports <day> <hour> <minute> <second> placeholders)
+contract-status:
   available: "<gray>Expires after <day>d <hour>h <minute>m <second>s"
-  expired: "<red>Order Expired"
-  completed: "<green>Order Completed"
+  expired: "<red>Contract Expired"
+  completed: "<green>Contract Completed"
 
 # ── Messages ─────────────────────────────────
 # All user-facing messages (MiniMessage format supported)
 messages:
-  create-order-success: "<gray>Your order has been created"
+  create-contract-success: "<gray>Your contract has been created"
   invalid-input: "<red>Invalid number or format"
-  deliver: "<gray>You earned <green>$<money><gray> from delivering an order"
+  deliver: "<gray>You earned <green>$<money><gray> from delivering a contract"
   receive-delivery: "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>"
   not-enough-money: "<red>You do not have enough money"
-  deliver-self: "<red>You cannot deliver your own order"
+  deliver-self: "<red>You cannot deliver your own contract"
   exceeded-max-collect: "<red>You are collecting too many items"
   collecting-too-fast: "<red>You are collecting items too fast. Wait a minute..."
-  order-creation-broadcast: "<green><player> <white>has just created a new order for <green><item> <white>in <gray>/contracts"
+  contract-creation-broadcast: "<green><player> <white>has just created a new contract for <green><item> <white>in <gray>/contracts"
 
 # ── Sounds ───────────────────────────────────
 # Sound effects played during GUI interactions
@@ -122,7 +126,7 @@ sounds:
     sound: "minecraft:ui.button.click"
     volume: 1.0
     pitch: 1.0
-  new-order:
+  new-contract:
     sound: "minecraft:entity.villager.work_cartographer"
     volume: 1.0
     pitch: 1.0
@@ -134,14 +138,14 @@ sounds:
 # ── GUI: Main ────────────────────────────────
 gui:
   main:
-    title: "Orders"
-    order-lore:
+    title: "Contracts"
+    contract-lore:
       - ""
       - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
       - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
       - "<green>$<money-per> <white>each"
       - ""
-      - "<white>Click to deliver <aqua><player><white>'s order"
+      - "<white>Click to deliver <aqua><player><white>'s contract"
     sorts-order:
       - most-money-per-item
       - recently-listed
@@ -154,11 +158,11 @@ gui:
           - "<white>Click to refresh"
         name: "<aqua>Refresh"
         item: PAPER
-      your-orders:
+      your-contracts:
         slot: 6
         lore:
-          - "<white>Click to view your orders"
-        name: "<aqua>Your Orders"
+          - "<white>Click to view your contracts"
+        name: "<aqua>Your Contracts"
         item: CHEST
       sort:
         slot: 3
@@ -189,21 +193,21 @@ gui:
         name: "<aqua>Search"
         item: OAK_SIGN
 
-  # ── GUI: Your Orders ─────────────────────
-  your-orders:
-    title: "Your Orders"
-    order-lore:
+  # ── GUI: Your Contracts ─────────────────
+  your-contracts:
+    title: "Your Contracts"
+    contract-lore:
       - ""
       - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
       - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
       - "<green>$<money-per> <white>each"
       - ""
-      - "<order-status>"
+      - "<contract-status>"
     buttons:
-      new-order:
+      new-contract:
         lore:
-          - "<white>Click to create a new order"
-        name: "<aqua>New Order"
+          - "<white>Click to create a new contract"
+        name: "<aqua>New Contract"
         item: MAP
 
   # ── GUI: Choose Item ─────────────────────
@@ -272,16 +276,16 @@ gui:
       name: "<green>Confirm"
       item: GREEN_WOOL
 
-  # ── GUI: New Order Dialog ────────────────
-  new-order:
-    title: "Create A New Order"
-    item-description: "You're creating an order for this item"
+  # ── GUI: New Contract Dialog ────────────
+  new-contract:
+    title: "Create A New Contract"
+    item-description: "You're creating a contract for this item"
     amount-label: "Amount"
     money-per-label: "Money Per Item"
     change-item-button: "Change Item..."
     change-item-tooltip: "Click to change the item"
     confirm-button: "<green>Confirm"
-    confirm-tooltip: "Click to confirm the order"
+    confirm-tooltip: "Click to confirm the contract"
     description-width: 210
     input-width: 200
     button-width: 150
@@ -296,28 +300,28 @@ gui:
     cancel-button: "<red>Cancel"
     cancel-tooltip: "Click to cancel the delivery"
 
-  # ── GUI: Manage Order Dialog ─────────────
-  manage-order:
-    title: "Manage Order"
-    body: "You are managing this order"
+  # ── GUI: Manage Contract Dialog ─────────
+  manage-contract:
+    title: "Manage Contract"
+    body: "You are managing this contract"
     collect-items-button: "Collect Items"
-    collect-items-tooltip: "Click to collect items from this order"
-    cancel-order-button: "Cancel Order"
-    cancel-order-tooltip: "Click to cancel the order"
+    collect-items-tooltip: "Click to collect items from this contract"
+    cancel-contract-button: "Cancel Contract"
+    cancel-contract-tooltip: "Click to cancel the contract"
 
     collect-items:
       title: "Collect Items"
-      body: "You are collecting items from this order. You can collect up to <aqua><in-storage> <item>"
+      body: "You are collecting items from this contract. You can collect up to <aqua><in-storage> <item>"
       amount-label: "Amount"
       cancel-button: "<red>Cancel"
       cancel-tooltip: "Click to cancel"
       confirm-button: "<green>Confirm"
       confirm-tooltip: "Click to confirm"
 
-    cancel-order:
-      title: "Cancel Order"
-      body: "You are cancelling this order. It will be expired"
+    cancel-contract:
+      title: "Cancel Contract"
+      body: "You are cancelling this contract. It will be expired"
       cancel-button: "<red>Cancel"
-      cancel-tooltip: "Click to cancel the cancellation of this order"
+      cancel-tooltip: "Click to cancel the cancellation of this contract"
       confirm-button: "<green>Confirm"
-      confirm-tooltip: "Click to confirm the cancellation of this order"
+      confirm-tooltip: "Click to confirm the cancellation of this contract"

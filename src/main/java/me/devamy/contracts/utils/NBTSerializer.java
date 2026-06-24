@@ -71,57 +71,20 @@ public abstract class NBTSerializer<T> {
             if (!(value instanceof Map<?, ?> data)) {
                 throw new IllegalArgumentException("object to deserialize is not a Map, it is " + value.getClass());
             }
-            if (!(data.get("count") instanceof Integer amount))
-                throw new IllegalArgumentException("count is not an Integer, it is " + data.get("count").getClass());
-            final String typeKey = (String) data.get("id");
+            final int amount = parseCount(data.get("count"));
+            final String typeKey = data.get("id") instanceof String idStr ? idStr : null;
             final ItemType type = ConvertUtils.getItemType(typeKey);
-            final ItemStack item = typeKey.equals("minecraft:air") ? ItemStack.empty() : type.createItemStack(amount);
             final Object componentsObject = data.get("components");
+            if (typeKey == null || typeKey.equals("minecraft:air")) {
+                if (componentsObject == null) return ItemStack.empty();
+                Log.warn("Item has no 'id' (or is minecraft:air) but has components; defaulting to minecraft:stone");
+                return applyComponents(ItemStack.of(org.bukkit.Material.STONE), componentsObject);
+            }
+            final ItemStack item = type.createItemStack(amount);
             if (componentsObject == null) {
                 return item;
             }
-            if (!(componentsObject instanceof Map<?, ?> components)) {
-                throw new IllegalStateException("components is not a Map, it is " + componentsObject.getClass());
-            }
-            for (final Map.Entry<?, ?> entry : components.entrySet()) {
-                final String componentKey = (String) entry.getKey();
-
-                final String[] keyComponents = componentKey.split(":");
-                if (keyComponents.length != 2) {
-                    Log.error("Invalid component key: " + componentKey, new IllegalStateException());
-                    continue;
-                }
-                final DataComponentType componentType = Registry.DATA_COMPONENT_TYPE.get(new NamespacedKey(keyComponents[0], keyComponents[1]));
-
-                final Object componentValue = entry.getValue();
-
-
-                // non valued component
-                if (componentType instanceof DataComponentType.NonValued nonValuedComponentType) {
-                    if (!(componentValue instanceof Boolean set)) {
-                        Log.error("Invalid value for component type " + componentKey, new IllegalStateException());
-                        continue;
-                    }
-                    if (set) {
-                        item.setData(nonValuedComponentType);
-                    } else {
-                        item.unsetData(nonValuedComponentType);
-                    }
-                    continue;
-                }
-                if (!(componentType instanceof DataComponentType.Valued<?> valuedComponentType)) {
-                    Log.error("Component type is neither valued nor non-valued. This is a bug.", new IllegalStateException());
-                    continue;
-                }
-                final NBTSerializer<?> serializer = componentSerializers.get(componentKey);
-                if (serializer == null) {
-                    Log.error("No serializer for component " + componentKey, new IllegalStateException());
-                    continue;
-                }
-                final Object deserializedComponent = serializer.deserialize(componentValue);
-                item.setData(NBTSerializer.cast(valuedComponentType), NBTSerializer.cast(valuedComponentType, deserializedComponent));
-            }
-            return item;
+            return applyComponents(item, componentsObject);
         }
     };
 
@@ -258,21 +221,18 @@ public abstract class NBTSerializer<T> {
                 throw new IllegalArgumentException("object to deserialize is not a Map, it is " + value.getClass());
             }
             final ResolvableProfile.Builder builder = ResolvableProfile.resolvableProfile();
-            final @Subst("ignored") String name = (String) data.get("name");
-            final String uuid = (String) data.get("id");
-            final List<?> properties = (List<?>) data.get("properties");
-            if (name != null) builder.name(name);
-            if (uuid != null) builder.uuid(UUID.fromString(uuid));
-            if (properties == null) return builder.build();
+            if (data.get("name") instanceof String name) builder.name(name);
+            if (data.get("id") instanceof String uuid) builder.uuid(UUID.fromString(uuid));
+            if (!(data.get("properties") instanceof List<?> properties)) return builder.build();
 
             for (final Object propertyObject : properties) {
                 if (!(propertyObject instanceof Map<?, ?> propertyData)) {
                     Log.error("property is not a Map, it is " + propertyObject.getClass(), new IllegalArgumentException());
                     continue;
                 }
-                final String propertyName = (String) propertyData.get("name");
-                final String propertyValue = (String) propertyData.get("value");
-                final String propertySignature = (String) propertyData.get("signature");
+                final String propertyName = propertyData.get("name") instanceof String s ? s : null;
+                final String propertyValue = propertyData.get("value") instanceof String s ? s : null;
+                final String propertySignature = propertyData.get("signature") instanceof String s ? s : null;
                 if (propertyName == null || propertyValue == null) {
                     Log.error("property is missing name or value, skipping it", new IllegalArgumentException());
                     continue;
@@ -300,7 +260,7 @@ public abstract class NBTSerializer<T> {
                 throw new IllegalArgumentException("object to deserialize is not a Map, it is " + value.getClass());
             }
             final TooltipDisplay.Builder builder = TooltipDisplay.tooltipDisplay();
-            builder.hideTooltip((boolean) data.get("hide_tooltip"));
+            builder.hideTooltip(Boolean.TRUE.equals(data.get("hide_tooltip")));
             for (final Object componentObject : (List<?>) data.get("hidden_components")) {
                 if (!(componentObject instanceof String componentString)) {
                     Log.error("hidden component is not a String, it is " + componentObject.getClass(), new IllegalArgumentException());
@@ -435,6 +395,72 @@ public abstract class NBTSerializer<T> {
             ERROR_TRACKER.trackError(exception);
             throw exception;
         }
+    }
+
+    private static int parseCount(final Object countObj) {
+        if (countObj == null) {
+            Log.warn("Item data missing 'count' field, defaulting to 1");
+            return 1;
+        }
+        if (countObj instanceof Number countNum) {
+            return countNum.intValue();
+        }
+        if (countObj instanceof String countStr) {
+            try {
+                return Integer.parseInt(countStr);
+            } catch (final NumberFormatException e) {
+                Log.error("count is not a valid number: " + countStr, e);
+                return 1;
+            }
+        }
+        Log.error("count is not a Number, it is " + countObj.getClass(), new IllegalArgumentException());
+        return 1;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static @NotNull ItemStack applyComponents(final @NotNull ItemStack item, final @NotNull Object componentsObject) {
+        if (!(componentsObject instanceof Map<?, ?> components)) {
+            throw new IllegalStateException("components is not a Map, it is " + componentsObject.getClass());
+        }
+        for (final Map.Entry<?, ?> entry : components.entrySet()) {
+            final String componentKey = (String) entry.getKey();
+
+            final String[] keyComponents = componentKey.split(":");
+            if (keyComponents.length != 2) {
+                Log.error("Invalid component key: " + componentKey, new IllegalStateException());
+                continue;
+            }
+            final DataComponentType componentType = Registry.DATA_COMPONENT_TYPE.get(new NamespacedKey(keyComponents[0], keyComponents[1]));
+
+            final Object componentValue = entry.getValue();
+
+
+            // non valued component
+            if (componentType instanceof DataComponentType.NonValued nonValuedComponentType) {
+                if (!(componentValue instanceof Boolean set)) {
+                    Log.error("Invalid value for component type " + componentKey, new IllegalStateException());
+                    continue;
+                }
+                if (set) {
+                    item.setData(nonValuedComponentType);
+                } else {
+                    item.unsetData(nonValuedComponentType);
+                }
+                continue;
+            }
+            if (!(componentType instanceof DataComponentType.Valued<?> valuedComponentType)) {
+                Log.error("Component type is neither valued nor non-valued. This is a bug.", new IllegalStateException());
+                continue;
+            }
+            final NBTSerializer<?> serializer = componentSerializers.get(componentKey);
+            if (serializer == null) {
+                Log.error("No serializer for component " + componentKey, new IllegalStateException());
+                continue;
+            }
+            final Object deserializedComponent = serializer.deserialize(componentValue);
+            item.setData(NBTSerializer.cast(valuedComponentType), NBTSerializer.cast(valuedComponentType, deserializedComponent));
+        }
+        return item;
     }
 
     public static Object serializeItemStack(final @NotNull ItemStack itemStack) {

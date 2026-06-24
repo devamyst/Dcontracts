@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.UUID;
 
 /**
@@ -12,37 +13,45 @@ import java.util.UUID;
  */
 public class BedrockUtils {
 
-    private static boolean geyserChecked = false;
-    private static boolean floodgateChecked = false;
-    private static boolean hasGeyser = false;
-    private static boolean hasFloodgate = false;
-    private static Object floodgateApiInstance = null;
-    private static java.lang.reflect.Method isFloodgatePlayerMethod = null;
-    private static java.lang.reflect.Method getFloodgatePlayerMethod = null;
-    private static java.lang.reflect.Method getUsernameMethod = null;
+    private static final AtomicBoolean geyserChecked = new AtomicBoolean(false);
+    private static final AtomicBoolean floodgateChecked = new AtomicBoolean(false);
+    private static volatile boolean hasGeyser = false;
+    private static volatile boolean hasFloodgate = false;
+    private static volatile Object floodgateApiInstance = null;
+    private static volatile java.lang.reflect.Method isFloodgatePlayerMethod = null;
+    private static volatile java.lang.reflect.Method getFloodgatePlayerMethod = null;
+    private static volatile java.lang.reflect.Method getUsernameMethod = null;
 
     private static void checkGeyser() {
-        if (!geyserChecked) {
-            hasGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
-            geyserChecked = true;
+        if (!geyserChecked.get()) {
+            synchronized (BedrockUtils.class) {
+                if (!geyserChecked.get()) {
+                    hasGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
+                    geyserChecked.set(true);
+                }
+            }
         }
     }
 
     private static void checkFloodgate() {
-        if (!floodgateChecked) {
-            try {
-                hasFloodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
-                if (hasFloodgate) {
-                    Class<?> floodgateApiClass = Class.forName("org.geysermc.floodgate.api.FloodgateApi");
-                    java.lang.reflect.Method getInstance = floodgateApiClass.getMethod("getInstance");
-                    floodgateApiInstance = getInstance.invoke(null);
-                    isFloodgatePlayerMethod = floodgateApiClass.getMethod("isFloodgatePlayer", UUID.class);
-                    getFloodgatePlayerMethod = floodgateApiClass.getMethod("getPlayer", UUID.class);
+        if (!floodgateChecked.get()) {
+            synchronized (BedrockUtils.class) {
+                if (!floodgateChecked.get()) {
+                    try {
+                        hasFloodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
+                        if (hasFloodgate) {
+                            Class<?> floodgateApiClass = Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+                            java.lang.reflect.Method getInstance = floodgateApiClass.getMethod("getInstance");
+                            floodgateApiInstance = getInstance.invoke(null);
+                            isFloodgatePlayerMethod = floodgateApiClass.getMethod("isFloodgatePlayer", UUID.class);
+                            getFloodgatePlayerMethod = floodgateApiClass.getMethod("getPlayer", UUID.class);
+                        }
+                    } catch (Exception e) {
+                        hasFloodgate = false;
+                    }
+                    floodgateChecked.set(true);
                 }
-            } catch (Exception e) {
-                hasFloodgate = false;
             }
-            floodgateChecked = true;
         }
     }
 

@@ -38,7 +38,7 @@ public class AdminToolGUI {
 
     private static final Consumer<InventoryClickEvent> viewWiki = e -> {
         e.getWhoClicked().closeInventory();
-        e.getWhoClicked().sendRichMessage("<gray>>> <blue><u><click:open_url:'https://github.com/DevAmy/Contracts/wiki/Blacklist-&-Custom-items'>Click here</click></u> <white>to view the wiki");
+        e.getWhoClicked().sendRichMessage("<gray>>> <blue><u><click:open_url:'https://github.com/DevAmy/Dcontracts/wiki/Blacklist-&-Custom-items'>Click here</click></u> <white>to view the wiki");
     };
 
     private static final ItemStack next = ItemStack.of(Material.ARROW);

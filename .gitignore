@@ -120,5 +120,28 @@ runs/
 
 # Has secrets
 gradle.properties
+
+# AI tool artifacts (configs, instructions, session data — not needed in repo)
+.opencode/
+opencode.json
+opencode.jsonc
+tui.json
+tui.jsonc
 .aider*
+.aider.conf.yml
 AGENTS.md
+CLAUDE.md
+.claude/
+.cursorrules
+.cursorignore
+.cursor/
+.github/copilot/
+.windsurfrules
+.windsurf/
+.clinerules
+.cline/
+.continue/
+.codeium/
+.tabnine/
+.gemini/
+.ai/

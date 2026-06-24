@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 public class ManageOrderDialog {
     public static Dialog getDialog(Order order) {
         final Config config = Config.config;
-        final ItemStack item = order.itemStack(config.yourOrdersGUIConfig.orderConfig.lore);
-        final Dialog collectItemsDialog = config.manageOrderDialogConfig.collectItems.dialog(
+        final ItemStack item = order.itemStack(config.yourContractsGUIConfig.contractConfig.lore);
+        final Dialog collectItemsDialog = config.manageContractDialogConfig.collectItems.dialog(
                 item,
                 order.placeholders(),
                 (view, audience) -> {
@@ -25,7 +25,7 @@ public class ManageOrderDialog {
                 null
         );
 
-        final Dialog cancelOrderDialog = config.manageOrderDialogConfig.cancelOrder.dialog(
+        final Dialog cancelContractDialog = config.manageContractDialogConfig.cancelContract.dialog(
                 item,
                 (view, player) -> {
                     if (!(player instanceof Player p)) return;
@@ -37,14 +37,14 @@ public class ManageOrderDialog {
                 }
         );
 
-        return config.manageOrderDialogConfig.manageOrder.dialog(
+        return config.manageContractDialogConfig.manageContract.dialog(
                 (view, player) -> {
                     if (!(player instanceof Player p)) return;
                     PlayerUtils.openDialog(p, collectItemsDialog);
                 },
                 (view, player) -> {
                     if (!(player instanceof Player p)) return;
-                    PlayerUtils.openDialog(p, cancelOrderDialog);
+                    PlayerUtils.openDialog(p, cancelContractDialog);
                 }
         );
     }
