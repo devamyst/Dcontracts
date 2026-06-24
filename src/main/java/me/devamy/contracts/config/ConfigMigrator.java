@@ -9,14 +9,8 @@ import java.util.*;
 
 import static me.devamy.contracts.Contracts.plugin;
 
-/**
- * Detects keys present in the bundled default resource that are missing from
- * the user's on-disk config file. The caller is responsible for adding those
- * keys via {@code ConfigFile.addDefault()} and {@code save()}.
- *
- * <p>This class does <b>not</b> write the file itself, so all existing
- * comments and formatting are preserved.</p>
- */
+// Compares the bundled default resource against the user's config file
+// and reports which keys are missing. The caller handles adding them.
 public class ConfigMigrator {
 
     private static final Yaml YAML = new Yaml();
@@ -66,13 +60,8 @@ public class ConfigMigrator {
         return missing;
     }
 
-    /**
-     * Legacy migration entry-point. Now merely logs which keys would be added
-     * without modifying the file.
-     *
-     * @deprecated ConfigurationMaster's {@code addDefault()} + {@code save()}
-     *             should be used instead.
-     */
+    // Legacy stub — just logs missing keys without writing anything.
+    // Use ConfigFile.addDefault() + save() instead.
     @Deprecated
     public static void migrate(String resourcePath, File targetFile) {
         Set<String> missing = findMissingKeys(resourcePath, targetFile);

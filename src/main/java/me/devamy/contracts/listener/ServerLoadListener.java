@@ -10,9 +10,8 @@ import static me.devamy.contracts.Contracts.plugin;
 
 public class ServerLoadListener implements Listener {
 
-    // This event is fired when all plugins are enabled
-    // So we can safely check if economy is hooked
-    // Economy plugin can be enabled after ours, so it's not suitable to check economy on enable.
+    // ServerLoadEvent fires after all plugins are enabled, so we can
+    // safely hook Vault here (economy might load after us).
     @EventHandler
     public void onPostWorldInitialization(final @NotNull ServerLoadEvent event) {
         if (event.getType().equals(ServerLoadEvent.LoadType.RELOAD)) {

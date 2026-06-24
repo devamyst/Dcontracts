@@ -7,10 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.UUID;
 
-/**
- * Utility class for GeyserMC/Floodgate crossplay (Bedrock) support.
- * All methods are safe to call even if Geyser/Floodgate is not installed.
- */
+// GeyserMC/Floodgate helpers. Safe to call even if neither is installed.
 public class BedrockUtils {
 
     private static final AtomicBoolean geyserChecked = new AtomicBoolean(false);
@@ -90,10 +87,7 @@ public class BedrockUtils {
         return hasFloodgate;
     }
 
-    /**
-     * Get a Bedrock player's Java-format username if they are a Floodgate player,
-     * otherwise return the player's actual name.
-     */
+    // Bedrock names from Floodgate have a "." prefix — strip it for display
     @NotNull
     public static String getDisplayName(@NotNull Player player) {
         if (isBedrockPlayer(player)) {
@@ -108,9 +102,7 @@ public class BedrockUtils {
         return name != null ? name : "Unknown";
     }
 
-    /**
-     * Get player display name by UUID (works for offline Bedrock players too)
-     */
+    // Same as above but works for offline players too
     @NotNull
     public static String getOfflineDisplayName(@NotNull UUID uuid) {
         if (isBedrockPlayer(uuid)) {

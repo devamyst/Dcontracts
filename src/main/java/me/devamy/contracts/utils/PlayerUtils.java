@@ -22,12 +22,6 @@ import static me.devamy.contracts.config.Config.config;
 
 public class PlayerUtils {
 
-    /**
-     *
-     * @param p Player to give item to
-     * @param items the items
-     * @param safe whether to schedule this with the player's scheduler or not
-     */
     public static void give(Player p, Collection<ItemStack> items, boolean safe) {
         if (!safe) {
             p.give(items, true);
@@ -45,23 +39,11 @@ public class PlayerUtils {
 
     }
 
-    /**
-     * give player an item stack
-     * @param p the player
-     * @param item the item stack
-     * @param safe whether to schedule this task in the correct thread or not
-     */
     public static void give(Player p, ItemStack item, boolean safe) {
         PlayerUtils.give(p, Collections.singleton(item), safe);
     }
 
-    /**
-     * give player a specific amount of an item stack, overrides item stack's amount
-     * @param p the player
-     * @param item the item stack
-     * @param amount the amount
-     * @param safe whether to schedule this task in the correct thread
-     */
+    // Give a specific amount, overrides the item stack's amount
     public static void give(Player p, ItemStack item, int amount, boolean safe) {
         final int maxStackSize = item.getMaxStackSize();
 

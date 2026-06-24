@@ -66,6 +66,7 @@ public final class Contracts extends JavaPlugin {
         AdminToolGUI.init();
 
         getDataFolder().mkdirs();
+        WikiGenerator.generate();
         DatabaseConfig.get(); // init early so database.yml is created before storage
         storage = createStorage();
         try {

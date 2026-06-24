@@ -20,7 +20,7 @@ import java.util.*;
 
 import static me.devamy.contracts.utils.Values.ERROR_TRACKER;
 
-// Serialize an nbt data to a Map, List, etc. to store it in config file
+// Serializes item NBT to Maps/Lists for YAML config storage.
 @SuppressWarnings("UnstableApiUsage")
 public abstract class NBTSerializer<T> {
     public static final NBTSerializer<ItemStack> ITEM_STACK = new NBTSerializer<>() {

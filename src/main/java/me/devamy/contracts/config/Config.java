@@ -30,10 +30,12 @@ import static me.devamy.contracts.Contracts.plugin;
 public class Config {
     private static final AtomicBoolean reloading = new AtomicBoolean(false);
     public static volatile Config config;
-    public static final int CURRENT_CONFIG_VERSION = 6;
+    public static final int CURRENT_CONFIG_VERSION = 7;
     public final File javaConfigFile = new File(plugin.getDataFolder(), "config.yml");
+    public final File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
 
     public ConfigFile configFile;
+    public ConfigFile messagesConfig;
 
     public final MainGUIConfig mainGUIConfig = new MainGUIConfig();
     public final YourContractsGUIConfig yourContractsGUIConfig = new YourContractsGUIConfig();
@@ -80,6 +82,7 @@ public class Config {
     public Config() throws Exception {
         try {
             configFile = ConfigFile.loadConfig(javaConfigFile);
+            messagesConfig = ConfigFile.loadConfig(messagesFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -93,13 +96,26 @@ public class Config {
                 setDefaults();
                 save();
             }
+            if (messagesConfig.isNew() || !ConfigMigrator.findMissingKeys("default-messages.yml", messagesFile).isEmpty()) {
+                setDefaultMessages();
+                try {
+                    messagesConfig.save();
+                } catch (Exception e) {
+                    Log.error("Failed to save messages.yml", e);
+                }
+            }
             ContractsMigration.perform(this);
         }
     }
 
     public void save() throws Exception {
-        configFile.set("config-version", 6);
+        configFile.set("config-version", CURRENT_CONFIG_VERSION);
         configFile.save();
+        try {
+            messagesConfig.save();
+        } catch (Exception e) {
+            Log.error("Failed to save messages.yml", e);
+        }
         mainGUIConfig.saveToFile();
         yourContractsGUIConfig.saveToFile();
         chooseItemGUIConfig.saveToFile();
@@ -194,7 +210,6 @@ public class Config {
         setDefaultMessages();
         setDefaultSounds();
     }
-
     public static CompletableFuture<Void> reloadAsync() {
         if (!reloading.compareAndSet(false, true)) {
             return CompletableFuture.completedFuture(null);
@@ -288,15 +303,15 @@ public class Config {
             similarityCheck.add(new NamespacedKey(components[0], components[1]));
         }
 
-        contractCreationSuccessful = configFile.getString("messages.create-contract-success");
-        invalidInput = configFile.getString("messages.invalid-input");
-        deliver = configFile.getString("messages.deliver");
-        receiveDelivery = configFile.getString("messages.receive-delivery");
-        notEnoughMoney = configFile.getString("messages.not-enough-money");
-        deliverSelf = configFile.getString("messages.deliver-self");
-        exceedMaxCollect = configFile.getString("messages.exceeded-max-collect");
-        collectingTooFast = configFile.getString("messages.collecting-too-fast");
-        contractCreationBroadcast = configFile.getString("messages.contract-creation-broadcast");
+        contractCreationSuccessful = messagesConfig.getString("create-contract-success");
+        invalidInput = messagesConfig.getString("invalid-input");
+        deliver = messagesConfig.getString("deliver");
+        receiveDelivery = messagesConfig.getString("receive-delivery");
+        notEnoughMoney = messagesConfig.getString("not-enough-money");
+        deliverSelf = messagesConfig.getString("deliver-self");
+        exceedMaxCollect = messagesConfig.getString("exceeded-max-collect");
+        collectingTooFast = messagesConfig.getString("collecting-too-fast");
+        contractCreationBroadcast = messagesConfig.getString("contract-creation-broadcast");
 
         nextPageSound = getSound("next-page");
         previousPageSound = getSound("previous-page");
@@ -317,8 +332,8 @@ public class Config {
         final String[] components = soundKey.split(":");
         final String namespace, key;
         if (components.length != 2) {
-            Log.warn("Invalid key for sound: " + soundKey + ". Using default: \"contracts:unknown_sound\"");
-            namespace = "contracts";
+            Log.warn("Invalid key for sound: " + soundKey + ". Using default: \"dcontracts:unknown_sound\"");
+            namespace = "dcontracts";
             key = "unknown_sound";
         } else {
             namespace = components[0];
@@ -346,14 +361,14 @@ public class Config {
     }
 
     private void setDefaultMessages() {
-        configFile.addDefault("messages.create-contract-success", "<gray>Your contract has been created", "Shown when a contract is created successfully");
-        configFile.addDefault("messages.invalid-input", "<red>Invalid number or format", "Shown when a player enters invalid input");
-        configFile.addDefault("messages.deliver", "<gray>You earned <green>$<money><gray> from delivering a contract", "Shown to the deliverer upon successful delivery");
-        configFile.addDefault("messages.receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>", "Shown to the contract owner when someone delivers");
-        configFile.addDefault("messages.not-enough-money", "<red>You do not have enough money", "Shown when a player lacks funds");
-        configFile.addDefault("messages.deliver-self", "<red>You cannot deliver your own contract", "Shown when a player tries to deliver their own contract");
-        configFile.addDefault("messages.exceeded-max-collect", "<red>You are collecting too many items", "Shown when exceeding max-collect limit");
-        configFile.addDefault("messages.collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...", "Shown when exceeding max-collect-per-minute rate limit");
-        configFile.addDefault("messages.contract-creation-broadcast", "<green><player> <white>has just created a new contract for <green><item> <white>in <gray>/contracts", "Broadcast message when a contract is created");
+        messagesConfig.addDefault("create-contract-success", "<gray>Your contract has been created", "Shown when a contract is created successfully");
+        messagesConfig.addDefault("invalid-input", "<red>Invalid number or format", "Shown when a player enters invalid input");
+        messagesConfig.addDefault("deliver", "<gray>You earned <green>$<money><gray> from delivering a contract", "Shown to the deliverer upon successful delivery");
+        messagesConfig.addDefault("receive-delivery", "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>", "Shown to the contract owner when someone delivers");
+        messagesConfig.addDefault("not-enough-money", "<red>You do not have enough money", "Shown when a player lacks funds");
+        messagesConfig.addDefault("deliver-self", "<red>You cannot deliver your own contract", "Shown when a player tries to deliver their own contract");
+        messagesConfig.addDefault("exceeded-max-collect", "<red>You are collecting too many items", "Shown when exceeding max-collect limit");
+        messagesConfig.addDefault("collecting-too-fast", "<red>You are collecting items too fast. Wait a minute...", "Shown when exceeding max-collect-per-minute rate limit");
+        messagesConfig.addDefault("contract-creation-broadcast", "<green><player> <white>has just created a new contract for <green><item> <white>in <gray>/contracts", "Broadcast message when a contract is created");
     }
 }

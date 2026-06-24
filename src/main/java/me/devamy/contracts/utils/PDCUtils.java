@@ -81,10 +81,7 @@ public class PDCUtils {
         return future;
     }
 
-    /**
-     * Remove all persistent data registered by Contracts from this holder
-     * @param holder the holder; can be player, item meta, etc
-     */
+    /// Remove all persistent data registered by Dcontracts from this holder
     public static void clear(@NotNull PersistentDataHolder holder) {
         PersistentDataContainer pdc = holder.getPersistentDataContainer();
         for (NamespacedKey key : KEYS) {

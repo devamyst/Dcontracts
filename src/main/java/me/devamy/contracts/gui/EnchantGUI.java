@@ -25,19 +25,14 @@ import java.util.function.Consumer;
 
 import static me.devamy.contracts.Contracts.plugin;
 
-/**
- * GUI that lets players select enchantments of their item
- */
+// Lets players pick enchantments for the item they're contracting
 public class EnchantGUI {
     // Store all the applicable enchantments and their current levels.
     private final ConcurrentHashMap<Enchantment, Integer> enchantsWithLevel = new ConcurrentHashMap<>();
     private InventoryGUI gui;
 
-    /**
-     * Create an EnchantGUI and shows it to the player
-     * @param item the original item
-     * @param action the action to perform after enchantments are applied, will be null if the player exits the GUI
-     */
+    // Create an EnchantGUI and show it to the player.
+    // action runs after enchantments are applied, or null if they exit the GUI.
     public EnchantGUI(EnchantableItem item, Consumer<OrderItem> action) {
         if (!(item instanceof VanillaItem vanillaItem)) {
             Log.error("Failed to process enchant GUI", new IllegalArgumentException("Unsupported item"));
@@ -121,12 +116,6 @@ public class EnchantGUI {
         return gui;
     }
 
-    /**
-     * Check if an item stack has an enchantment that conflicts with the specified one.
-     * @param item the item
-     * @param enchantment the specified enchantment
-     * @return {@code true} if there are conflict enchantments
-     */
     private boolean conflicts(ItemStack item, Enchantment enchantment) {
         for (Enchantment itemEnchantment : item.getEnchantments().keySet()) {
             if (enchantment.equals(itemEnchantment) || enchantment.isCursed()) continue;

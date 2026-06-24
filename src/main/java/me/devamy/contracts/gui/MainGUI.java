@@ -134,12 +134,7 @@ public class MainGUI {
         return deliverGUI;
     }
 
-    /**
-     * Scan an inventory for similar items
-     * @param inv the inventory to scan
-     * @param comparer the item to compare for similarity
-     * @return the amount of similar items
-     */
+    // Count matching items in an inventory (recursively checks shulkers too)
     @SuppressWarnings("UnstableApiUsage")
     private int scanInv(Iterable<ItemStack> inv, ItemStack comparer) {
         int amount = 0;

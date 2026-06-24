@@ -16,16 +16,11 @@ import static me.devamy.contracts.Contracts.plugin;
 
 public class ContractsMigration {
 
-    /**
-     * Perform config migration
-     *
-     * @param config the config
-     */
+    // Run config migration if needed
     public static void perform(final @NotNull Config config) throws Exception {
         config.configFile.loadContent();
         final int configVersion = config.configFile.getInteger("config-version");
 
-        // No migration needed
         if (configVersion == Config.CURRENT_CONFIG_VERSION) {
             config.setDefaults();
             config.mainGUIConfig.saveToFile();
@@ -47,7 +42,17 @@ public class ContractsMigration {
             throw new RuntimeException("Downgrading config is not supported. Please use the latest version");
         }
 
-        // Backup old config file
+        // v6 → v7: move messages from config.yml to messages.yml
+        if (configVersion == 6) {
+            migrateMessagesV6toV7(config);
+            config.configFile.set("messages", null);
+            config.configFile.set("config-version", Config.CURRENT_CONFIG_VERSION);
+            config.configFile.save();
+            config.load();
+            return;
+        }
+
+        // v4 or below — full migration
         final File backupConfig = new File(plugin.getDataFolder(), "config.yml.old");
         Files.copy(new File(plugin.getDataFolder(), "config.yml"), backupConfig);
 
@@ -329,6 +334,28 @@ public class ContractsMigration {
             config.save();
         } catch (Exception e) {
             Log.error("Failed to migrate config version 4", e);
+        }
+    }
+
+    // v6 had messages inside config.yml under the "messages" section.
+    // v7 moves them to a standalone messages.yml file.
+    private static void migrateMessagesV6toV7(final @NotNull Config config) {
+        final String[] keys = {
+                "create-contract-success", "invalid-input", "deliver",
+                "receive-delivery", "not-enough-money", "deliver-self",
+                "exceeded-max-collect", "collecting-too-fast",
+                "contract-creation-broadcast"
+        };
+        for (final String key : keys) {
+            final String oldVal = config.configFile.getString("messages." + key);
+            if (oldVal != null) {
+                config.messagesConfig.set(key, oldVal);
+            }
+        }
+        try {
+            config.messagesConfig.save();
+        } catch (Exception e) {
+            Log.error("Failed to save messages.yml during v6→v7 migration", e);
         }
     }
 }

@@ -47,7 +47,7 @@ public class ContainerContentListener implements PacketListener {
         }
     }
     
-    /// Strip persistent data of Contracts from this item
+    /// Strip Dcontracts persistent data from this item
     private void stripItemPD(ItemStack item) {
         Optional<NBTCompound> nbtOptional = item.getComponent(ComponentTypes.CUSTOM_DATA);
         if (nbtOptional.isEmpty()) return;

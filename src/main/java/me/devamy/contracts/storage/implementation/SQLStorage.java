@@ -52,14 +52,14 @@ public class SQLStorage extends Storage {
     private SQLStorage(StorageMethod method, String jdbcUrl, String username, String password) {
         super();
         HikariConfig conf = new HikariConfig();
-        conf.setPoolName("contracts data pool");
+        conf.setPoolName("dcontracts data pool");
         conf.setJdbcUrl(jdbcUrl);
 
         if (username != null && !username.isEmpty()) conf.setUsername(username);
         if (password != null && !password.isEmpty()) conf.setPassword(password);
 
         if (method == StorageMethod.MYSQL) {
-            conf.setDriverClassName("contracts.mysql.cj.jdbc.Driver");
+            conf.setDriverClassName("dcontracts.mysql.cj.jdbc.Driver");
             conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
             conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
             conf.setConnectionTimeout(DatabaseConfig.get().connectionTimeout);
@@ -72,7 +72,7 @@ public class SQLStorage extends Storage {
         } else if (method == StorageMethod.H2) {
             conf.setMaximumPoolSize(DatabaseConfig.get().maximumPoolSize);
             conf.setMinimumIdle(DatabaseConfig.get().minimumIdle);
-            conf.setDriverClassName("contracts.h2.Driver");
+            conf.setDriverClassName("dcontracts.h2.Driver");
         }
 
         data = new HikariDataSource(conf);
@@ -188,13 +188,8 @@ public class SQLStorage extends Storage {
         return future;
     }
 
-    /**
-     * deliver an order from an inventory of items
-     * @param deliverer the player that is delivering the order
-     * @param order the order the player is delivering
-     * @param items the inventory of items
-     * @return the amount of money the player receive after delivering
-     */
+    // Deliver items from an inventory to a contract.
+    // Returns the money the deliverer should receive.
     @Override
     public CompletableFuture<Double> deliverOrder(Player deliverer, Order order, Iterable<ItemStack> items) {
         CompletableFuture<Double> future = new CompletableFuture<>();
@@ -255,13 +250,7 @@ public class SQLStorage extends Storage {
         return future;
     }
 
-    /**
-     * scan this shulker box for similar items
-     * @param shulkerBox the shulker box to scan
-     * @param comparer the item to check for similarity
-     * @param deliverable the maximum amount of items can be delivered
-     * @return the new deliverable value after scanning
-     */
+    // Scan a shulker box for matching items. Returns the updated deliverable count.
     @SuppressWarnings("UnstableApiUsage")
     private int scanShulkerBox(ItemStack shulkerBox, ItemStack comparer, int deliverable) {
         ItemContainerContents shulkerContent = shulkerBox.getData(DataComponentTypes.CONTAINER);

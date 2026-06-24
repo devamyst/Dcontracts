@@ -26,11 +26,8 @@ import java.util.stream.Collectors;
 
 import static me.devamy.contracts.Contracts.plugin;
 
-/**
- * Admin GUI that shows ALL contracts (including expired / completed) with
- * edit and force-delete capabilities for any player — including offline players.
- * Fully configurable via gui/admin.yml
- */
+// Admin GUI — shows ALL contracts (including expired/completed) with edit
+// and force-delete. Works for any player, including offline ones.
 @SuppressWarnings("UnstableApiUsage")
 public class ContractAdminGUI {
 

@@ -13,10 +13,7 @@ import org.bukkit.inventory.ItemStack;
 @SuppressWarnings("UnstableApiUsage")
 public class NewOrderDialog {
 
-    /**
-     * Open the contract creation flow for a player immediately (e.g. from /contracts create).
-     * Sends them to the item-chooser GUI as the first step.
-     */
+    // Opens the contract creation flow — sends the player to the item picker first.
     public static void open(Player player) {
         InventoryGUI chooseItemGUI = ChooseItemGUI.getGUI(0, 0);
         PlayerUtils.openGUI(player, chooseItemGUI, false);

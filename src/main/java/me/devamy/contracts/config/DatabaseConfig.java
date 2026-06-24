@@ -66,7 +66,7 @@ public class DatabaseConfig {
         configFile.addDefault("storage-method", "SQLITE", "Storage backend: SQLITE, MYSQL, or H2");
         configFile.addDefault("host", "localhost", "Database host (MySQL/H2 only)");
         configFile.addDefault("port", 3306, "Database port (MySQL/H2 only)");
-        configFile.addDefault("database", "contracts", "Database name (MySQL/H2 only)");
+        configFile.addDefault("database", "dcontracts", "Database name (MySQL/H2 only)");
         configFile.addDefault("username", "root", "Database username (MySQL/H2 only)");
         configFile.addDefault("password", "", "Database password (MySQL/H2 only)");
         configFile.addDefault("pool-settings.maximum-pool-size", 10, "Maximum connections in the HikariCP pool");
@@ -87,7 +87,7 @@ public class DatabaseConfig {
 
         this.host = configFile.getString("host", "localhost");
         this.port = configFile.getInteger("port", 3306);
-        this.database = configFile.getString("database", "contracts");
+        this.database = configFile.getString("database", "dcontracts");
         this.username = configFile.getString("username", "root");
         this.password = configFile.getString("password", "");
         this.maximumPoolSize = configFile.getInteger("pool-settings.maximum-pool-size", 10);

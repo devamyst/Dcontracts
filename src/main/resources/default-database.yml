@@ -1,30 +1,14 @@
-# ─────────────────────────────────────────────
-# Dcontracts v2 — Default Database Configuration
-# ─────────────────────────────────────────────
-# This file is shipped with the plugin as the reference default.
-# When the plugin loads, any new keys added in a future version
-# will be automatically merged into your existing database.yml.
-
-# Storage method: SQLITE, MYSQL, or H2
 storage-method: SQLITE
 
-# ── MySQL / H2 Settings ──────────────────────
-# Only required when storage-method is MYSQL or H2.
 host: localhost
 port: 3306
 database: dcontracts
 username: root
 password: ""
 
-# ── Connection Pool Settings (HikariCP) ──────
 pool-settings:
-  # Maximum number of connections in the pool
   maximum-pool-size: 10
-  # Minimum number of idle connections to maintain
   minimum-idle: 2
-  # Maximum time (ms) to wait for a connection from the pool
   connection-timeout: 5000
-  # Maximum time (ms) a connection can sit idle in the pool
   idle-timeout: 600000
-  # Maximum lifetime (ms) of a connection in the pool
   max-lifetime: 1800000

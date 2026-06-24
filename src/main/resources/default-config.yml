@@ -1,51 +1,16 @@
-# ─────────────────────────────────────────────
-# Dcontracts v2 — Default Configuration
-# ─────────────────────────────────────────────
-# This file is shipped with the plugin as the reference default.
-# When the plugin loads, any new keys added in a future version
-# will be automatically merged into your existing config.yml.
+config-version: 7
 
-config-version: 6
-
-# ── General Settings ─────────────────────────
-
-# Whether to let bStats collect anonymous usage statistics
 bstats: true
-
-# Whether to check for plugin updates on startup
 check-for-updates: true
-
-# Whether to log player money transactions (Vault) to console
 log-transactions: true
-
-# After how many milliseconds a contract expires (default: 7 days)
 expires-after: 604800000
-
-# Minimum price per item a player can set when creating a contract
 minimum-price: 0.1
-
-# Maximum items a player can collect from a single contract at once
 max-collect: 1000
-
-# Global rate limit: max items collected per minute across all contracts.
-# Setting this too high may let players lag the server on large deliveries.
 max-collect-per-minute: 1000
-
-# Whether players can deliver contracts using shulker boxes containing items
 shulker-delivering: true
-
-# Whether to broadcast a server-wide message when a contract is created
 broadcast-contract-creation: false
-
-# Whether to use parallel processing for expensive operations (loading, GUI building, etc.).
-# Enabled by default on Paper, Purpur, Pufferfish, and Folia.
 parallel-processing: true
 
-# ── Similarity Check ─────────────────────────
-# Defines how two items are considered "similar" for delivery matching.
-# If all the listed data components match between items (regardless of item type),
-# they are treated as the same item for contract delivery.
-# See: https://minecraft.wiki/w/Data_component_format#List_of_components
 similarity-check:
   - "minecraft:enchantments"
   - "minecraft:bundle_contents"
@@ -63,8 +28,6 @@ similarity-check:
   - "minecraft:damage_type"
   - "minecraft:consumable"
 
-# ── Sort Display ─────────────────────────────
-# How each sort option appears in the GUI (active = currently selected)
 sorts-display:
   active:
     most-money-per-item: "<aqua>Most Money Per Item"
@@ -87,28 +50,11 @@ sorts-display:
     cheapest: "Cheapest"
     oldest: "Oldest"
 
-# ── Contract Status ─────────────────────────
-# Text format for each contract status (supports <day> <hour> <minute> <second> placeholders)
 contract-status:
   available: "<gray>Expires after <day>d <hour>h <minute>m <second>s"
   expired: "<red>Contract Expired"
   completed: "<green>Contract Completed"
 
-# ── Messages ─────────────────────────────────
-# All user-facing messages (MiniMessage format supported)
-messages:
-  create-contract-success: "<gray>Your contract has been created"
-  invalid-input: "<red>Invalid number or format"
-  deliver: "<gray>You earned <green>$<money><gray> from delivering a contract"
-  receive-delivery: "<aqua><deliverer> <gray>delivered you <aqua><amount> <item>"
-  not-enough-money: "<red>You do not have enough money"
-  deliver-self: "<red>You cannot deliver your own contract"
-  exceeded-max-collect: "<red>You are collecting too many items"
-  collecting-too-fast: "<red>You are collecting items too fast. Wait a minute..."
-  contract-creation-broadcast: "<green><player> <white>has just created a new contract for <green><item> <white>in <gray>/contracts"
-
-# ── Sounds ───────────────────────────────────
-# Sound effects played during GUI interactions
 sounds:
   next-page:
     sound: "minecraft:ui.button.click"
@@ -134,194 +80,3 @@ sounds:
     sound: "minecraft:entity.player.levelup"
     volume: 1.0
     pitch: 2.0
-
-# ── GUI: Main ────────────────────────────────
-gui:
-  main:
-    title: "Contracts"
-    contract-lore:
-      - ""
-      - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
-      - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
-      - "<green>$<money-per> <white>each"
-      - ""
-      - "<white>Click to deliver <aqua><player><white>'s contract"
-    sorts-order:
-      - most-money-per-item
-      - recently-listed
-      - most-delivered
-      - most-paid
-    buttons:
-      refresh:
-        slot: 4
-        lore:
-          - "<white>Click to refresh"
-        name: "<aqua>Refresh"
-        item: PAPER
-      your-contracts:
-        slot: 6
-        lore:
-          - "<white>Click to view your contracts"
-        name: "<aqua>Your Contracts"
-        item: CHEST
-      sort:
-        slot: 3
-        lore:
-          - ""
-          - "<white> • <most-money-per-item>"
-          - "<white> • <recently-listed>"
-          - "<white> • <most-delivered>"
-          - "<white> • <most-paid>"
-        name: "<aqua>Sort"
-        item: HOPPER
-      back:
-        slot: 0
-        lore:
-          - "<white>Click to go to the previous page"
-        name: "<aqua>Back"
-        item: ARROW
-      next:
-        slot: 8
-        lore:
-          - "<white>Click to go to the next page"
-        name: "<aqua>Next"
-        item: ARROW
-      search:
-        slot: 5
-        lore:
-          - "<white>Click to search"
-        name: "<aqua>Search"
-        item: OAK_SIGN
-
-  # ── GUI: Your Contracts ─────────────────
-  your-contracts:
-    title: "Your Contracts"
-    contract-lore:
-      - ""
-      - "<#786500>$<paid><gray>/<#017800>$<total> <gray>Paid"
-      - "<#786500><delivered><gray>/<#017800><amount> <gray>Delivered"
-      - "<green>$<money-per> <white>each"
-      - ""
-      - "<contract-status>"
-    buttons:
-      new-contract:
-        lore:
-          - "<white>Click to create a new contract"
-        name: "<aqua>New Contract"
-        item: MAP
-
-  # ── GUI: Choose Item ─────────────────────
-  choose-item:
-    title: "Choose Your Item"
-    sorts-order:
-      - a-z
-      - z-a
-    buttons:
-      back:
-        slot: 0
-        lore:
-          - "<white>Click to go to the previous page"
-        name: "<aqua>Back"
-        item: ARROW
-      next:
-        slot: 8
-        lore:
-          - "<white>Click to go to the next page"
-        name: "<aqua>Next"
-        item: ARROW
-      search:
-        slot: 5
-        lore:
-          - "<white>Click to search"
-        name: "<aqua>Search"
-        item: OAK_SIGN
-      sort:
-        slot: 3
-        lore:
-          - ""
-          - "<white> • <a-z>"
-          - "<white> • <z-a>"
-        name: "<aqua>Sort"
-        item: HOPPER
-
-  # ── GUI: Search Sign ─────────────────────
-  search-sign:
-    type: "minecraft:oak_sign"
-    search-line: 1
-    lines:
-      - ""
-      - "↑↑↑↑↑↑↑↑↑↑↑↑"
-      - "Search"
-      - ""
-
-  # ── GUI: Delivery ────────────────────────
-  delivery:
-    title: "Delivering..."
-    rows: 6
-
-  # ── GUI: Enchant Item ────────────────────
-  enchant-item:
-    title: "Enchant Your Item"
-    name-prefix:
-      active: "<aqua>"
-      inactive: "<gray>"
-    lore:
-      - ""
-      - "<gray>Right-click to decrease level"
-      - "<gray>Left-click to increase level"
-    confirm-button:
-      slot: 8
-      lore:
-        - "<white>Click to confirm your enchantments"
-      name: "<green>Confirm"
-      item: GREEN_WOOL
-
-  # ── GUI: New Contract Dialog ────────────
-  new-contract:
-    title: "Create A New Contract"
-    item-description: "You're creating a contract for this item"
-    amount-label: "Amount"
-    money-per-label: "Money Per Item"
-    change-item-button: "Change Item..."
-    change-item-tooltip: "Click to change the item"
-    confirm-button: "<green>Confirm"
-    confirm-tooltip: "Click to confirm the contract"
-    description-width: 210
-    input-width: 200
-    button-width: 150
-
-  # ── GUI: Confirm Delivery Dialog ─────────
-  confirm-delivery:
-    title: "Confirm your Delivery"
-    body: "You are delivering"
-    transaction-message: "You will get <green>$<money><white> in return"
-    confirm-button: "<green>Confirm"
-    confirm-tooltip: "Click to confirm the delivery"
-    cancel-button: "<red>Cancel"
-    cancel-tooltip: "Click to cancel the delivery"
-
-  # ── GUI: Manage Contract Dialog ─────────
-  manage-contract:
-    title: "Manage Contract"
-    body: "You are managing this contract"
-    collect-items-button: "Collect Items"
-    collect-items-tooltip: "Click to collect items from this contract"
-    cancel-contract-button: "Cancel Contract"
-    cancel-contract-tooltip: "Click to cancel the contract"
-
-    collect-items:
-      title: "Collect Items"
-      body: "You are collecting items from this contract. You can collect up to <aqua><in-storage> <item>"
-      amount-label: "Amount"
-      cancel-button: "<red>Cancel"
-      cancel-tooltip: "Click to cancel"
-      confirm-button: "<green>Confirm"
-      confirm-tooltip: "Click to confirm"
-
-    cancel-contract:
-      title: "Cancel Contract"
-      body: "You are cancelling this contract. It will be expired"
-      cancel-button: "<red>Cancel"
-      cancel-tooltip: "Click to cancel the cancellation of this contract"
-      confirm-button: "<green>Confirm"
-      confirm-tooltip: "Click to confirm the cancellation of this contract"

@@ -9,11 +9,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryView;
 
-/// This class helps things happen normally when the player disconnects
+// Cleans up when a player quits — returns items, closes sign sessions, etc.
 @SuppressWarnings("UnstableApiUsage")
 public class DisconnectListener implements Listener {
 
-    // Properly give items back to the player in case they quit while still in the delivery GUI
+    // Give items back if the player quits while in the delivery GUI
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
